@@ -24,3 +24,14 @@ The rules of chess, ordinary move sequences, user-imported PGN files, and third-
 Upload the provided `index.html` to the root of your `Xchrss` GitHub repository, replacing the previous `index.html`. Put this `COPYRIGHT.md` in the same repository for clear attribution. Do not substitute a proprietary licence for the separate GPL-licensed engine.
 
 This text is informational and not a legal registration certificate or legal opinion.
+
+
+## Chess-piece artwork (added in version 2)
+
+The app uses **Cburnett** chess pieces (the classic Lichess default), created by **Colin M. L. Burnett** and served as SVGs from the Lichess public asset repository. Those files are licensed **GPL v2 or later** according to the [Lichess attribution list](https://github.com/lichess-org/lila/blob/master/COPYING.md); the SVG artwork is not proprietary VER material.
+
+- Source: https://github.com/lichess-org/lila/tree/master/public/piece/cburnett
+- Licence: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+- Attribution: Colin M. L. Burnett, Cburnett chess pieces.
+- Technical note: this single HTML page loads the piece SVGs separately from jsDelivr on the user's device. The files are not included inside the ZIP. If offline, Unicode fallback pieces are shown.
+- The website is not affiliated with or endorsed by Lichess or Chess.com.
