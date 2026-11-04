@@ -4,6 +4,19 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 <meta name="theme-color" content="#0c221d" />
+<!--
+VER CHESS INTELLIGENCE — COPYRIGHT AND THIRD-PARTY NOTICE
+Copyright © 2026 VIGNESWARAN E R. All rights reserved in the original,
+protectable website content, distinctive visual arrangement and branding.
+Rights in third-party materials are unaffected.
+Stockfish.js 19.0.1 and the Stockfish engine are GPL-3.0 software, loaded
+separately via a public CDN. See https://github.com/nmrugg/stockfish.js
+and https://www.gnu.org/licenses/gpl-3.0.html.
+No copyright is claimed in chess rules, game moves, or third-party PGNs.
+See COPYRIGHT.md in the GitHub package for more information.
+-->
+<meta name="author" content="VIGNESWARAN E R" />
+<meta name="copyright" content="Copyright © 2026 VIGNESWARAN E R. Original VER Chess Intelligence materials. Third-party software is separately licensed." />
 <meta name="description" content="VER Chess Intelligence: free, private chess game review powered by Stockfish in your browser." />
 <title>VER Chess Intelligence · Every move teaches</title>
 <style>
@@ -13,6 +26,11 @@
 @media(max-width:980px){.main{grid-template-columns:1fr 1fr}.hero h1{font-size:40px}.board-wrap{padding:0 14px}.game-title,.board-footer{padding-left:14px;padding-right:14px}.players{font-size:17px}.stat-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:750px){.shell{padding:15px 12px 24px}.main{grid-template-columns:1fr}.hero{grid-template-columns:1fr}.hero-stat{display:none}.hero h1{font-size:41px}.hero{margin-bottom:18px}.top{padding-bottom:19px}.board-wrap{padding:0 12px}.game-title{padding:15px 13px}.board-footer{padding:13px 13px 16px}.piece{font-size:clamp(28px,8vw,48px)}.right .panel .body{padding:15px}.stat-grid{grid-template-columns:repeat(4,minmax(0,1fr))}.stat strong{font-size:22px}.board{border-radius:4px}.top-note{font-size:10px}.advisor{padding:14px}.panel+.panel{margin-top:12px}}
 @media(max-width:375px){.board-caption{font-size:11px}.btn{padding:9px 10px;font-size:11px}.piece{font-size:clamp(24px,8.3vw,38px)}.brand{letter-spacing:.08em}}
+.copyright-foot{display:flex;flex-direction:column;gap:8px;width:100%;border-top:1px solid var(--border);padding-top:15px;margin-top:3px}
+.copyright-main{color:#f1dfb6;font-weight:680;letter-spacing:.03em;font-size:12px}
+.copyright-main span{font-weight:400;color:var(--muted)}
+.copyright-small{color:var(--muted);line-height:1.65;font-size:11px}
+.copyright-small a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 </style>
 </head>
 <body>
@@ -55,7 +73,14 @@
       <section class="panel"><div class="panel-head"><h2>05 / Learning moments</h2><div class="reviewer"><select id="sideFilter" aria-label="Which side to review"><option value="all">Both players</option><option value="w">White only</option><option value="b">Black only</option></select></div></div><div class="body"><div id="critical" class="critical"><p class="empty">After analysis, mistakes and missed opportunities will appear here. Tap one to revisit the position.</p></div></div></section>
     </aside>
   </main>
-  <footer class="footer"><div class="foot-disclaimer">VER Chess Intelligence is an independent study tool, not affiliated with Chess.com or Lichess. Its grades are heuristic estimates based on limited-depth Stockfish evaluations, not official platform scores. For fair play, analyse <strong>completed</strong> games only.</div><div>Powered by <a href="https://github.com/nmrugg/stockfish.js" target="_blank" rel="noopener">Stockfish.js (GPL-3.0)</a> · Built for learning ♟</div></footer>
+  <footer class="footer">
+    <div class="foot-disclaimer">VER Chess Intelligence is an independent study tool, not affiliated with Chess.com or Lichess. Its grades are heuristic estimates based on limited-depth Stockfish evaluations, not official platform scores. For fair play, analyse <strong>completed</strong> games only.</div>
+    <div>Powered by <a href="https://github.com/nmrugg/stockfish.js" target="_blank" rel="noopener">Stockfish.js</a> · Built for learning ♟</div>
+    <div class="copyright-foot" aria-label="Copyright and open-source attribution">
+      <div class="copyright-main">© 2026 VIGNESWARAN E R <span>· VER Chess Intelligence · All rights reserved in original materials.</span></div>
+      <div class="copyright-small">Copyright notice covers protectable original branding, written material and website design; third-party software keeps its own licence. Stockfish.js and Stockfish are available under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU GPL v3</a> (<a href="https://github.com/nmrugg/stockfish.js/tree/v19.0.1" target="_blank" rel="noopener noreferrer">source</a>). No rights are claimed over chess rules, game moves or imported PGN files.</div>
+    </div>
+  </footer>
 </div>
 <div id="toast" class="toast" role="status" hidden></div>
 <script>
