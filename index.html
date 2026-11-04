@@ -10,7 +10,7 @@ Copyright © 2026 VIGNESWARAN E R. All rights reserved in the original,
 protectable website content, distinctive visual arrangement and branding.
 Rights in third-party materials are unaffected.
 Stockfish.js 19.0.1 and the Stockfish engine are GPL-3.0 software, loaded
-separately via a public CDN. See https://github.com/nmrugg/stockfish.js
+as separate, GPL-3.0 licensed engine files; self-hosted when installed. See https://github.com/nmrugg/stockfish.js
 and https://www.gnu.org/licenses/gpl-3.0.html.
 No copyright is claimed in chess rules, game moves, or third-party PGNs.
 Cburnett chess-piece SVGs are authored by Colin M. L. Burnett, served from
@@ -19,7 +19,7 @@ See COPYRIGHT.md in the GitHub package for more information.
 -->
 <meta name="author" content="VIGNESWARAN E R" />
 <meta name="copyright" content="Copyright © 2026 VIGNESWARAN E R. Original VER Chess Intelligence materials. Third-party software is separately licensed." />
-<meta name="description" content="VER Chess Intelligence: private Stockfish game review with Lichess-style SVG pieces and missed-opportunity arrows." />
+<meta name="description" content="VER Chess Intelligence: private Stockfish game review with Lichess-style pieces, missed-opportunity arrows and a locally hosted cached chess engine." />
 <title>VER Chess Intelligence · Every move teaches</title>
 <style>
 :root{--ink:#eaf2e7;--muted:#a8b9ac;--paper:#f6f2e6;--panel:#142a24;--panel2:#1a332b;--border:rgba(221,238,219,.13);--gold:#dfbf77;--mint:#a0d4b0;--red:#ed827d;--orange:#efbb7d;--lite:#eddfb9;--dark:#718c72}
@@ -34,7 +34,7 @@ See COPYRIGHT.md in the GitHub package for more information.
 .copyright-small{color:var(--muted);line-height:1.65;font-size:11px}
 .copyright-small a{color:var(--gold);text-decoration:underline;text-underline-offset:2px}
 
-/* VER Chess Intelligence v2 — clean chessboard and coach arrows */
+/* VER Chess Intelligence v2.1 — clean chessboard and coach arrows */
 [hidden]{display:none!important}
 .board{border:1px solid #536f5d;border-radius:9px;box-shadow:0 16px 30px #040d0a65;isolation:isolate}
 .sq.light{background:#eeeed2}.sq.dark{background:#769656}
@@ -60,6 +60,53 @@ See COPYRIGHT.md in the GitHub package for more information.
 .arrows-btn[aria-pressed="true"]{border-color:#72ac87a8;color:#b8e8c5}
 @keyframes revealReview{from{opacity:.5;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:750px){.board{border-radius:7px}.arrow-legend{gap:12px;font-size:10px}.board-review-status{padding:9px 10px}.board-review-status strong{font-size:11px}.board-review-status small{font-size:10px}}
+
+/* VER Chess Intelligence 2.1 — analysis-in-progress experience */
+body.analysis-open{overflow:hidden}
+.analysis-overlay[hidden]{display:none!important}
+.analysis-overlay{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;overflow-y:auto;padding:clamp(14px,4vw,30px);background:rgba(5,19,16,.91);backdrop-filter:blur(18px) saturate(.75);-webkit-backdrop-filter:blur(18px) saturate(.75);animation:analysisAppear .24s ease-out}
+.analysis-overlay:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 27%,rgba(193,166,92,.14),transparent 42%),radial-gradient(circle at 86% 90%,rgba(72,142,109,.14),transparent 52%)}
+.analysis-dialog{position:relative;width:min(100%,530px);padding:clamp(22px,5vw,38px);text-align:center;background:linear-gradient(158deg,#1a3b2e 0%,#112b24 52%,#091e19 100%);border:1px solid rgba(224,199,128,.33);border-radius:24px;box-shadow:0 25px 100px #000b, inset 0 1px 0 #ffffff17;overflow:hidden}
+.analysis-dialog:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(112deg,transparent 15%,#dfc5870a 46%,transparent 74%)}
+.analysis-kicker{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;color:#ddc384;text-transform:uppercase;letter-spacing:.2em;font-size:10px;font-weight:750}
+.analysis-pulse{width:7px;height:7px;background:#9cddb1;border-radius:50%;box-shadow:0 0 0 5px #9cddb127;animation:analysisPulse 1.7s ease-in-out infinite}
+.analysis-visual{position:relative;width:170px;height:170px;margin:18px auto 12px;display:grid;place-items:center}
+.analysis-orbit,.analysis-orbit:before,.analysis-orbit:after{position:absolute;inset:4px;border-radius:50%;border:1px solid #eacb8040}
+.analysis-orbit{animation:analysisRotate 14s linear infinite;border-top:2px solid #edcf85;border-right:2px solid #b5dcb1}
+.analysis-orbit:before{content:"";inset:15px;border-color:#d8c58b25;border-bottom:1px solid #edcf85}
+.analysis-orbit:after{content:"";inset:-9px;border-style:dashed;border-color:#c9a66035;animation:analysisRotate 20s linear infinite reverse}
+.analysis-grid-graphic{position:absolute;width:119px;height:119px;border:1px solid #b6ceac42;border-radius:16px;transform:rotate(-12deg);background:conic-gradient(from 90deg,#b4cc9750 25%,transparent 0 50%,#b4cc9750 0 75%,transparent 0) 0 0/30px 30px;mask-image:radial-gradient(circle,#000 10%,#0008 67%,transparent 90%);animation:analysisFloat 4s ease-in-out infinite alternate}
+.analysis-piece-symbol{position:relative;z-index:1;display:grid;place-items:center;width:85px;height:85px;border-radius:50%;background:radial-gradient(circle,#284a38 0%,#0d2b23 82%);border:1px solid #dbbe8060;box-shadow:0 0 32px #e2c47720}
+.analysis-piece-symbol svg{width:45px;height:55px;fill:#e5d09e;filter:drop-shadow(0 2px 7px #d3af6859)}
+.analysis-dialog h2{position:relative;z-index:1;font:400 clamp(27px,6vw,37px)/1.14 Georgia,serif;letter-spacing:-.035em;margin:9px 0 11px;color:#f4efdd}
+.analysis-dialog h2 em{font-style:italic;color:#e7c77e}
+.analysis-description{position:relative;z-index:1;font-size:13px;line-height:1.65;color:#c0d0c0;margin:0 auto;max-width:375px;min-height:43px}
+.analysis-stepper{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:23px 0 20px;position:relative;z-index:1}
+.analysis-step{display:flex;align-items:center;justify-content:center;gap:5px;border:1px solid #617e664a;border-radius:9px;background:#0c211c;color:#91ac99;padding:9px 4px;font-size:10px;font-weight:650;white-space:nowrap}
+.analysis-step i{display:grid;place-items:center;font:700 9px system-ui;width:17px;height:17px;border-radius:50%;border:1px solid #75977b60;font-style:normal}
+.analysis-step.is-current{border-color:#d7be7e8f;background:#d9bd7e18;color:#f9e4b5}
+.analysis-step.is-current i{background:#d9bd7e;color:#13251c;border-color:#d9bd7e}
+.analysis-step.is-done{color:#afddbd}.analysis-step.is-done i{background:#76b993;color:#0b2218;border-color:#76b993}
+.analysis-progress-meta{display:flex;align-items:center;justify-content:space-between;gap:12px;color:#dce8db;font-size:11px;text-align:left;margin-bottom:9px}
+.analysis-progress-meta strong{font-size:19px;color:#eaca7b;font-variant-numeric:tabular-nums;white-space:nowrap}
+.analysis-meter{height:10px;border:1px solid #75957442;border-radius:999px;overflow:hidden;background:#081a15;position:relative}
+.analysis-meter-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#4f9c79,#b6d3a2 55%,#e9c77e);box-shadow:0 0 15px #dcbe7673;transition:width .25s ease}
+.analysis-overlay.is-indeterminate .analysis-meter-fill{width:33%;animation:analysisLoading 1.55s ease-in-out infinite;transition:none}
+.analysis-footnote{font-size:11px;color:#94ae9e;line-height:1.6;margin:14px auto 16px;max-width:385px}
+.analysis-cancel{position:relative;min-width:135px;background:transparent;color:#e8deca;border:1px solid #a5b5a763;border-radius:10px;padding:10px 16px;font-weight:650;font-size:12px;transition:background .14s}
+.analysis-cancel:hover{background:#ffffff12}.analysis-cancel:focus-visible{outline:2px solid #eaca7b;outline-offset:3px}
+.analysis-overlay.is-complete .analysis-pulse{animation:none;background:#9cddb1;box-shadow:none}
+.analysis-overlay.is-complete .analysis-orbit{animation-duration:28s}
+.analysis-overlay.is-error .analysis-orbit{border-top-color:#e6a19a;border-right-color:#c99b7e}
+.analysis-overlay.is-error .analysis-pulse{background:#ed9c8f;animation:none}
+@keyframes analysisAppear{from{opacity:0}to{opacity:1}}
+@keyframes analysisPulse{0%,100%{opacity:.65;transform:scale(.85)}50%{opacity:1;transform:scale(1.18)}}
+@keyframes analysisRotate{to{transform:rotate(360deg)}}
+@keyframes analysisFloat{to{transform:rotate(5deg) translateY(-6px)}}
+@keyframes analysisLoading{0%{transform:translateX(-100%)}50%{transform:translateX(115%)}100%{transform:translateX(310%)}}
+@media(max-width:420px){.analysis-dialog{border-radius:19px;padding:24px 17px}.analysis-visual{width:137px;height:137px;margin:9px auto 8px}.analysis-piece-symbol{width:69px;height:69px}.analysis-piece-symbol svg{width:37px;height:45px}.analysis-grid-graphic{width:102px;height:102px}.analysis-stepper{gap:5px;margin:19px 0 17px}.analysis-step{font-size:9px;padding:8px 2px}.analysis-kicker{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.analysis-overlay,.analysis-pulse,.analysis-orbit,.analysis-orbit:after,.analysis-grid-graphic,.analysis-overlay.is-indeterminate .analysis-meter-fill{animation:none!important}.analysis-meter-fill{transition:none!important}}
+
 </style>
 </head>
 <body>
@@ -99,7 +146,7 @@ See COPYRIGHT.md in the GitHub package for more information.
         <div class="depths margintop" id="depths"><button data-depth="8" class="selected">⚡ Quick · 8</button><button data-depth="11">◈ Balanced · 11</button><button data-depth="14">♛ Deep · 14</button></div>
         <div class="row-between margintop"><button id="analyzeBtn" class="btn btn-gold" style="flex:1">✦ Analyse entire game</button><button id="cancelBtn" class="btn btn-quiet" hidden>Stop</button></div>
         <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><div class="row-between"><span id="progressLabel" class="hint">Import a game to begin.</span><span id="progressPct" class="hint">0%</span></div>
-        <div class="book"><b>How it works:</b> Stockfish calculates on your device. Your PGN stays in the browser; the engine files are fetched online once. The app reviews completed standard chess games only.</div>
+        <div class="book"><b>How it works:</b> Stockfish calculates on your device. Your PGN stays in the browser; the engine files are loaded from this website when installed, and cached for repeat visits. The app reviews completed standard chess games only.</div>
       </div></section>
       <section class="panel"><div class="panel-head"><h2>03 / Game fingerprint</h2><span id="statsNote" class="sub">Awaiting analysis</span></div><div class="body"><div class="stat-grid"><div class="stat"><strong id="strongCount">—</strong><span>Strong moves</span></div><div class="stat"><strong id="missCount">—</strong><span>Missed chances</span></div><div class="stat"><strong id="mistakeCount">—</strong><span>Mistakes</span></div><div class="stat"><strong id="blunderCount">—</strong><span>Blunders</span></div></div><svg class="eval-chart" id="evalChart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" aria-label="Engine evaluation over time"><line x1="0" y1="60" x2="600" y2="60" stroke="#546d5d" stroke-dasharray="5 4"/><text x="12" y="24" fill="#a6c6ab" font-size="10">White advantage ↑</text><text x="12" y="109" fill="#a6c6ab" font-size="10">Black advantage ↓</text></svg><div class="legend"><span>Opening</span><span>↑ Better for White · ↓ Better for Black</span><span>Endgame</span></div></div></section>
       <section class="panel"><div class="panel-head"><h2>04 / Move explorer</h2><span class="sub" id="moveCount">0 moves</span></div><div class="body"><div id="moveList" class="move-list"><p class="empty">Import a PGN to explore every move.</p></div></div></section>
@@ -114,6 +161,28 @@ See COPYRIGHT.md in the GitHub package for more information.
       <div class="copyright-small">Copyright notice covers protectable original branding, written material and website design; third-party software keeps its own licence. Stockfish.js and Stockfish are available under the <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">GNU GPL v3</a> (<a href="https://github.com/nmrugg/stockfish.js/tree/v19.0.1" target="_blank" rel="noopener noreferrer">source</a>). Cburnett SVG chess-piece artwork is by Colin M. L. Burnett, distributed by Lichess under GPLv2+ (<a href="https://github.com/lichess-org/lila/blob/master/COPYING.md" target="_blank" rel="noopener noreferrer">licence details</a>); its copyright is separate. No rights are claimed over chess rules, game moves or imported PGN files.</div>
     </div>
   </footer>
+</div>
+
+<!-- Review overlay: remains visible during engine startup and every evaluated position. -->
+<div id="analysisOverlay" class="analysis-overlay is-indeterminate" role="dialog" aria-modal="true" aria-labelledby="analysisTitle" aria-describedby="analysisDescription" hidden>
+  <section class="analysis-dialog">
+    <div class="analysis-kicker"><span class="analysis-pulse" aria-hidden="true"></span><span id="analysisKicker">VER · CHESS INTELLIGENCE</span></div>
+    <div class="analysis-visual" aria-hidden="true">
+      <div class="analysis-orbit"></div><div class="analysis-grid-graphic"></div>
+      <div class="analysis-piece-symbol"><svg viewBox="0 0 64 76" aria-hidden="true"><path d="M14 6h8v11h7V6h7v11h7V6h8v18l-7 7-2 20 7 8H15l7-8-2-20-6-7zM12 64h40l3 7H9z"/></svg></div>
+    </div>
+    <h2 id="analysisTitle">Your game is <em>being analysed.</em></h2>
+    <p id="analysisDescription" class="analysis-description" aria-live="polite" aria-atomic="true">Preparing Stockfish on your device. Please wait while the chess engine starts.</p>
+    <div class="analysis-stepper" aria-label="Review stages">
+      <div class="analysis-step is-current" data-review-step="load"><i>1</i> Load engine</div>
+      <div class="analysis-step" data-review-step="analyse"><i>2</i> Evaluate</div>
+      <div class="analysis-step" data-review-step="finish"><i>3</i> Results</div>
+    </div>
+    <div class="analysis-progress-meta"><span id="analysisProgressLabel">Loading engine files…</span><strong id="analysisProgressPercent">—</strong></div>
+    <div id="analysisProgressTrack" class="analysis-meter" role="progressbar" aria-label="Chess game analysis" aria-valuemin="0" aria-valuemax="100" aria-valuetext="Loading chess engine"><div id="analysisProgressBar" class="analysis-meter-fill"></div></div>
+    <p id="analysisFootnote" class="analysis-footnote">The first visit may take longer. Once loaded, Stockfish reviews each position locally on your phone.</p>
+    <button id="analysisCancelBtn" class="analysis-cancel" type="button">Stop analysis</button>
+  </section>
 </div>
 <div id="toast" class="toast" role="status" hidden></div>
 <script>
@@ -226,8 +295,92 @@ function renderCritical(){const box=$('critical');box.innerHTML='';const hits=[]
 function renderAll(){renderBoard();renderCoach();renderMoves();renderStats();renderChart();renderCritical();$('backBtn').disabled=at===0;$('startBtn').disabled=at===0;$('nextBtn').disabled=at>=game.moves.length;$('endBtn').disabled=at>=game.moves.length;}
 function loadGame(raw){if(running)stopAnalysis();const obj=parseGame(raw);game=obj;at=0;viewBefore=false;showActual=false;analysis=[];$('playerNames').innerHTML='';const w=document.createTextNode(obj.headers.White||'White'),vs=document.createElement('span'),b=document.createTextNode(obj.headers.Black||'Black');vs.textContent=' vs ';$('playerNames').append(w,vs,b);const info=document.createElement('small');info.textContent=[obj.headers.Event,obj.headers.Date,obj.headers.TimeControl?'TC '+obj.headers.TimeControl:null].filter(Boolean).join(' · ')||'Imported PGN';$('playerNames').append(info);$('gameResult').textContent=obj.headers.Result||'IMPORTED';$('progressFill').style.width='0%';$('progressLabel').textContent='Game ready — '+game.moves.length+' half-moves.';$('progressPct').textContent='0%';renderAll();notify('PGN loaded: '+game.moves.length+' half-moves ready to study.');}
 function importText(txt){const parts=splitGames(txt);allImported=parts;$('gameSelectRow').hidden=parts.length<2;const sel=$('gameSelect');sel.innerHTML='';parts.forEach((p,i)=>{const matchW=p.match(/\[White\s+"([^"]+)"\]/),matchB=p.match(/\[Black\s+"([^"]+)"\]/);const o=document.createElement('option');o.value=String(i);o.textContent=(i+1)+'. '+(matchW?.[1]||'White')+' vs '+(matchB?.[1]||'Black');sel.append(o);});let loaded=false;let failure;for(let i=0;i<parts.length;i++){try{loadGame(parts[i]);sel.value=String(i);loaded=true;break;}catch(e){failure=e;}}if(!loaded)throw failure||Error('No usable standard chess game found.');if(parts.length>1)notify('Loaded '+parts.length+' PGN records. Choose a game in the dropdown.');}
+let analysisOverlayTimer=null;
+function showAnalysisOverlay(){
+ if(analysisOverlayTimer){clearTimeout(analysisOverlayTimer);analysisOverlayTimer=null;}
+ const overlay=$('analysisOverlay');overlay.hidden=false;
+ document.body.classList.add('analysis-open');
+ overlay.className='analysis-overlay is-indeterminate';
+ $('analysisKicker').textContent='VER · CHESS INTELLIGENCE';
+ $('analysisTitle').innerHTML='Your game is <em>being analysed.</em>';
+ $('analysisCancelBtn').textContent='Stop analysis';
+ setAnalysisStage('load','Preparing Stockfish on your device. Please wait while the chess engine starts.');
+ $('analysisFootnote').textContent='The first visit may take longer. Once loaded, Stockfish reviews each position locally on your phone.';
+ $('analysisCancelBtn').focus({preventScroll:true});
+}
+function hideAnalysisOverlay(){
+ if(analysisOverlayTimer){clearTimeout(analysisOverlayTimer);analysisOverlayTimer=null;}
+ $('analysisOverlay').hidden=true;document.body.classList.remove('analysis-open');
+ $('analyzeBtn').focus({preventScroll:true});
+}
+function setAnalysisStage(stage,message){
+ const overlay=$('analysisOverlay');
+ const stages=['load','analyse','finish'];const pos=stages.indexOf(stage);
+ overlay.querySelectorAll('[data-review-step]').forEach((el,i)=>{
+  el.classList.toggle('is-current',i===pos);
+  el.classList.toggle('is-done',i<pos);
+  const circle=el.querySelector('i');circle.textContent=i<pos?'✓':String(i+1);
+ });
+ $('analysisDescription').textContent=message;
+ if(stage==='load'){
+  overlay.classList.add('is-indeterminate');overlay.classList.remove('is-complete','is-error');
+  $('analysisProgressLabel').textContent='Loading chess engine…';
+  $('analysisProgressPercent').textContent='—';$('analysisProgressBar').style.removeProperty('width');
+  $('analysisProgressTrack').removeAttribute('aria-valuenow');
+  $('analysisProgressTrack').setAttribute('aria-valuetext','Loading chess engine');
+ }
+}
+function setAnalysisProgress(completed,total){
+ const pct=total?Math.min(100,Math.round(completed/total*100)):0;
+ const overlay=$('analysisOverlay');overlay.classList.remove('is-indeterminate');
+ $('analysisProgressLabel').textContent='Position '+completed+' of '+total;
+ $('analysisProgressPercent').textContent=pct+'%';
+ $('analysisProgressBar').style.width=pct+'%';
+ $('analysisProgressTrack').setAttribute('aria-valuenow',String(pct));
+ $('analysisProgressTrack').setAttribute('aria-valuetext',completed+' of '+total+' positions reviewed');
+}
+function completeAnalysisOverlay(){
+ const overlay=$('analysisOverlay');overlay.classList.remove('is-indeterminate','is-error');overlay.classList.add('is-complete');
+ $('analysisKicker').textContent='REVIEW COMPLETE';
+ $('analysisTitle').innerHTML='Your chess insights <em>are ready.</em>';
+ setAnalysisStage('finish','Your review is complete. Explore the missed opportunities and stronger moves on the board.');
+ setAnalysisProgress(game.states.length,game.states.length);
+ $('analysisFootnote').textContent='Ready to learn from every position.';
+ $('analysisCancelBtn').textContent='See my results';
+ analysisOverlayTimer=setTimeout(hideAnalysisOverlay,1450);
+}
+function failAnalysisOverlay(message){
+ const overlay=$('analysisOverlay');overlay.classList.remove('is-complete','is-indeterminate');overlay.classList.add('is-error');
+ $('analysisKicker').textContent='ENGINE NEEDS ATTENTION';
+ $('analysisTitle').innerHTML='Analysis <em>could not start.</em>';
+ $('analysisDescription').textContent=message;
+ $('analysisProgressLabel').textContent='Review paused';
+ $('analysisProgressPercent').textContent='—';$('analysisProgressBar').style.width='0%';
+ $('analysisProgressTrack').removeAttribute('aria-valuenow');
+ $('analysisProgressTrack').setAttribute('aria-valuetext','Engine loading failed');
+ $('analysisFootnote').textContent='Check your internet connection or the hosted engine files, then try again.';
+ $('analysisCancelBtn').textContent='Close';
+}
+$('analysisCancelBtn').addEventListener('click',()=>{if(running)stopAnalysis();else hideAnalysisOverlay();});
 function showEngineStatus(txt,busy=false){$('engineStatus').textContent=txt;$('engineDot').style.background=busy?'#dcbd74':'#8cd6a6';$('engineDot').classList.toggle('spinner',busy);}
+// Stockfish 19.0.1 — local-first, browser-cached. Engine is GPL-3.0 software.
+// Place the matching JavaScript and WASM files inside /engine/ on GitHub Pages.
+// A CDN fallback keeps the existing site usable until the files are uploaded.
+const SF_LOCAL=new URL('engine/',document.baseURI).href;
 const SF_BASE='https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/';
+const SF_CACHE='ver-chess-stockfish-19.0.1-v1';
+async function getEngineAsset(url){
+  // Cache Storage persists across browser sessions when the user permits it.
+  // This is not guaranteed: browsers may evict cached data or private sessions may disable it.
+  let cache=null;
+  if(location.protocol==='https:'&&'caches' in window){
+    try{cache=await caches.open(SF_CACHE);const hit=await cache.match(url);if(hit&&hit.ok)return {response:hit,fromCache:true};}catch(_){cache=null;}
+  }
+  const response=await fetch(url);
+  if(!response.ok)throw Error('Stockfish asset HTTP '+response.status+' ('+url.split('/').pop()+').');
+  if(cache){try{await cache.put(url,response.clone());}catch(_){/* Storage may be unavailable or full. */}}
+  return {response,fromCache:false};
+}
 class Engine{
  constructor(worker,workerUrl,wasmUrl){this.worker=worker;this.workerUrl=workerUrl;this.wasmUrl=wasmUrl;this.ready=false;this.pending=null;this.waitReady=null;this.waitUci=null;worker.onmessage=e=>this.onmessage(e.data);worker.onerror=e=>{const error=new Error('Stockfish could not start: '+(e.message||'worker error'));this.fail(error);};}
  onmessage(data){for(const line of String(data).split(/\r?\n/)){if(!line.trim())continue;if(/\buciok\b/.test(line)){this.waitUci?.();this.waitUci=null;}if(/\breadyok\b/.test(line)){this.waitReady?.();this.waitReady=null;}const job=this.pending;if(!job)continue;if(line.startsWith('info ')){const match=line.match(/\bscore (cp|mate) (-?\d+)/);if(match&&!/\blowerbound\b|\bupperbound\b/.test(line)){job.kind=match[1];job.score=Number(match[2]);const pv=line.match(/\bpv\s+(.+)/);if(pv)job.pv=pv[1].split(/\s+/).slice(0,10);const d=line.match(/\bdepth (\d+)/);job.depth=d?Number(d[1]):job.depth;}}if(line.startsWith('bestmove ')){this.pending=null;clearTimeout(job.timer);const best=line.match(/^bestmove (\S+)/)?.[1];job.resolve({bestUci:best&&best!=='(none)'?best:null,kind:job.kind,score:job.score,pv:job.pv,depth:job.depth});}}}
@@ -237,11 +390,107 @@ class Engine{
  think(position,depth){if(!this.ready)throw Error('Engine has not initialized.');if(this.pending)throw Error('Engine is already searching.');return new Promise((resolve,reject)=>{const job={resolve,reject,score:null,kind:'cp',pv:[],depth:0,timer:null};job.timer=setTimeout(()=>{this.command('stop');this.pending=null;reject(Error('The chess engine took too long for this position. Try Quick mode.'));},90000);this.pending=job;this.command('position fen '+position);this.command('go depth '+depth);});}
  close(){this.fail(Error('Analysis stopped.'));this.worker.terminate();URL.revokeObjectURL(this.workerUrl);if(this.wasmUrl)URL.revokeObjectURL(this.wasmUrl);}
 }
-async function acquireWorker(useWasm,base=SF_BASE){const scriptName=useWasm?'stockfish-19-lite-single.js':'stockfish-19-asm.js';const r=await fetch(base+scriptName);if(!r.ok)throw Error('Engine download failed (HTTP '+r.status+').');const script=await r.text();let wasmUrl=null;let prefix='';if(useWasm){const w=await fetch(base+'stockfish-19-lite-single.wasm');if(!w.ok)throw Error('WASM engine download failed.');const bytes=await w.arrayBuffer();wasmUrl=URL.createObjectURL(new Blob([bytes],{type:'application/wasm'}));prefix='var Module = { locateFile: function(f){return f.endsWith(".wasm") ? '+JSON.stringify(wasmUrl)+' : '+JSON.stringify(base)+' + f;} };\n';}const workerUrl=URL.createObjectURL(new Blob([prefix,script],{type:'text/javascript'}));try{return new Engine(new Worker(workerUrl),workerUrl,wasmUrl);}catch(e){URL.revokeObjectURL(workerUrl);if(wasmUrl)URL.revokeObjectURL(wasmUrl);throw e;}}
-async function ensureEngine(){if(engine?.ready)return engine;let err;for(const base of [SF_BASE,'https://unpkg.com/stockfish@19.0.1/bin/'])for(const type of [true,false]){let candidate;try{showEngineStatus(type?'Downloading Stockfish 19 Lite…':'Trying JavaScript fallback…',true);candidate=await acquireWorker(type,base);await candidate.init();engine=candidate;showEngineStatus(type?'Stockfish 19 · WASM ready':'Stockfish 19 · JS fallback ready');return engine;}catch(e){err=e;candidate?.close();}}showEngineStatus('Engine unavailable');throw Error('Unable to load Stockfish. Check your internet connection, or open the HTML via GitHub Pages/HTTPS. '+(err?.message||''));}
+async function acquireWorker(useWasm,base=SF_LOCAL){
+ const scriptName=useWasm?'stockfish-19-lite-single.js':'stockfish-19-asm.js';
+ const scriptAsset=await getEngineAsset(base+scriptName);
+ const script=await scriptAsset.response.text();
+ let wasmUrl=null,prefix='',wasmCached=true;
+ if(useWasm){
+   const wasmAsset=await getEngineAsset(base+'stockfish-19-lite-single.wasm');
+   wasmCached=wasmAsset.fromCache;
+   const bytes=await wasmAsset.response.arrayBuffer();
+   wasmUrl=URL.createObjectURL(new Blob([bytes],{type:'application/wasm'}));
+   prefix='var Module = { locateFile: function(f){return f.endsWith(".wasm") ? '+JSON.stringify(wasmUrl)+' : '+JSON.stringify(base)+' + f;} };\n';
+ }
+ const workerUrl=URL.createObjectURL(new Blob([prefix,script],{type:'text/javascript'}));
+ try{const instance=new Engine(new Worker(workerUrl),workerUrl,wasmUrl);instance.local=(base===SF_LOCAL);instance.fromCache=scriptAsset.fromCache&&wasmCached;return instance;}
+ catch(e){URL.revokeObjectURL(workerUrl);if(wasmUrl)URL.revokeObjectURL(wasmUrl);throw e;}
+}
+async function ensureEngine(){
+ if(engine?.ready)return engine;
+ let err;
+ const attempts=[[SF_LOCAL,true],[SF_BASE,true],['https://unpkg.com/stockfish@19.0.1/bin/',true],[SF_BASE,false]];
+ for(const [base,useWasm] of attempts){
+   let candidate;
+   try{
+     showEngineStatus(base===SF_LOCAL?'Opening hosted Stockfish…':'Checking saved engine / online backup…',true);
+      setAnalysisStage('load',base===SF_LOCAL?'Loading Stockfish from your website or browser cache…':'Trying a backup engine source. Your chess moves are staying on this device…');
+      candidate=await acquireWorker(useWasm,base);
+      setAnalysisStage('load','Starting Stockfish and preparing the evaluation engine…');
+      await candidate.init();
+     engine=candidate;
+     showEngineStatus((candidate.local?'Self-hosted':'Backup')+' Stockfish 19 · '+(candidate.fromCache?'cached':'ready'));
+     return engine;
+   }catch(e){err=e;candidate?.close();}
+ }
+ showEngineStatus('Engine unavailable');
+ throw Error('Unable to load Stockfish. Upload the two matching Stockfish files to /engine/ or connect to the internet. '+(err?.message||''));
+}
 function toWhiteScore(pos,result){if(result.kind==='mate'){const m=result.score;return (pos.t===1?1:-1)*Math.sign(m)*(10000-Math.min(Math.abs(m),90)*3);}if(result.score==null)return null;return result.score*(pos.t===1?1:-1);}
-async function runAnalysis(){if(running)return;if(!game.moves.length){notify('Import a completed PGN first.');return;}running=true;const myToken=++cancelToken;analysis=[];at=0;viewBefore=false;showActual=false;$('analyzeBtn').disabled=true;$('cancelBtn').hidden=false;renderAll();try{const fish=await ensureEngine();if(myToken!==cancelToken)return;for(let i=0;i<game.states.length;i++){if(myToken!==cancelToken)break;const s=game.states[i];$('progressLabel').textContent='Examining position '+(i+1)+' of '+game.states.length+'…';showEngineStatus('Calculating '+(i+1)+'/'+game.states.length,true);const movesHere=legal(s);const terminal=!movesHere.length;const response=terminal?{bestUci:null,pv:[],depth,cpWhite:checked(s)?(s.t===1?-10000:10000):0}:await fish.think(fen(s),depth);if(myToken!==cancelToken)break;analysis.push({cpWhite:terminal?response.cpWhite:toWhiteScore(s,response),bestUci:response.bestUci,pv:response.pv,depth:response.depth});const pct=Math.round(100*analysis.length/game.states.length);$('progressFill').style.width=pct+'%';$('progressPct').textContent=pct+'%';if(i===1){at=1;}else if(i>1&&i<=game.moves.length&&gradeAt(i)?.flag==='blunder'&&at<=1)at=i;renderAll();await new Promise(resolve=>setTimeout(resolve,0));}if(myToken===cancelToken){$('progressLabel').textContent='Full game review complete · '+(game.moves.length)+' moves';showEngineStatus('Analysis complete');const first=nextLearningIndex(0);if(first>0)at=first;renderAll();notify('Analysis complete. Tap a learning moment to review it.');}}catch(e){if(myToken===cancelToken){showEngineStatus('Engine needs attention');$('progressLabel').textContent=e.message;notify(e.message);}}finally{if(myToken===cancelToken){running=false;$('analyzeBtn').disabled=false;$('cancelBtn').hidden=true;}}}
-function stopAnalysis(){cancelToken++;running=false;$('analyzeBtn').disabled=false;$('cancelBtn').hidden=true;if(engine){engine.close();engine=null;}showEngineStatus('Stopped');$('progressLabel').textContent='Stopped at '+analysis.length+'/'+game.states.length+' positions. Partial review preserved.';renderAll();}
+async function runAnalysis(){
+ if(running)return;
+ if(!game.moves.length){notify('Import a completed PGN first.');return;}
+ running=true;
+ const myToken=++cancelToken;
+ analysis=[];at=0;viewBefore=false;showActual=false;
+ $('analyzeBtn').disabled=true;$('cancelBtn').hidden=false;
+ $('progressFill').style.width='0%';$('progressPct').textContent='0%';
+ renderAll();showAnalysisOverlay();
+ // Yield a frame so the overlay appears before engine setup starts.
+ await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
+ if(myToken!==cancelToken)return;
+ try{
+  const fish=await ensureEngine();
+  if(myToken!==cancelToken)return;
+  setAnalysisStage('analyse','Stockfish is examining your decisions and finding stronger alternatives. Please wait…');
+  setAnalysisProgress(0,game.states.length);
+  for(let i=0;i<game.states.length;i++){
+   if(myToken!==cancelToken)break;
+   const s=game.states[i];
+   $('progressLabel').textContent='Examining position '+(i+1)+' of '+game.states.length+'…';
+   showEngineStatus('Calculating '+(i+1)+'/'+game.states.length,true);
+   const movesHere=legal(s);
+   const terminal=!movesHere.length;
+   const response=terminal?{bestUci:null,pv:[],depth,cpWhite:checked(s)?(s.t===1?-10000:10000):0}:await fish.think(fen(s),depth);
+   if(myToken!==cancelToken)break;
+   analysis.push({cpWhite:terminal?response.cpWhite:toWhiteScore(s,response),bestUci:response.bestUci,pv:response.pv,depth:response.depth});
+   const pct=Math.round(100*analysis.length/game.states.length);
+   $('progressFill').style.width=pct+'%';$('progressPct').textContent=pct+'%';
+   setAnalysisProgress(analysis.length,game.states.length);
+   if(i===1){at=1;}
+   else if(i>1&&i<=game.moves.length&&gradeAt(i)?.flag==='blunder'&&at<=1)at=i;
+   renderAll();
+   await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  if(myToken===cancelToken){
+   $('progressLabel').textContent='Full game review complete · '+game.moves.length+' moves';
+   showEngineStatus('Analysis complete');
+   const first=nextLearningIndex(0);if(first>0)at=first;
+   renderAll();completeAnalysisOverlay();
+   notify('Analysis complete. Tap a learning moment to review it.');
+  }
+ }catch(e){
+  if(myToken===cancelToken){
+   const message=e?.message||String(e);
+   showEngineStatus('Engine needs attention');
+   $('progressLabel').textContent=message;
+   failAnalysisOverlay(message);
+   notify(message);
+  }
+ }finally{
+  if(myToken===cancelToken){
+   running=false;$('analyzeBtn').disabled=false;$('cancelBtn').hidden=true;
+  }
+ }
+}
+function stopAnalysis(){
+ cancelToken++;running=false;
+ $('analyzeBtn').disabled=false;$('cancelBtn').hidden=true;
+ if(engine){engine.close();engine=null;}
+ showEngineStatus('Stopped');
+ $('progressLabel').textContent='Stopped at '+analysis.length+'/'+game.states.length+' positions. Partial review preserved.';
+ hideAnalysisOverlay();renderAll();
+}
 $('exportBtn').onclick=()=>{if(analysis.length<2)return;let lines=['VER CHESS INTELLIGENCE — GAME REVIEW','',`${game.headers.White||'White'} vs ${game.headers.Black||'Black'}`,`${game.headers.Event||'Imported game'} · ${game.headers.Date||''}`,`Result: ${game.headers.Result||'*'}`,'',`Engine depth selected: ${depth}`,'All evaluations are approximate and may change at higher search depths.','','MOVE-BY-MOVE COACHING'];for(let i=1;i<=game.moves.length;i++){const move=game.moves[i-1],g=gradeAt(i),before=analysis[i-1],bm=before?.bestUci&&findUci(game.states[i-1],before.bestUci),recommended=bm?san(game.states[i-1],bm):'—';lines.push(`${moveTitle(i)}  |  ${(g?.flag||'Not analysed').toUpperCase()}  |  Loss: ${g?g.loss+' cp':'—'}  |  Best: ${recommended}`);if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)){const prev=at;at=i;lines.push('  '+humanSuggestion(move,recommended,g));lines.push('  Suggested line: '+previewLine(i));at=prev;}}lines.push('','Independent study tool. Use only for completed games.','Stockfish source: https://github.com/nmrugg/stockfish.js');const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='VER-chess-review.txt';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);};
 $('startBtn').onclick=()=>jump(0);$('backBtn').onclick=()=>jump(at-1);$('nextBtn').onclick=()=>jump(at+1);$('endBtn').onclick=()=>jump(game.moves.length);$('flipBtn').onclick=()=>{flipped=!flipped;renderBoard();};$('previewBtn').onclick=()=>{if(showingBefore(at)){viewBefore=false;showActual=true;}else{viewBefore=true;showActual=false;}renderAll();};$('arrowsBtn').onclick=()=>{arrowsEnabled=!arrowsEnabled;viewBefore=false;showActual=false;renderAll();};$('nextIssueBtn').onclick=()=>{const p=nextLearningIndex(at);if(p>0)jump(p);};$('analyzeBtn').onclick=runAnalysis;$('cancelBtn').onclick=stopAnalysis;
 $('depths').addEventListener('click',e=>{const el=e.target.closest('[data-depth]');if(!el||running)return;depth=Number(el.dataset.depth);$('depths').querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===el));});

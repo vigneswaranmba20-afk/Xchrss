@@ -15,7 +15,8 @@ Copyright arises automatically for qualifying original works under applicable la
 - Stockfish.js source for v19.0.1: https://github.com/nmrugg/stockfish.js/tree/v19.0.1
 - Project repository: https://github.com/nmrugg/stockfish.js
 - GPL v3 text: https://www.gnu.org/licenses/gpl-3.0.html
-- The app downloads Stockfish 19.0.1 engine files from public package CDNs in the user's browser; engine files are not included in this package.
+- Stockfish 19.0.1 can be self-hosted as separate engine files in `engine/`; the app uses an online fallback if the local files are absent. Its engine files are downloaded separately from the exact package release. The engine is not covered by the website's proprietary rights claim.
+- A copy of GPL-3.0 is supplied in `GPL-3.0-STOCKFISH-LICENSE.txt`. Redistributors must comply with the GPL, including corresponding source availability obligations.
 
 The rules of chess, ordinary move sequences, user-imported PGN files, and third-party trademarks belong to their respective rights holders or may be uncopyrightable. The website is not affiliated with Chess.com or Lichess.
 
