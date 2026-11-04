@@ -1,0 +1,1 @@
+Stockfish engine installed. Publish updated chess website.
