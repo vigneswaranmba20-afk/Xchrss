@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#1f4837"/><stop offset="100%" stop-color="#071d18"/></linearGradient><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f5df9d"/><stop offset="100%" stop-color="#bf9450"/></linearGradient></defs>
+<rect x="0" y="0" width="512" height="512" rx="114" fill="url(#bg)"/>
+<circle cx="256" cy="239" r="183" fill="none" stroke="#ebcb82" stroke-opacity=".24" stroke-width="3"/>
+<circle cx="256" cy="239" r="166" fill="none" stroke="#ebcb82" stroke-opacity=".18" stroke-width="2"/>
+<!-- A stylized original knight profile using solid Bezier shapes -->
+<path d="M176 355 L190 329 Q204 309 199 279 L181 268 Q159 264 151 247 Q143 229 162 206 L187 172 L183 136 Q186 120 205 126 L227 155 L267 138 Q319 133 343 176 Q365 218 347 264 Q332 302 307 329 L316 355 Z" fill="url(#gold)" stroke="#f5e4b7" stroke-width="4" stroke-linejoin="round"/>
+<path d="M187 172 Q201 174 217 192 L252 209 L220 231 L169 235" fill="none" stroke="#5b5939" stroke-width="7" stroke-linecap="round"/>
+<path d="M252 187 Q283 176 307 188" fill="none" stroke="#816d45" stroke-width="8" stroke-linecap="round"/>
+<ellipse cx="211" cy="218" rx="8" ry="10" fill="#10291f"/>
+<path d="M196 285 Q249 301 292 278" fill="none" stroke="#8a754b" stroke-width="7" stroke-linecap="round"/>
+<path d="M158 358 H336 Q343 358 347 373 L353 387 H146 L151 373 Q155 358 158 358 Z" fill="#f4e3b9"/>
+<path d="M160 398 H347" stroke="#e0ba75" stroke-width="12" stroke-linecap="round"/>
+<text x="256" y="455" font-family="Georgia,serif" font-weight="700" font-size="31" letter-spacing="9" text-anchor="middle" fill="#eace91">VER</text>
+</svg>
