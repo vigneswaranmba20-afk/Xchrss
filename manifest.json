@@ -1,0 +1,41 @@
+{
+  "id": "./",
+  "name": "VER Chess Intelligence",
+  "short_name": "VER Chess",
+  "description": "Your private chess analysis studio \u2014 Stockfish 19, PGN review, missed opportunities, and tactical move arrows.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": [
+    "standalone",
+    "minimal-ui"
+  ],
+  "background_color": "#0a1b17",
+  "theme_color": "#0c221d",
+  "lang": "en",
+  "orientation": "any",
+  "categories": [
+    "games",
+    "education"
+  ],
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
