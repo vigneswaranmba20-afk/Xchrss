@@ -1,0 +1,42 @@
+name: Install Stockfish 19 Lite
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  install-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the chess website
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Download the official Stockfish 19.0.1 package
+        run: |
+          set -euo pipefail
+          archive="$(npm pack stockfish@19.0.1 --silent)"
+          tar -xzf "$archive" \
+            package/bin/stockfish-19-lite-single.js \
+            package/bin/stockfish-19-lite-single.wasm
+          mkdir -p engine
+          cp package/bin/stockfish-19-lite-single.js engine/
+          cp package/bin/stockfish-19-lite-single.wasm engine/
+          ls -lh engine/stockfish-19-lite-single.*
+
+      - name: Commit engine files to main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add engine/stockfish-19-lite-single.js engine/stockfish-19-lite-single.wasm
+          if git diff --cached --quiet; then
+            echo "Engine files already installed."
+          else
+            git commit -m "Install self-hosted Stockfish 19 Lite"
+            git push origin HEAD:main
+          fi
+          
