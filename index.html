@@ -368,7 +368,7 @@ function showEngineStatus(txt,busy=false){$('engineStatus').textContent=txt;$('e
 // A CDN fallback keeps the existing site usable until the files are uploaded.
 const SF_LOCAL=new URL('engine/',document.baseURI).href;
 const SF_BASE='https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/';
-const SF_CACHE='ver-chess-stockfish-19.0.1-v1';
+const SF_CACHE='ver-chess-stockfish-19.0.1-v2';
 async function getEngineAsset(url){
   // Cache Storage persists across browser sessions when the user permits it.
   // This is not guaranteed: browsers may evict cached data or private sessions may disable it.
@@ -388,10 +388,24 @@ class Engine{
  command(s){this.worker.postMessage(s);}
  async init(){await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.waitUci=null;reject(Error('Engine did not respond to UCI startup.'));},18000);this.waitUci=e=>{clearTimeout(timer);e?reject(e):resolve();};this.command('uci');});this.command('setoption name Hash value 16');this.command('setoption name MultiPV value 1');await new Promise((resolve,reject)=>{const timer=setTimeout(()=>{this.waitReady=null;reject(Error('Engine timed out during initialization.'));},14000);this.waitReady=e=>{clearTimeout(timer);e?reject(e):resolve();};this.command('isready');});this.ready=true;}
  think(position,depth){if(!this.ready)throw Error('Engine has not initialized.');if(this.pending)throw Error('Engine is already searching.');return new Promise((resolve,reject)=>{const job={resolve,reject,score:null,kind:'cp',pv:[],depth:0,timer:null};job.timer=setTimeout(()=>{this.command('stop');this.pending=null;reject(Error('The chess engine took too long for this position. Try Quick mode.'));},90000);this.pending=job;this.command('position fen '+position);this.command('go depth '+depth);});}
- close(){this.fail(Error('Analysis stopped.'));this.worker.terminate();URL.revokeObjectURL(this.workerUrl);if(this.wasmUrl)URL.revokeObjectURL(this.wasmUrl);}
+ close(){this.fail(Error('Analysis stopped.'));this.worker.terminate();if(this.workerUrl)URL.revokeObjectURL(this.workerUrl);if(this.wasmUrl)URL.revokeObjectURL(this.wasmUrl);}
 }
 async function acquireWorker(useWasm,base=SF_LOCAL){
  const scriptName=useWasm?'stockfish-19-lite-single.js':'stockfish-19-asm.js';
+ // First-party engine: load the actual, same-origin worker rather than wrapping
+ // a WASM-dependent bundle in a Blob. This lets Stockfish resolve its matching
+ // .wasm file beside the JavaScript file exactly as upstream documents.
+ // The browser's ordinary HTTP cache is respected on future visits.
+ if(base===SF_LOCAL && useWasm){
+   const jsURL=base+scriptName;
+   const wasmURL=base+'stockfish-19-lite-single.wasm';
+   const both=await Promise.all([fetch(jsURL,{method:'HEAD'}),fetch(wasmURL,{method:'HEAD'})]);
+   if(!both[0].ok||!both[1].ok)throw Error('Self-hosted engine files are missing (JS HTTP '+both[0].status+', WASM HTTP '+both[1].status+').');
+   const worker=new Worker(jsURL,{type:'classic'});
+   const instance=new Engine(worker,null,null);
+   instance.local=true;instance.fromCache=false;
+   return instance;
+ }
  const scriptAsset=await getEngineAsset(base+scriptName);
  const script=await scriptAsset.response.text();
  let wasmUrl=null,prefix='',wasmCached=true;
@@ -424,7 +438,7 @@ async function ensureEngine(){
    }catch(e){err=e;candidate?.close();}
  }
  showEngineStatus('Engine unavailable');
- throw Error('Unable to load Stockfish. Upload the two matching Stockfish files to /engine/ or connect to the internet. '+(err?.message||''));
+ throw Error('Stockfish is not installed on the website yet. The site owner should run the Install Stockfish workflow on GitHub and redeploy. '+(err?.message||''));
 }
 function toWhiteScore(pos,result){if(result.kind==='mate'){const m=result.score;return (pos.t===1?1:-1)*Math.sign(m)*(10000-Math.min(Math.abs(m),90)*3);}if(result.score==null)return null;return result.score*(pos.t===1?1:-1);}
 async function runAnalysis(){
