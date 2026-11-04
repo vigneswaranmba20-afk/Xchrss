@@ -1,0 +1,12 @@
+This folder must contain the two Stockfish files downloaded from the official Stockfish.js 19.0.1 npm package:
+
+stockfish-19-lite-single.js
+stockfish-19-lite-single.wasm
+
+Source:
+https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/stockfish-19-lite-single.js
+https://cdn.jsdelivr.net/npm/stockfish@19.0.1/bin/stockfish-19-lite-single.wasm
+
+GitHub web: Upload both into the engine/ directory, not at repository root.
+Important: This ZIP intentionally does not include the binary files.
+GPLv3 source: https://github.com/nmrugg/stockfish.js/tree/v19.0.1
