@@ -128,14 +128,14 @@ body.analysis-open{overflow:hidden}
 @media(display-mode:standalone){body{padding-top:env(safe-area-inset-top)}.pwa-install{display:none}}
 </style>
 <link rel="stylesheet" href="./ver-chess-v4-ux.css" />
-<link rel="stylesheet" href="./ver-chess-smooth-ui.css" />
+<link rel="stylesheet" href="./ver-chess-smooth-ui.css?v=5.3" />
 <link rel="stylesheet" href="./ver-chess-refined-ui.css?v=5.2" />
 <script src="./ver-chess-board-themes.js"></script>
 </head>
 <body>
 <div class="shell">
   <header class="top"><div class="logo"><div class="mark">VER</div><div class="brand">CHESS INTELLIGENCE<small>THE OPEN ANALYSIS STUDIO</small></div></div><div class="pwa-head"><span class="top-note"><i class="live"></i> FREE · PRIVATE · NO ACCOUNT</span><button type="button" class="btn btn-gold pwa-install" id="installPwaBtn" aria-label="Install VER Chess Intelligence on this device">↓ Install App</button></div></header>
-<div class="pwa-connect" role="status" aria-live="polite"><span id="pwaConnectText">Play in your browser or install to your home screen. Stockfish is stored on this device after its first successful download.</span><button type="button" id="pwaHelpBtn" class="pwa-help" aria-label="How to install on Android">How to install</button></div>
+<div class="pwa-connect" hidden aria-hidden="true"><span id="pwaConnectText">Play in your browser or install to your home screen. Stockfish is stored on this device after its first successful download.</span><button type="button" id="pwaHelpBtn" class="pwa-help" aria-label="How to install on Android">How to install</button></div>
 <dialog class="pwa-dialog" id="pwaDialog" aria-labelledby="pwaDialogTitle"><form method="dialog"><button class="pwa-close" aria-label="Close installation instructions">×</button></form><div class="pwa-dialog-icon"><img src="./icon-192.png" width="70" height="70" alt="VER Chess icon"></div><h2 id="pwaDialogTitle">Install VER Chess Intelligence</h2><p>Open this website in <strong>Google Chrome on Android</strong>. Tap Chrome's <strong>⋮</strong> menu, then choose <strong>Install app</strong> or <strong>Add to Home screen</strong>. Once installed, launch it from your app list.</p><p class="pwa-dialog-note">After your first online visit has saved Stockfish, imported PGN files can be reviewed without internet. Fetching new Lichess games by URL still requires a connection.</p><form method="dialog"><button class="btn btn-gold" value="close">Got it</button></form></dialog>
   <section class="hero"><div><div class="eyebrow">Learn from every position</div><h1>Every move <em>teaches.</em></h1><p>Import a completed game. Discover the chances you missed, the moves you got right, and what a stronger continuation looks like.</p></div><div class="hero-stat"><strong>64</strong><span>Squares · Infinite lessons</span></div></section>
   <main class="main">
@@ -639,6 +639,6 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
 
 <!-- VER Chess Intelligence v4 — optional public-game library; original analysis/PWA scripts preserved. -->
 <script defer src="./ver-chess-v4-library.js?v=5.2"></script>
-<script defer src="./ver-chess-touch-review.js?v=5"></script>
+<script defer src="./ver-chess-touch-review.js?v=5.3"></script>
 </body>
 </html>
