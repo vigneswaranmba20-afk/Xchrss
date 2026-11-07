@@ -368,3 +368,95 @@ test('Read full shows the legal engine alternative on-board without mutating the
     await context.close();
   }
 });
+
+
+test('Learn offers original fork and pin lessons with a separate chessboard on mobile', async ({ browser }) => {
+ const context=await browser.newContext({
+  viewport:{width:390,height:820},isMobile:true,hasTouch:true,serviceWorkers:'block'
+ });
+ try{
+  const page=await openChess(context);
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await expect(page.locator('[data-ver-nav="learn"]')).toBeVisible();
+  await page.locator('[data-ver-nav="learn"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-ver-view','learn');
+  await expect(page.locator('#verLearnChoices .ver-learn-choice')).toHaveCount(2);
+  expect(await page.evaluate(()=>window.VERChessLearn.verify())).toBe(true);
+  await page.locator('[data-lesson="fork"]').click();
+  await expect(page.locator('#verLearnPlayer')).toBeVisible();
+  await expect(page.locator('#verLearnBoard .v5-square')).toHaveCount(64);
+  await expect(page.locator('#verLearnBoard .v5-piece')).toHaveCount(4);
+  await expect(page.locator('#verLearnProgress')).toHaveText('Step 1 of 6');
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnStage')).toHaveText('Discover');
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnStage')).toHaveText('Animate');
+  await expect(page.locator('#verLearnBoard .v5-square[aria-label="f7 N"]')).toHaveCount(1);
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnStage')).toHaveText('Explain');
+  await expect(page.locator('#verLearnText')).toContainText('king on h8');
+  await expect(page.locator('#verLearnBoard .v5-square.last')).toHaveCount(3);
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnStage')).toHaveText('Practice');
+  await expect(page.locator('#verLearnNext')).toBeDisabled();
+  await page.locator('#verLearnChoicesQuiz button:has-text("Nc6")').click();
+  await expect(page.locator('#verLearnFeedback')).toContainText('Not quite');
+  await page.locator('#verLearnChoicesQuiz button:has-text("Nf7+")').click();
+  await expect(page.locator('#verLearnFeedback')).toContainText('Correct');
+  await expect(page.locator('#verLearnNext')).toBeEnabled();
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnStage')).toHaveText('Review');
+  expect(errors).toEqual([]);
+ }finally{await context.close();}
+});
+
+test('Pin lesson checks legality and does not alter an existing game review', async ({ browser }) => {
+ const context=await browser.newContext({
+  viewport:{width:320,height:600},isMobile:true,hasTouch:true,serviceWorkers:'block'
+ });
+ try{
+  const page=await openChess(context);
+  await importSampleGame(page);
+  const initial=await measureBoard(page);
+  await page.locator('#v5Next').click();
+  const moveNumber=await page.locator('#v5MoveNumber').textContent();
+  await page.locator('[data-ver-nav="learn"]').click();
+  await page.locator('[data-lesson="pin"]').click();
+  await expect(page.locator('#verLearnTitle')).toHaveText('Absolute pin');
+  await expect(page.locator('#verLearnBoard .v5-square')).toHaveCount(64);
+  await page.locator('#verLearnNext').click();
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnBoard .v5-square[aria-label="c4 B"]')).toHaveCount(1);
+  await page.locator('#verLearnNext').click();
+  await expect(page.locator('#verLearnText')).toContainText('f7–g8');
+  await page.locator('#verLearnFlip').click();
+  await expect(page.locator('#verLearnBoard .v5-square')).toHaveCount(64);
+  await page.locator('[data-ver-nav="board"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-ver-view','board');
+  await expect(page.locator('#v5MoveNumber')).toHaveText(moveNumber);
+  const after=await measureBoard(page);
+  expect(after.visibleFraction).toBeGreaterThan(0.97);
+  expect(Math.abs(after.width-initial.width)).toBeLessThan(3);
+  await expect(page.locator('#playerNames')).toContainText('TestWhite');
+ }finally{await context.close();}
+});
+
+test('Installed app exposes cached Learn lessons while offline',async ({browser})=>{
+ const context=await browser.newContext({
+  viewport:{width:390,height:820},isMobile:true,hasTouch:true,serviceWorkers:'allow'
+ });
+ try{
+  const page=await context.newPage();
+  await page.goto('/',{waitUntil:'load'});
+  await page.evaluate(async()=>await navigator.serviceWorker.ready);
+  await page.reload({waitUntil:'load'});
+  await context.setOffline(true);
+  await page.reload({waitUntil:'domcontentloaded'});
+  await expect(page.locator('[data-ver-nav="learn"]')).toBeVisible();
+  await page.locator('[data-ver-nav="learn"]').click();
+  await page.locator('[data-lesson="pin"]').click();
+  await expect(page.locator('#verLearnBoard .v5-square')).toHaveCount(64);
+ }finally{
+  await context.setOffline(false);await context.close();
+ }
+});
