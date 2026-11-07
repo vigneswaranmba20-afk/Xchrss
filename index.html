@@ -137,7 +137,7 @@ body.analysis-open{overflow:hidden}
   <header class="top"><div class="logo"><div class="mark">VER</div><div class="brand">CHESS INTELLIGENCE<small>THE OPEN ANALYSIS STUDIO</small></div></div><div class="pwa-head"><span class="top-note"><i class="live"></i> FREE · PRIVATE · NO ACCOUNT</span><button type="button" class="btn btn-gold pwa-install" id="installPwaBtn" aria-label="Install VER Chess Intelligence on this device">↓ Install App</button></div></header>
 <div class="pwa-connect" hidden aria-hidden="true"><span id="pwaConnectText">Play in your browser or install to your home screen. Stockfish is stored on this device after its first successful download.</span><button type="button" id="pwaHelpBtn" class="pwa-help" aria-label="How to install on Android">How to install</button></div>
 <dialog class="pwa-dialog" id="pwaDialog" aria-labelledby="pwaDialogTitle"><form method="dialog"><button class="pwa-close" aria-label="Close installation instructions">×</button></form><div class="pwa-dialog-icon"><img src="./icon-192.png" width="70" height="70" alt="VER Chess icon"></div><h2 id="pwaDialogTitle">Install VER Chess Intelligence</h2><p>Open this website in <strong>Google Chrome on Android</strong>. Tap Chrome's <strong>⋮</strong> menu, then choose <strong>Install app</strong> or <strong>Add to Home screen</strong>. Once installed, launch it from your app list.</p><p class="pwa-dialog-note">After your first online visit has saved Stockfish, imported PGN files can be reviewed without internet. Fetching new Lichess games by URL still requires a connection.</p><form method="dialog"><button class="btn btn-gold" value="close">Got it</button></form></dialog>
-  <section class="hero"><div><div class="eyebrow">Learn from every position</div><h1>Every move <em>teaches.</em></h1><p>Import a completed game. Discover the chances you missed, the moves you got right, and what a stronger continuation looks like.</p></div><div class="hero-stat"><strong>64</strong><span>Squares · Infinite lessons</span></div></section>
+
   <main class="main">
     <div class="left">
       <section class="panel">
@@ -176,7 +176,7 @@ body.analysis-open{overflow:hidden}
       <section class="panel" id="verFingerprintPanel" tabindex="-1"><div class="panel-head"><h2>Game fingerprint</h2><span id="statsNote" class="sub">Awaiting analysis</span></div><div class="body"><div class="stat-grid"><div class="stat"><strong id="strongCount">—</strong><span>Strong moves</span></div><div class="stat"><strong id="missCount">—</strong><span>Missed chances</span></div><div class="stat"><strong id="mistakeCount">—</strong><span>Mistakes</span></div><div class="stat"><strong id="blunderCount">—</strong><span>Blunders</span></div></div><svg class="eval-chart" id="evalChart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" aria-label="Engine evaluation over time"><line x1="0" y1="60" x2="600" y2="60" stroke="#546d5d" stroke-dasharray="5 4"/><text x="12" y="24" fill="#a6c6ab" font-size="10">White advantage ↑</text><text x="12" y="109" fill="#a6c6ab" font-size="10">Black advantage ↓</text></svg><div class="legend"><span>Opening</span><span>↑ Better for White · ↓ Better for Black</span><span>Endgame</span></div></div></section>
       <!-- Move explorer intentionally removed from the interface; retained IDs for the original review renderer. -->
       <div id="verMoveExplorerCompatibility" hidden aria-hidden="true"><span id="moveCount"></span><div id="moveList"></div></div>
-      <section class="panel ver-learning-moments-panel" id="verLearningMomentsPanel"><div class="panel-head"><h2>Learning moments</h2><div class="reviewer"><select id="sideFilter" aria-label="Which side to review"><option value="all">Both players</option><option value="w">White only</option><option value="b">Black only</option></select></div></div><div class="body"><p class="ver-moments-help" id="verLearningContext">Analyse a completed game to reveal its learning moments. Tap any finding to open the exact move on your board.</p><div id="critical" class="critical"><p class="empty">After analysis, mistakes and missed opportunities will appear here. Tap one to revisit the position.</p></div></div></section>
+      <section class="panel ver-learning-moments-panel" id="verLearningMomentsPanel" hidden aria-hidden="true"><div class="panel-head"><h2>Learning moments</h2><div class="reviewer"><select id="sideFilter" aria-label="Which side to review"><option value="all">Both players</option><option value="w">White only</option><option value="b">Black only</option></select></div></div><div class="body"><p class="ver-moments-help" id="verLearningContext">Analyse a completed game to reveal its learning moments. Tap any finding to open the exact move on your board.</p><div id="critical" class="critical"><p class="empty">After analysis, mistakes and missed opportunities will appear here. Tap one to revisit the position.</p></div></div></section>
     </aside>
   </main>
   <footer class="footer">
@@ -338,7 +338,24 @@ function renderCritical(){
  if(reviewedCritGame===game && reviewedCritDepth===analysis.length && reviewedCritSide===filter)return;
  reviewedCritGame=game;reviewedCritDepth=analysis.length;reviewedCritSide=filter;
 const box=$('critical');box.innerHTML='';const hits=[];for(let p=1;p<=game.moves.length;p++){const g=gradeAt(p),m=game.moves[p-1];if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)&&(filter==='all'||m.color===filter))hits.push({p,g,m});}hits.sort((a,b)=>b.g.loss-a.g.loss);for(const item of hits.slice(0,20)){const button=document.createElement('button');const left=document.createElement('div'),right=document.createElement('b');const t=document.createElement('strong'),s=document.createElement('span');t.textContent=moveTitle(item.p)+' · '+gradeTitle(item.g.flag);s.textContent=(item.m.color==='w'?'White':'Black')+' · View stronger alternative';right.textContent='−'+(item.g.loss/100).toFixed(2);left.append(t,s);button.append(left,right);button.addEventListener('click',()=>{jump(item.p);window.VERChessLibraryV4?.openLearningMoment?.(item.p);});box.append(button);}if(!hits.length){const p=document.createElement('p');p.className='empty';p.textContent=analysis.length?'No major losses detected in the evaluated moves for this filter.':'Analyse a completed game from the Board to discover learning moments here.';box.append(p);}}
-function renderAll(){renderBoard();renderCoach();renderMoves();renderStats();renderChart();renderCritical();$('backBtn').disabled=at===0;$('startBtn').disabled=at===0;$('nextBtn').disabled=at>=game.moves.length;$('endBtn').disabled=at>=game.moves.length;window.VERChessTouchUI?.sync?.({at,total:game.moves.length,running});}
+function publishFloatingCoach(){
+ const coach=window.VERChessFloatingCoach;
+ if(!coach)return;
+ const reviewed=at>0?gradeAt(at):null;
+ const before=at>0?analysis[at-1]:null;
+ const boardBefore=at>0?game.states[at-1]:null;
+ const bestMove=before?.bestUci&&boardBefore?findUci(boardBefore,before.bestUci):null;
+ const suggested=bestMove?san(boardBefore,bestMove):'';
+ const move=at>0?game.moves[at-1]:null;
+ coach.update({
+  ply:at,total:game.moves.length,running,
+  flag:reviewed?.flag||'',loss:reviewed?.loss||0,
+  label:at>0?moveTitle(at):'',
+  best:suggested,
+  message:reviewed&&move?humanSuggestion(move,suggested||'an alternative',reviewed):''
+ });
+}
+function renderAll(){renderBoard();renderCoach();renderMoves();renderStats();renderChart();renderCritical();$('backBtn').disabled=at===0;$('startBtn').disabled=at===0;$('nextBtn').disabled=at>=game.moves.length;$('endBtn').disabled=at>=game.moves.length;window.VERChessTouchUI?.sync?.({at,total:game.moves.length,running});publishFloatingCoach();}
 function loadGame(raw){if(running)stopAnalysis();const obj=parseGame(raw);game=obj;at=0;viewBefore=false;showActual=false;analysis=[];$('playerNames').innerHTML='';const w=document.createTextNode(obj.headers.White||'White'),vs=document.createElement('span'),b=document.createTextNode(obj.headers.Black||'Black');vs.textContent=' vs ';$('playerNames').append(w,vs,b);const info=document.createElement('small');info.textContent=[obj.headers.Event,obj.headers.Date,obj.headers.TimeControl?'TC '+obj.headers.TimeControl:null].filter(Boolean).join(' · ')||'Imported PGN';$('playerNames').append(info);$('gameResult').textContent=obj.headers.Result||'IMPORTED';$('progressFill').style.width='0%';$('progressLabel').textContent='Game ready — '+game.moves.length+' half-moves.';$('progressPct').textContent='0%';renderAll();notify('PGN loaded: '+game.moves.length+' half-moves ready to study.');}
 function importText(txt){const parts=splitGames(txt);allImported=parts;$('gameSelectRow').hidden=parts.length<2;const sel=$('gameSelect');sel.innerHTML='';parts.forEach((p,i)=>{const matchW=p.match(/\[White\s+"([^"]+)"\]/),matchB=p.match(/\[Black\s+"([^"]+)"\]/);const o=document.createElement('option');o.value=String(i);o.textContent=(i+1)+'. '+(matchW?.[1]||'White')+' vs '+(matchB?.[1]||'Black');sel.append(o);});let loaded=false;let failure;for(let i=0;i<parts.length;i++){try{loadGame(parts[i]);sel.value=String(i);loaded=true;break;}catch(e){failure=e;}}if(!loaded)throw failure||Error('No usable standard chess game found.');if(parts.length>1)notify('Loaded '+parts.length+' PGN records. Choose a game in the dropdown.');}
 let analysisOverlayTimer=null;
@@ -540,7 +557,7 @@ async function runAnalysis(){
   }
  }finally{
   if(myToken===cancelToken){
-   running=false;$('analyzeBtn').disabled=false;$('cancelBtn').hidden=true;window.VERChessTouchUI?.sync?.({at,total:game.moves.length,running});
+   running=false;$('analyzeBtn').disabled=false;$('cancelBtn').hidden=true;window.VERChessTouchUI?.sync?.({at,total:game.moves.length,running});publishFloatingCoach();
   }
  }
 }
@@ -640,5 +657,7 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
 <!-- VER Chess Intelligence v4 — optional public-game library; original analysis/PWA scripts preserved. -->
 <script defer src="./ver-chess-v4-library.js?v=5.2"></script>
 <script defer src="./ver-chess-touch-review.js?v=5.3"></script>
+<script defer src="./ver-chess-v6-mobile.js?v=6"></script>
+<script defer src="./ver-chess-flying-coach.js?v=6"></script>
 </body>
 </html>
