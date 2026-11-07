@@ -86,3 +86,32 @@ body[data-ver-view="board"]{padding-bottom:152px}
  .v5-piece{transition:none!important}
  .v5-thumb{transition:none!important}
 }
+/* v5.3 — the centre of the two-thumb dock now resets the current game.
+   Move progress remains visible beside the scrubber rather than occupying the button. */
+.v5-dock-reset{
+ touch-action:manipulation;min-height:60px;min-width:0;
+ display:flex;align-items:center;justify-content:center;gap:5px;
+ border:1px solid #d9c27d9c;border-radius:14px;
+ background:#d9c27f;color:#1b2b20;
+ font-size:12px;font-weight:800;line-height:1.15;
+ cursor:pointer;white-space:normal;
+}
+.v5-dock-reset span{font-size:25px;font-weight:650;line-height:1}
+.v5-dock-reset strong{font-size:12px;line-height:1.1}
+.v5-dock-reset:active:not(:disabled){background:#ecd79a;transform:scale(.985)}
+.v5-dock-reset:disabled{opacity:.42;cursor:default}
+.v5-dock-scrub{min-width:0;display:flex;align-items:center;gap:9px}
+.v5-dock-scrub input[type=range]{flex:1;min-width:0}
+#v5MoveNumber{flex:none;min-width:42px;text-align:right;font-size:11px;line-height:1.2;color:#efd594;font-weight:800;font-variant-numeric:tabular-nums}
+@media(max-width:750px){
+ .v5-dock-reset{min-height:61px;flex-direction:column;gap:0;padding:6px 2px}
+ .v5-dock-reset strong{font-size:11px}
+ .v5-dock-reset span{font-size:23px}
+ .v5-dock-scrub{gap:6px}
+ #v5MoveNumber{font-size:10px;min-width:39px}
+}
+@media(max-width:350px){
+ .v5-dock-reset{min-height:57px}
+ .v5-dock-reset span{font-size:21px}
+ .v5-dock-reset strong{font-size:10px}
+}
