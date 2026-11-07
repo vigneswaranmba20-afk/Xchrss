@@ -65,6 +65,7 @@ panel.innerHTML=[
  ' <div class="ver-pgn-inputs"><div id="verPgnUploadSlot" class="ver-pgn-upload-slot"></div><details id="verPgnPasteDetails" class="ver-pgn-details"><summary>Paste PGN</summary><div id="verPgnPasteSlot"></div></details></div>',
  ' <div id="verPgnSelectSlot"></div>',
  '</section>',
+ '<div id="verMomentsSlot" class="ver-moments-slot" aria-label="Learning moments from current chess game"></div>',
  '<div class="verv4-results-head"><div><span class="verv4-overline">Your collection</span><h3 id="verV4ResultTitle">Saved games</h3></div><button type="button" class="verv4-clear" id="verV4Clear">Clear saved</button></div>',
  '<div class="verv4-scope"><button type="button" id="verV4All" class="active" aria-pressed="true">All saved games</button><button type="button" id="verV4Latest" aria-pressed="false" hidden>Current search</button></div>',
  '<p class="verv4-context" id="verV4Context" role="status" aria-live="polite">Your saved public games appear here, from either platform.</p>',
@@ -76,6 +77,10 @@ panel.innerHTML=[
  '</div>'
 ].join('');
 host.insertBefore(panel,host.firstChild);
+// Rehome the existing Stockfish-generated moments (including side filter and
+// exact-move links) on Games, instead of showing them in the Insights area.
+const moments=$('verLearningMomentsPanel');
+if(moments)$('verMomentsSlot').append(moments);
 // Move the original parser-wired PGN elements into their visible home on Games.
 // No new parser and no duplicate controls — the inline handlers remain attached.
 const uploadBtn=$('uploadBtn'),fileInput=$('fileInput'),pasteText=$('pgnText'),pasteBtn=$('pasteBtn'),selector=$('gameSelectRow');
@@ -97,10 +102,10 @@ function setView(view){
  });
  if(typeof window.scrollTo==='function')window.scrollTo({top:0,behavior:'instant'});
  if(view==='insights'){
-  // Skip any import chrome: put engine depth/progress and analysis first.
+  // The entire engine control block is now hidden: start directly at fingerprint.
   requestAnimationFrame(()=>{
-   const engine=$('verEngineAnalysisPanel');
-   if(state.view==='insights'&&engine)engine.scrollIntoView({block:'start',behavior:'auto'});
+   const fingerprint=$('verFingerprintPanel');
+   if(state.view==='insights'&&fingerprint)fingerprint.scrollIntoView({block:'start',behavior:'auto'});
   });
  }
 }
@@ -394,8 +399,9 @@ $('verV4ChessUsername').value=state.accounts.chesscom||'';
 $('verV4LichessUsername').value=state.accounts.lichess||'';
 render();setView('games');
 window.VERChessLibraryV4={
- version:'5.1-streamlined-workflow',
+ version:'5.2-fingerprint-learning',
  openGames:()=>setView('games'),
+ openLearningMoment:ply=>{if(Number.isInteger(ply)&&ply>0)setView('board');},
  openImportedPgn:()=>{
   state.selected=null;
   $('verV4ReviewName').textContent='Imported PGN';

@@ -129,7 +129,7 @@ body.analysis-open{overflow:hidden}
 </style>
 <link rel="stylesheet" href="./ver-chess-v4-ux.css" />
 <link rel="stylesheet" href="./ver-chess-smooth-ui.css" />
-<link rel="stylesheet" href="./ver-chess-refined-ui.css" />
+<link rel="stylesheet" href="./ver-chess-refined-ui.css?v=5.2" />
 <script src="./ver-chess-board-themes.js"></script>
 </head>
 <body>
@@ -166,16 +166,17 @@ body.analysis-open{overflow:hidden}
         <button type="button" class="btn btn-quiet" id="pasteBtn">Load pasted PGN</button>
         <div id="gameSelectRow" class="game-select" hidden><label class="hint" for="gameSelect">Multiple games detected. Choose one to study:</label><select aria-label="Choose imported game" id="gameSelect"></select></div>
       </div>
-      <section class="panel" id="verEngineAnalysisPanel" tabindex="-1" aria-label="Engine analysis"><div class="panel-head"><h2>Engine analysis</h2><div class="engine-state"><i id="engineDot"></i><span id="engineStatus">Engine not loaded</span></div></div><div class="body">
+      <section class="panel" id="verEngineAnalysisPanel" hidden aria-hidden="true" aria-label="Stockfish compatibility controls"><div class="panel-head"><h2>Engine analysis</h2><div class="engine-state"><i id="engineDot"></i><span id="engineStatus">Engine not loaded</span></div></div><div class="body">
         <div class="row-between"><span class="sub">Analysis strength</span><span class="micro">More depth = more time</span></div>
         <div class="depths margintop" id="depths"><button data-depth="8" class="selected">⚡ Quick · 8</button><button data-depth="11">◈ Balanced · 11</button><button data-depth="14">♛ Deep · 14</button></div>
         <div class="row-between margintop"><button id="analyzeBtn" class="btn btn-gold" style="flex:1">✦ Analyse entire game</button><button id="cancelBtn" class="btn btn-quiet" hidden>Stop</button></div>
         <div class="progress-track"><div id="progressFill" class="progress-fill"></div></div><div class="row-between"><span id="progressLabel" class="hint">Import a game to begin.</span><span id="progressPct" class="hint">0%</span></div>
         <div class="book"><b>How it works:</b> Stockfish calculates on your device. Your PGN stays in the browser; the engine files are loaded from this website when installed, and cached for repeat visits. The app reviews completed standard chess games only.</div>
       </div></section>
-      <section class="panel"><div class="panel-head"><h2>03 / Game fingerprint</h2><span id="statsNote" class="sub">Awaiting analysis</span></div><div class="body"><div class="stat-grid"><div class="stat"><strong id="strongCount">—</strong><span>Strong moves</span></div><div class="stat"><strong id="missCount">—</strong><span>Missed chances</span></div><div class="stat"><strong id="mistakeCount">—</strong><span>Mistakes</span></div><div class="stat"><strong id="blunderCount">—</strong><span>Blunders</span></div></div><svg class="eval-chart" id="evalChart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" aria-label="Engine evaluation over time"><line x1="0" y1="60" x2="600" y2="60" stroke="#546d5d" stroke-dasharray="5 4"/><text x="12" y="24" fill="#a6c6ab" font-size="10">White advantage ↑</text><text x="12" y="109" fill="#a6c6ab" font-size="10">Black advantage ↓</text></svg><div class="legend"><span>Opening</span><span>↑ Better for White · ↓ Better for Black</span><span>Endgame</span></div></div></section>
-      <section class="panel"><div class="panel-head"><h2>04 / Move explorer</h2><span class="sub" id="moveCount">0 moves</span></div><div class="body"><div id="moveList" class="move-list"><p class="empty">Import a PGN to explore every move.</p></div></div></section>
-      <section class="panel"><div class="panel-head"><h2>05 / Learning moments</h2><div class="reviewer"><select id="sideFilter" aria-label="Which side to review"><option value="all">Both players</option><option value="w">White only</option><option value="b">Black only</option></select></div></div><div class="body"><div id="critical" class="critical"><p class="empty">After analysis, mistakes and missed opportunities will appear here. Tap one to revisit the position.</p></div></div></section>
+      <section class="panel" id="verFingerprintPanel" tabindex="-1"><div class="panel-head"><h2>Game fingerprint</h2><span id="statsNote" class="sub">Awaiting analysis</span></div><div class="body"><div class="stat-grid"><div class="stat"><strong id="strongCount">—</strong><span>Strong moves</span></div><div class="stat"><strong id="missCount">—</strong><span>Missed chances</span></div><div class="stat"><strong id="mistakeCount">—</strong><span>Mistakes</span></div><div class="stat"><strong id="blunderCount">—</strong><span>Blunders</span></div></div><svg class="eval-chart" id="evalChart" viewBox="0 0 600 120" preserveAspectRatio="none" role="img" aria-label="Engine evaluation over time"><line x1="0" y1="60" x2="600" y2="60" stroke="#546d5d" stroke-dasharray="5 4"/><text x="12" y="24" fill="#a6c6ab" font-size="10">White advantage ↑</text><text x="12" y="109" fill="#a6c6ab" font-size="10">Black advantage ↓</text></svg><div class="legend"><span>Opening</span><span>↑ Better for White · ↓ Better for Black</span><span>Endgame</span></div></div></section>
+      <!-- Move explorer intentionally removed from the interface; retained IDs for the original review renderer. -->
+      <div id="verMoveExplorerCompatibility" hidden aria-hidden="true"><span id="moveCount"></span><div id="moveList"></div></div>
+      <section class="panel ver-learning-moments-panel" id="verLearningMomentsPanel"><div class="panel-head"><h2>Learning moments</h2><div class="reviewer"><select id="sideFilter" aria-label="Which side to review"><option value="all">Both players</option><option value="w">White only</option><option value="b">Black only</option></select></div></div><div class="body"><p class="ver-moments-help" id="verLearningContext">Analyse a completed game to reveal its learning moments. Tap any finding to open the exact move on your board.</p><div id="critical" class="critical"><p class="empty">After analysis, mistakes and missed opportunities will appear here. Tap one to revisit the position.</p></div></div></section>
     </aside>
   </main>
   <footer class="footer">
@@ -318,43 +319,25 @@ function renderCoach(){let title,text,grade='READY',best='—',mini='A recommend
  $('gradeTag').textContent=grade;$('gradeTag').className='tag '+gradeClass;$('evalTag').textContent=evalValue;$('insightTitle').textContent=title;$('insightText').textContent=text;$('bestMove').textContent=best;$('bestMoveText').textContent=mini;$('principalVariation').textContent=pv;const next=nextLearningIndex(at);$('nextIssueBtn').disabled=next<0;$('exportBtn').disabled=analysis.length<2;}
 function nextLearningIndex(from){for(let p=from+1;p<=game.moves.length;p++){const g=gradeAt(p);if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)&&(filter==='all'||game.moves[p-1].color===filter))return p;}for(let p=1;p<=from;p++){const g=gradeAt(p);if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)&&(filter==='all'||game.moves[p-1].color===filter))return p;}return -1;}
 function jump(p){at=Math.max(0,Math.min(game.moves.length,p));viewBefore=false;showActual=false;renderAll();}
-let renderedMovesGame=null, renderedMovesDepth=-1;
+// Move explorer UI was retired in v5.2. Move navigation remains on Board.
 function renderMoves(){
- const box=$('moveList');
- if(!game.moves.length){
-  if(box.children.length!==1||!box.querySelector('.empty'))box.innerHTML='<p class="empty">No moves yet.</p>';
-  renderedMovesGame=game;renderedMovesDepth=analysis.length;return;
- }
- if(renderedMovesGame!==game || renderedMovesDepth!==analysis.length){
-  box.replaceChildren();
-  const frag=document.createDocumentFragment();
-  game.moves.forEach((m,i)=>{
-   const p=i+1,g=gradeAt(p),button=document.createElement('button');
-   button.className='move-item';
-   button.innerHTML=`<b>${m.moveNo}${m.color==='b'?'...':'.'}</b><strong>${m.san}</strong><span class="dot ${g?.flag||''}"></span>`;
-   button.addEventListener('click',()=>jump(p));frag.append(button);
-  });
-  box.append(frag);
-  renderedMovesGame=game;renderedMovesDepth=analysis.length;
- }
- // Only the active state changes during a normal move-by-move review.
- for(let i=0;i<box.children.length;i++)box.children[i].classList.toggle('active',i===at-1);
- if(at>0){
-  const active=box.children[at-1];
-  if(active&&box.getBoundingClientRect().height){
-   const pos=active.offsetTop-box.offsetTop;
-   if(pos<box.scrollTop||pos>box.scrollTop+box.clientHeight-30)box.scrollTop=Math.max(0,pos-box.clientHeight/3);
-  }
- }
- $('moveCount').textContent=game.moves.length+' moves';
+ $('moveCount').textContent=game.moves.length+' half-moves';
 }
 function renderStats(){const grades=game.moves.map((_,i)=>gradeAt(i+1)).filter(Boolean);const count=(...k)=>grades.filter(g=>k.includes(g.flag)).length;$('strongCount').textContent=analysis.length?count('best','strong'):'—';$('missCount').textContent=analysis.length?count('miss'):'—';$('mistakeCount').textContent=analysis.length?count('mistake'):'—';$('blunderCount').textContent=analysis.length?count('blunder'):'—';const reviewed=grades.length;$('statsNote').textContent=reviewed?reviewed+'/'+game.moves.length+' moves reviewed':'Awaiting analysis';}
 function renderChart(){const svg=$('evalChart');const pointsArr=analysis.map((r,i)=>r.cpWhite==null?null:{i,cp:r.cpWhite}).filter(Boolean);let html='<line x1="0" y1="60" x2="600" y2="60" stroke="#647d68" stroke-dasharray="5 4" opacity=".65"/><text x="12" y="20" fill="#a6c6ab" font-size="10">White ↑</text><text x="12" y="109" fill="#a6c6ab" font-size="10">Black ↓</text>';if(pointsArr.length>=2){const x=i=>i/Math.max(1,game.moves.length)*600,y=cp=>60-52*Math.tanh(cp/440);const coords=pointsArr.map(r=>x(r.i)+','+y(r.cp)).join(' ');html+=`<polyline points="${coords}" stroke="#edd18e" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" fill="none"/>`;}const marker=analysis[at];if(marker?.cpWhite!=null){const x=at/Math.max(1,game.moves.length)*600,y=60-52*Math.tanh(marker.cpWhite/440);html+=`<line x1="${x}" y1="4" x2="${x}" y2="116" stroke="#f7f1dc" stroke-width="1" opacity=".5"/><circle cx="${x}" cy="${y}" r="5" fill="#fff2ca" stroke="#11251e" stroke-width="2"/>`;}svg.innerHTML=html;}
 let reviewedCritGame=null, reviewedCritDepth=-1, reviewedCritSide='';
 function renderCritical(){
+ const meta=$('verLearningContext');
+ if(meta){
+  const white=game.headers.White||'',black=game.headers.Black||'';
+  const named=white&&black?(white+' vs '+black):'the selected game';
+  meta.textContent=analysis.length
+    ? 'Reviewing '+named+'. Tap any learning moment to jump to that move on the Board.'
+    : 'Analyse '+named+' on the Board to unlock learning moments here.';
+ }
  if(reviewedCritGame===game && reviewedCritDepth===analysis.length && reviewedCritSide===filter)return;
  reviewedCritGame=game;reviewedCritDepth=analysis.length;reviewedCritSide=filter;
-const box=$('critical');box.innerHTML='';const hits=[];for(let p=1;p<=game.moves.length;p++){const g=gradeAt(p),m=game.moves[p-1];if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)&&(filter==='all'||m.color===filter))hits.push({p,g,m});}hits.sort((a,b)=>b.g.loss-a.g.loss);for(const item of hits.slice(0,20)){const button=document.createElement('button');const left=document.createElement('div'),right=document.createElement('b');const t=document.createElement('strong'),s=document.createElement('span');t.textContent=moveTitle(item.p)+' · '+gradeTitle(item.g.flag);s.textContent=(item.m.color==='w'?'White':'Black')+' · View stronger alternative';right.textContent='−'+(item.g.loss/100).toFixed(2);left.append(t,s);button.append(left,right);button.addEventListener('click',()=>jump(item.p));box.append(button);}if(!hits.length){const p=document.createElement('p');p.className='empty';p.textContent=analysis.length?'No major losses detected in the evaluated moves for this filter.':'Engine review will identify the critical moments in your game.';box.append(p);}}
+const box=$('critical');box.innerHTML='';const hits=[];for(let p=1;p<=game.moves.length;p++){const g=gradeAt(p),m=game.moves[p-1];if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)&&(filter==='all'||m.color===filter))hits.push({p,g,m});}hits.sort((a,b)=>b.g.loss-a.g.loss);for(const item of hits.slice(0,20)){const button=document.createElement('button');const left=document.createElement('div'),right=document.createElement('b');const t=document.createElement('strong'),s=document.createElement('span');t.textContent=moveTitle(item.p)+' · '+gradeTitle(item.g.flag);s.textContent=(item.m.color==='w'?'White':'Black')+' · View stronger alternative';right.textContent='−'+(item.g.loss/100).toFixed(2);left.append(t,s);button.append(left,right);button.addEventListener('click',()=>{jump(item.p);window.VERChessLibraryV4?.openLearningMoment?.(item.p);});box.append(button);}if(!hits.length){const p=document.createElement('p');p.className='empty';p.textContent=analysis.length?'No major losses detected in the evaluated moves for this filter.':'Analyse a completed game from the Board to discover learning moments here.';box.append(p);}}
 function renderAll(){renderBoard();renderCoach();renderMoves();renderStats();renderChart();renderCritical();$('backBtn').disabled=at===0;$('startBtn').disabled=at===0;$('nextBtn').disabled=at>=game.moves.length;$('endBtn').disabled=at>=game.moves.length;window.VERChessTouchUI?.sync?.({at,total:game.moves.length,running});}
 function loadGame(raw){if(running)stopAnalysis();const obj=parseGame(raw);game=obj;at=0;viewBefore=false;showActual=false;analysis=[];$('playerNames').innerHTML='';const w=document.createTextNode(obj.headers.White||'White'),vs=document.createElement('span'),b=document.createTextNode(obj.headers.Black||'Black');vs.textContent=' vs ';$('playerNames').append(w,vs,b);const info=document.createElement('small');info.textContent=[obj.headers.Event,obj.headers.Date,obj.headers.TimeControl?'TC '+obj.headers.TimeControl:null].filter(Boolean).join(' · ')||'Imported PGN';$('playerNames').append(info);$('gameResult').textContent=obj.headers.Result||'IMPORTED';$('progressFill').style.width='0%';$('progressLabel').textContent='Game ready — '+game.moves.length+' half-moves.';$('progressPct').textContent='0%';renderAll();notify('PGN loaded: '+game.moves.length+' half-moves ready to study.');}
 function importText(txt){const parts=splitGames(txt);allImported=parts;$('gameSelectRow').hidden=parts.length<2;const sel=$('gameSelect');sel.innerHTML='';parts.forEach((p,i)=>{const matchW=p.match(/\[White\s+"([^"]+)"\]/),matchB=p.match(/\[Black\s+"([^"]+)"\]/);const o=document.createElement('option');o.value=String(i);o.textContent=(i+1)+'. '+(matchW?.[1]||'White')+' vs '+(matchB?.[1]||'Black');sel.append(o);});let loaded=false;let failure;for(let i=0;i<parts.length;i++){try{loadGame(parts[i]);sel.value=String(i);loaded=true;break;}catch(e){failure=e;}}if(!loaded)throw failure||Error('No usable standard chess game found.');if(parts.length>1)notify('Loaded '+parts.length+' PGN records. Choose a game in the dropdown.');}
@@ -655,7 +638,7 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
 </script>
 
 <!-- VER Chess Intelligence v4 — optional public-game library; original analysis/PWA scripts preserved. -->
-<script defer src="./ver-chess-v4-library.js?v=5.1"></script>
+<script defer src="./ver-chess-v4-library.js?v=5.2"></script>
 <script defer src="./ver-chess-touch-review.js?v=5"></script>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /* VER Chess Intelligence PWA service worker. App assets are self-hosted under GitHub Pages /Xchrss/. */
 'use strict';
-const APP_CACHE='ver-chess-shell-v5-1-refined-2026-11-07';
+const APP_CACHE='ver-chess-shell-v5-2-fingerprint-2026-11-07';
 const ENGINE_CACHE='ver-chess-stockfish-19-0-1';
 const ART_CACHE='ver-chess-cburnett-piece-art-v1';
 const APP_SHELL=['./','./index.html','./ver-chess-v4-library.js','./ver-chess-v4-ux.css','./ver-chess-piece-art.js','./ver-chess-smooth-board.js','./ver-chess-smooth-ui.css','./ver-chess-touch-review.js','./ver-chess-board-themes.js','./ver-chess-refined-ui.css','./manifest.json','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./icon-180.png'];
