@@ -1,0 +1,45 @@
+name: Chess stability gate
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-browser-regression:
+    name: Real Chromium chessboard and interaction tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install pinned test tools
+        run: npm install --ignore-scripts --no-audit --no-fund
+
+      - name: Install headless Chromium and dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Test the real static chess website
+        run: npm run test:stability
+
+      - name: Preserve screenshots and traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ver-chess-browser-failure
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: ignore
+          retention-days: 7
