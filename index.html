@@ -133,6 +133,7 @@ body.analysis-open{overflow:hidden}
 <link rel="stylesheet" href="./ver-chess-v6-mobile.css?v=6" />
 <link rel="stylesheet" href="./ver-chess-v6-1-fit.css" />
 <link rel="stylesheet" href="./ver-chess-v6-2-board-rescue.css" />
+<link rel="stylesheet" href="./ver-chess-coach-on-board.css" />
 <script src="./ver-chess-board-themes.js"></script>
 </head>
 <body>
@@ -604,6 +605,64 @@ window.VERChessReviewControls={
  jumpTo:ply=>jump(Number(ply)||0),
  state:()=>({at,total:game.moves.length,running}),
 };
+
+// Public, read-only explanation context and a dedicated ephemeral board renderer.
+// The real PGN, ply and saved analysis never change when a lesson shows "what if".
+window.VERChessLessonAPI={
+ context(ply=at){
+  if(running||!Number.isSafeInteger(ply)||ply<1||ply>game.moves.length)return null;
+  const original=game.moves[ply-1],before=game.states[ply-1];
+  const candidate=analysis[ply-1]?.bestUci;
+  const best=candidate?findUci(before,candidate):null;
+  return {
+   ply,label:moveTitle(ply),
+   played:{uci:original.uci,from:original.from,to:original.to,san:original.san},
+   best:best?{uci:uci(best),from:sq(best[0]),to:sq(best[1]),san:san(before,best)}:null
+  };
+ },
+ show(ply,mode){
+  const context=this.context(ply);
+  if(!context||!window.VERChessSmoothBoard||!['before','played','best'].includes(mode))return false;
+  const before=game.states[ply-1],real=game.states[ply];
+  const bestMove=context.best?findUci(before,context.best.uci):null;
+  if(mode==='best'&&!bestMove)return false;
+  const selected=mode==='best'?context.best:context.played;
+  const state=mode==='before'?before:mode==='best'?apply(before,bestMove):real;
+  const colour=mode==='best'?'#44e4b0':'#f5c56c';
+  const arrows=mode==='before'
+    ?arrow(context.played.uci,'#ef7773','ver-lesson-played-arrow')
+     +(context.best&&context.best.uci!==context.played.uci
+      ?arrow(context.best.uci,'#49dbaa','ver-lesson-best-arrow'):'')
+    :arrow(selected.uci,colour,'ver-lesson-focus-arrow');
+  const board=$('board');
+  window.VERChessSmoothBoard.render(board,{
+   state,flipped,focusSquares:[selected.from,selected.to],arrows
+  });
+  board.classList.add('v7-teaching-board');
+  board.dataset.lessonMode=mode;
+  for(const cell of board.querySelectorAll('.v5-square')){
+   const notation=cell.getAttribute('aria-label')?.slice(0,2);
+   cell.classList.toggle('v7-coach-origin',notation===selected.from);
+   cell.classList.toggle('v7-coach-destination',notation===selected.to);
+  }
+  const explanation=mode==='before'?'Before ':mode==='best'?'Stockfish alternative to ':'Played ';
+  const label=mode==='best'?context.best.san:context.played.san;
+  board.setAttribute('aria-label',explanation+context.label+' — '+selected.from+' to '+selected.to);
+  $('boardPosition').textContent=explanation+context.label+' · '+label;
+  $('turnLabel').textContent=(state.t===1?'White':'Black')+' to move';
+  return true;
+ },
+ restore(){
+  const board=$('board');
+  board.classList.remove('v7-teaching-board');
+  delete board.dataset.lessonMode;
+  for(const cell of board.querySelectorAll('.v5-square')){
+   cell.classList.remove('v7-coach-origin','v7-coach-destination');
+  }
+  renderBoard();
+ }
+};
+
 renderAll();$('progressLabel').textContent='Choose a completed game from Games to begin your analysis.';
 </script>
 <script>
@@ -661,6 +720,6 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
 <script defer src="./ver-chess-v4-library.js?v=6"></script>
 <script defer src="./ver-chess-touch-review-v6-1.js"></script>
 <script defer src="./ver-chess-viewport-fit-v6-1.js"></script>
-<script defer src="./ver-chess-flying-coach.js?v=6"></script>
+<script defer src="./ver-chess-coach-on-board.js"></script>
 </body>
 </html>
