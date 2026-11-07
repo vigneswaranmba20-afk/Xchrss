@@ -34,5 +34,6 @@ The app uses **Cburnett** chess pieces (the classic Lichess default), created by
 - Source: https://github.com/lichess-org/lila/tree/master/public/piece/cburnett
 - Licence: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 - Attribution: Colin M. L. Burnett, Cburnett chess pieces.
-- Technical note: this single HTML page loads the piece SVGs separately from jsDelivr on the user's device. The files are not included inside the ZIP. If offline, Unicode fallback pieces are shown.
+- Technical note (v5): original Cburnett SVG source files are bundled inside `ver-chess-piece-art.js` for crisp, stable and offline piece rendering. They are **separate GPLv2+ artwork**, not proprietary VER materials. Unicode glyphs are retained as a last-resort fallback. The related board renderer and CSS are original code; no Chessground or cm-chessboard source code has been copied.
+- A copy of the GPL version 2 licence accompanies the artwork in `GPL-2.0-CBURNETT-LICENSE.txt`. See the copyright and source attribution above.
 - The website is not affiliated with or endorsed by Lichess or Chess.com.
