@@ -4,8 +4,8 @@
    with no flex parent, clipping all 64 squares. Keep this file LAST.
 */
 @media (max-width:850px) {
-  /* The actual main board panel is the first SECTION, not first child. */
-  body[data-ver-view="board"] .main > .left > section.panel:first-of-type {
+  /* The original board section now has an explicit class, unaffected by sibling order. */
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel {
     display:flex !important;
     flex-direction:column !important;
     width:100% !important;
@@ -27,7 +27,7 @@
     overflow:hidden !important;
   }
   /* Never force the parent of a visible board to zero height. */
-  body[data-ver-view="board"] .main > .left > section.panel:first-of-type > .board-wrap {
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel > .board-wrap {
     display:flex !important;
     flex-direction:column !important;
     flex:1 1 auto !important;
@@ -59,7 +59,7 @@
     margin:auto !important;
     overflow:hidden !important;
   }
-  body[data-ver-view="board"] .main > .left > section.panel:first-of-type > .board-footer {
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel > .board-footer {
     display:block !important;
     flex:0 0 auto !important;
     height:25px !important;
