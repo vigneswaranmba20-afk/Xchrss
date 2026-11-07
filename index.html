@@ -245,8 +245,7 @@ function cleanMovetext(raw){let out='',depth=0,brace=false,lineComment=false;for
 function parseGame(text){const headers={};const hRe=/^\s*\[([A-Za-z0-9_]+)\s+"((?:\\.|[^"])*)"\s*\]\s*$/gm;const noHeaders=text.replace(hRe,(_,k,val)=>{headers[k]=val.replace(/\\"/g,'"');return ' ';});if(headers.Variant&&!['standard','chess'].includes(headers.Variant.toLowerCase()))throw Error('This app analyses standard chess only; '+headers.Variant+' is not yet supported.');const start=parseFen(headers.FEN||START_FEN),states=[start],moves=[],tokens=cleanMovetext(noHeaders).split(/\s+/).filter(Boolean);if(!tokens.length)throw Error('No chess moves found in the PGN.');let s=start;for(const token of tokens){if(/^(?:1-0|0-1|1\/2-1\/2|\*)$/.test(token))break;if(/^e\.?p\.?$/i.test(token))continue;const m=findSan(s,token);if(!m)throw Error('Could not parse move '+(moves.length+1)+' ("'+token+'"). Please export a standard PGN.');moves.push({san:san(s,m),uci:uci(m),from:sq(m[0]),to:sq(m[1]),color:s.t===1?'w':'b',moveNo:s.full,flag:m[3],piece:s.b[m[0]],capture:s.b[m[1]]!=='.'||m[3]==='ep'});s=apply(s,m);states.push(s);}return {headers,states,moves,raw:text};}
 function splitGames(src){const clean=src.replace(/^\uFEFF/,'').trim();if(!clean)throw Error('Paste or upload a PGN first.');const parts=clean.split(/(?=^\[Event\s+")/gm).map(x=>x.trim()).filter(x=>x&&/\b(?:\d+\.|[KQRBN]?[a-h]?[1-8]?[x]?[a-h][1-8])/i.test(x));return (parts.length?parts:[clean]).slice(0,100);}
 const $=id=>document.getElementById(id);
-const examplePgn=`[Event "A lesson in early queen attacks"]\n[Site "VER Chess Intelligence"]\n[White "White"]\n[Black "Black"]\n[Result "1-0"]\n\n1. e4 e5 2. Qh5 Nc6 3. Bc4 Nf6 4. Qxf7# 1-0`;
-let game=parseGame(examplePgn),allImported=[examplePgn],at=0,flipped=false,viewBefore=false,showActual=false,arrowsEnabled=true,analysis=[],running=false,cancelToken=0,depth=8,engine=null,toastTimer=null,filter='all';
+let game={headers:{},states:[parseFen(START_FEN)],moves:[],raw:''},allImported=[],at=0,flipped=false,viewBefore=false,showActual=false,arrowsEnabled=true,analysis=[],running=false,cancelToken=0,depth=8,engine=null,toastTimer=null,filter='all';
 const boardSquares=Array.from({length:64},(_,j)=>(j>>3)*16+(j&7));
 function notify(message){const el=$('toast');el.textContent=message;el.hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.hidden=true,4500);}
 function moveTitle(i){if(i===0)return 'Starting position';const x=game.moves[i-1];return x.moveNo+(x.color==='w'?'. ':'... ')+x.san;}
@@ -602,7 +601,7 @@ window.VERChessReviewControls={
  jumpTo:ply=>jump(Number(ply)||0),
  state:()=>({at,total:game.moves.length,running}),
 };
-renderAll();$('progressLabel').textContent='Example position ready · import a game or tap Try example game.';
+renderAll();$('progressLabel').textContent='Choose a completed game from Games to begin your analysis.';
 </script>
 <script>
 
