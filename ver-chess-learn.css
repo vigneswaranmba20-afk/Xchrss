@@ -1,0 +1,74 @@
+/* VER Chess Learn v7.1 — standalone, mobile-first lesson academy.
+ * No impact on the fixed, user-verified game-review board.
+ */
+.ver-learn{display:none;max-width:950px;margin:0 auto 40px}
+body[data-ver-view="learn"] .ver-learn{display:block}
+body[data-ver-view="learn"] .main{display:none!important}
+body[data-ver-view="learn"]{overflow:auto!important}
+body[data-ver-view="learn"] .shell{padding:12px 12px 26px}
+.ver-learn-hero{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:8px 0 17px;padding:22px 19px;overflow:hidden;border:1px solid #a5af7d5e;border-radius:18px;background:radial-gradient(ellipse at 100% 20%,#d0ab4750,transparent 49%),linear-gradient(135deg,#1b4535,#102b24 80%)}
+.ver-learn-hero small{display:block;font-size:10px;font-weight:800;letter-spacing:.17em;color:#f1d58e}
+.ver-learn-hero h1{color:#faf0d5;font:500 clamp(24px,5vw,36px)/1.15 Georgia,serif;margin:6px 0 9px;letter-spacing:-.035em}
+.ver-learn-hero p{font-size:12px;line-height:1.5;color:#c9dcc8;margin:0;max-width:510px}
+.ver-learn-mark{font:normal clamp(55px,11vw,110px)/1 Georgia,serif;color:#dfc16c;opacity:.84;filter:drop-shadow(0 7px 9px #0004)}
+.ver-learn-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:18px}
+.ver-learn-choice{display:flex;text-align:left;align-items:center;gap:13px;border:1px solid #71957e77;background:linear-gradient(150deg,#17382c,#12271f);color:#eee9da;border-radius:15px;padding:15px 13px;min-height:100px;width:100%;transition:transform .16s ease,border-color .16s ease,background .16s ease}
+.ver-learn-choice:hover,.ver-learn-choice[aria-pressed="true"]{background:#244d3a;border-color:#e0c883;transform:translateY(-1px)}
+.ver-learn-choice:focus-visible,.ver-learn button:focus-visible{outline:3px solid #f0d68f;outline-offset:2px}
+.ver-learn-choice-symbol{flex:0 0 55px;font-size:41px;text-align:center;color:#ead093;line-height:1}
+.ver-learn-choice-copy{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0}
+.ver-learn-choice strong{font-size:16px;line-height:1.25}
+.ver-learn-choice small{font-size:11px;color:#c2d6c3;line-height:1.45}
+.ver-learn-choice-arrow{font-size:24px;color:#dbbf82}
+.ver-learn-player[hidden],.ver-learn-quiz[hidden]{display:none!important}
+.ver-learn-player{scroll-margin-top:72px;border:1px solid #b8b48c66;background:linear-gradient(140deg,#163629,#0c251d);border-radius:20px;padding:16px;box-shadow:0 18px 45px #0004}
+.ver-learn-player-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:0 0 12px}
+.ver-learn-player-head small{font-size:10px;font-weight:750;letter-spacing:.13em;color:#e6c57b}
+.ver-learn-player-head h2{font:500 27px/1.2 Georgia,serif;color:#f3eddc;margin:4px 0 0}
+.ver-learn-player-head button{min-height:39px;min-width:82px;border:1px solid #adb99b80;color:#f4eddb;background:#274536;border-radius:11px;font-size:12px;font-weight:650;padding:7px}
+.ver-learn-progress{display:flex;align-items:center;gap:12px;color:#cbdccb;font-size:11px;margin-bottom:13px}
+.ver-learn-progress>span{flex:0 0 auto;font-weight:650}
+.ver-learn-progress>div{flex:1;height:6px;background:#46665066;border-radius:999px;overflow:hidden}
+.ver-learn-progress>div>span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,#4cc292,#ead288);transition:width .2s}
+.ver-learn-stage-layout{display:grid;grid-template-columns:minmax(0,430px) minmax(0,1fr);align-items:start;gap:17px}
+.ver-learn-board-wrap{min-width:0}
+.ver-learn-board{display:grid;width:100%!important;max-width:430px;height:auto!important;aspect-ratio:1!important;min-width:0;min-height:0;border-radius:8px!important;overflow:hidden;box-shadow:0 3px 25px #0006}
+.ver-learn-board .v5-board-arrows{opacity:.9}
+.ver-learn-board-foot{display:block;font-size:10px;color:#c4d1b5;line-height:1.4;margin:7px 0;text-align:center}
+.ver-learn-copy{display:flex;flex-direction:column;min-width:0;gap:10px;min-height:260px}
+.ver-learn-copy>strong{align-self:start;color:#172b20;background:#e4cb88;border-radius:100px;padding:5px 12px;font-size:11px;letter-spacing:.05em}
+.ver-learn-copy>p.ver-learn-text,.ver-learn-copy>p#verLearnText{font-size:15px;line-height:1.72;color:#f4f1e2;margin:0;overflow-wrap:anywhere}
+.ver-learn-feedback{color:#e7cd83;font-size:12px;line-height:1.55;margin:0;min-height:18px}
+.ver-learn-quiz{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ver-learn-quiz button{border-radius:9px;background:#234c38;border:1px solid #77987f;color:#fff4d2;min-height:44px;font:750 13px system-ui,sans-serif}
+.ver-learn-quiz button:disabled{opacity:.6}
+.ver-learn-actions{display:grid;grid-template-columns:1fr 1.15fr 1fr 1fr;gap:7px;margin-top:auto}
+.ver-learn-actions button{min-height:43px;border:1px solid #819e8980;border-radius:9px;background:#244536;color:#eff5e5;font-size:12px;font-weight:750;padding:8px 6px}
+.ver-learn-actions #verLearnNext{background:#e4ca84;color:#1b2d1f;border-color:#e9d493}
+.ver-learn-actions button:disabled{opacity:.38}
+.ver-learn-note{font-size:11px;line-height:1.5;color:#9ebba5;margin:12px 2px}
+@media(max-width:720px){
+ .ver-learn-grid{grid-template-columns:1fr;gap:9px}
+ .ver-learn-choice{min-height:78px;padding:11px 10px}
+ .ver-learn-choice-symbol{flex-basis:46px;font-size:35px}
+ .ver-learn-stage-layout{grid-template-columns:1fr;gap:12px}
+ .ver-learn-board{width:min(100%,420px)!important;margin:auto}
+ .ver-learn-copy{min-height:0;gap:10px}
+ .ver-learn-hero{padding:15px}
+ .ver-learn-hero h1{font-size:26px}
+ .ver-learn-mark{font-size:64px}
+ .ver-learn-player{padding:11px;border-radius:14px}
+ .ver-learn-player-head h2{font-size:23px}
+ .ver-learn-copy>p#verLearnText{font-size:13px;line-height:1.62}
+}
+@media(max-width:370px){
+ .ver-learn-hero h1{font-size:22px}
+ .ver-learn-hero p{font-size:11px}
+ .ver-learn-mark{font-size:49px}
+ .ver-learn-actions{gap:4px}
+ .ver-learn-actions button{font-size:10px;padding:6px 3px}
+}
+@media(prefers-reduced-motion:reduce){
+ .ver-learn-choice,.ver-learn-progress>div>span{transition:none!important}
+ .ver-learn-choice:hover{transform:none}
+}
