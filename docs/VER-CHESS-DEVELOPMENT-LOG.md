@@ -4,11 +4,11 @@ This log separates deployed functionality from work in progress. Entries must be
 
 ## 2026-11-07 — v7.1 Learn Academy foundation
 
-Status: **Pull request testing** (not deployed at time of authoring; verify CI and Pages before updating).
+Status: **Deployed and verified**. [PR #14](https://github.com/vigneswaranmba20-afk/Xchrss/pull/14) merged as [544b5bc](https://github.com/vigneswaranmba20-afk/Xchrss/commit/544b5bcba75450528662b3d615fe244535de5ada); [pre-merge Chromium tests passed](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42400841349), [post-merge Chromium tests passed](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42400950200), [GitHub Pages deployment passed](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42400949674).
 
 Planned change: add a dedicated fourth Learn tab with two original sample lessons (Knight Fork, Absolute Pin), an independent SmoothBoard chess diagram, six guided lesson stages (Observe, Discover, Animate, Explain, Practice, Review), original short quizzes, reduced-motion behavior and offline assets. Added Playwright tests for lesson geometry, quiz, review preservation and offline PWA loading. Chess engine, saved game history, Stockfish and main game review board remain untouched.
 
-Next: Verify actual full-site Chromium tests; if any fail, fix without merging; then merge and verify GitHub Pages publication.
+Next: Build small positive and negative tactical position fixtures for fork and absolute-pin detectors (v7.2), then connect only verified motifs to game analysis. Keep researching mobile interaction design without enlarging the stable board.
 
 ## 2026-11-07 — v7 interactive Coach on Board
 
