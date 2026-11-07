@@ -157,3 +157,11 @@ body[data-ver-view="games"] .hero,body[data-ver-view="insights"] .hero,body[data
 @media(prefers-reduced-motion:reduce){
  .v6-coach-note{transition:none!important;transform:none!important}
 }
+
+.v6-library-filters{padding:4px 0;border-bottom:1px solid #ffffff19}
+.v6-library-filters>summary{list-style:none;font-size:11px;color:#b7cbb8;cursor:pointer;padding:7px 0;min-height:32px}
+.v6-library-filters>summary::-webkit-details-marker{display:none}
+.v6-library-filters>summary::after{content:" ▾";color:#e0c57a}
+.v6-library-filters[open]>summary::after{content:" ▴"}
+.v6-library-filters .verv4-filters{margin:6px 0 8px}
+.v6-library-filters .verv4-summary{margin:8px 0}
