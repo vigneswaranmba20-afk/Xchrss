@@ -1,278 +1,365 @@
-/* VER Chess Intelligence v4 — public username game library.
-   Independent, free browser-only integration. No OAuth token, private data or API key.
-   Stockfish analysis continues through the existing local engine and PGN importer.
-*/
+/* VER Chess Intelligence — v4.1 mobile UX.
+ * Two visible public account searches, honest search states, filtered results,
+ * local PGN library and a compact Games / Board / Insights flow.
+ * This is independent of both services; no paid APIs, passwords or tracking.
+ */
 (function(){
 'use strict';
 if(window.VERChessLibraryV4)return;
+const root=document.querySelector('.shell');
+const main=document.querySelector('main.main');
 const host=document.querySelector('aside.right');
-if(!host || typeof window.importText!=='function' || typeof window.runAnalysis!=='function')return;
-const STORE='ver-chess-v4-public-library-v1';
-const MAX_ITEMS=80;
-const MAX_PER_REQUEST=40;
+const left=document.querySelector('.left');
+if(!root||!main||!host||!left||typeof window.importText!=='function'||typeof window.runAnalysis!=='function')return;
 const $=id=>document.getElementById(id);
-const state={items:[],accounts:{chesscom:'',lichess:''},busy:false,shown:10};
-const css=document.createElement('style');
-css.textContent=[
-'.verv4-panel{border-color:#b5c98a42}',
-'.verv4-panel .body{display:grid;gap:11px}',
-'.verv4-intro{font-size:12px;color:#b8ccba;line-height:1.6;margin:0}',
-'.verv4-search{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr) auto;gap:7px}',
-'.verv4-search .btn{white-space:nowrap}',
-'.verv4-status{font-size:11px;color:#d5d7ba;min-height:17px;line-height:1.5}',
-'.verv4-filters{display:grid;grid-template-columns:1fr 1fr;gap:7px}',
-'.verv4-filters input{grid-column:1/-1}',
-'.verv4-summary{display:flex;gap:6px;flex-wrap:wrap}',
-'.verv4-summary span{padding:6px 8px;font-size:11px;border-radius:8px;background:#0b251c;border:1px solid #68836c50;color:#d6e6d6}',
-'.verv4-list{display:grid;gap:8px;max-height:450px;overflow-y:auto;scrollbar-color:#4c7058 transparent}',
-'.verv4-game{display:flex;flex-direction:column;gap:8px;border:1px solid #58746063;border-radius:12px;padding:11px;background:#10261f}',
-'.verv4-game-main{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}',
-'.verv4-game-main strong{font-size:12px;font-weight:680;line-height:1.5;display:block;overflow-wrap:anywhere}',
-'.verv4-game-main small{font-size:10px;color:#b7cbb6;display:block;margin-top:3px;line-height:1.5}',
-'.verv4-result{font-size:10px;flex:none;border:1px solid #bfcf9e66;border-radius:999px;padding:4px 8px;color:#f1dfae}',
-'.verv4-result.win{color:#b9f2c1;border-color:#76b48b88}',
-'.verv4-result.loss{color:#f4aaaa;border-color:#bb777788}',
-'.verv4-actions{display:flex;gap:7px;align-items:center;flex-wrap:wrap}',
-'.verv4-actions button{flex:1;min-width:95px}',
-'.verv4-actions a{color:#ddca92;font-size:11px;white-space:nowrap;padding:5px}',
-'.verv4-actions a:focus-visible,.verv4-game button:focus-visible{outline:2px solid #e5c77d;outline-offset:2px}',
-'.verv4-tail{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}',
-'.verv4-tail .hint{max-width:240px}',
-'.verv4-empty{border:1px dashed #6a8a725c;padding:14px;border-radius:10px;font-size:12px;color:#a9c0ac}',
-'@media(max-width:430px){.verv4-search{grid-template-columns:1fr 1fr}.verv4-search input{grid-column:1/-1}.verv4-search button{grid-column:1/-1}.verv4-actions button{min-width:100px}.verv4-panel .body{gap:10px}}'
-].join('\n');
-document.head.append(css);
-const panel=document.createElement('section');
-panel.className='panel verv4-panel';
-panel.setAttribute('aria-label','Public chess game library');
-panel.innerHTML=[
-'<div class="panel-head"><h2>00 / Your game library</h2><span class="sub">Chess.com + Lichess · Free</span></div>',
-'<div class="body">',
-'<p class="verv4-intro">Enter a public chess username. Find finished games on either platform and keep them together here. No password or paid API needed.</p>',
-'<form id="verV4Form" class="verv4-search">',
-'<select id="verV4Platform" aria-label="Chess platform"><option value="chesscom">Chess.com</option><option value="lichess">Lichess</option></select>',
-'<input id="verV4Username" type="text" aria-label="Public chess username" maxlength="32" autocomplete="off" autocapitalize="none" spellcheck="false" placeholder="Player username" required />',
-'<button type="submit" class="btn btn-gold" id="verV4Find">Find games</button>',
-'</form>',
-'<div id="verV4Status" class="verv4-status" role="status" aria-live="polite">Ready to search public finished games.</div>',
-'<div class="verv4-summary" id="verV4Summary" aria-label="Library statistics"></div>',
-'<div class="verv4-filters">',
-'<select id="verV4Source" aria-label="Filter by platform"><option value="all">Both platforms</option><option value="chesscom">Chess.com</option><option value="lichess">Lichess</option></select>',
-'<select id="verV4Result" aria-label="Filter by result"><option value="all">All results</option><option value="win">Wins</option><option value="loss">Losses</option><option value="draw">Draws</option></select>',
-'<input id="verV4Query" type="text" aria-label="Search games" placeholder="Search opponent or opening…" />',
-'</div>',
-'<div class="verv4-list" id="verV4List" aria-live="polite"></div>',
-'<div class="verv4-tail"><button class="btn btn-quiet" id="verV4More" hidden>Show more games</button><button class="btn btn-quiet" id="verV4Clear" type="button">Clear saved games</button></div>',
-'<p class="hint">Public completed games only. Only your search username goes to the selected chess platform. Imported PGNs stay in this browser; Stockfish analysis stays on your device. Requests need internet.</p>',
-'</div>'
+const STORE='ver-chess-v4-public-library-v1';
+const MAX_ITEMS=80,MAX_FETCH=40;
+const state={
+ items:[],accounts:{chesscom:'',lichess:''},shown:10,busy:false,
+ active:null,currentKeys:[],scope:'all',view:'games',selected:null
+};
+const nameFor=k=>k==='chesscom'?'Chess.com':'Lichess';
+function el(tag,cls,text){
+ const n=document.createElement(tag);
+ if(cls)n.className=cls;
+ if(text!==undefined)n.textContent=text;
+ return n;
+}
+const nav=el('nav','verv4-appnav');
+nav.setAttribute('aria-label','Main chess navigation');
+nav.setAttribute('role','tablist');
+nav.innerHTML=[
+ '<button type="button" role="tab" data-ver-nav="games" aria-selected="true">♟ Games <span id="verV4Count" class="v4-count">0</span></button>',
+ '<button type="button" role="tab" data-ver-nav="board" aria-selected="false">▦ Board</button>',
+ '<button type="button" role="tab" data-ver-nav="insights" aria-selected="false">✦ Insights</button>'
 ].join('');
-host.insertBefore(panel,host.firstChild);
-function status(message){$('verV4Status').textContent=message;}
-function keyFor(platform,source,pgn){
- const id=String(source||'').trim().toLowerCase();
- if(id)return platform+':'+id;
- let hash=2166136261;
- for(let i=0;i<pgn.length;i++){hash^=pgn.charCodeAt(i);hash=Math.imul(hash,16777619);}
- return platform+':pgn:'+String(hash>>>0);
+root.insertBefore(nav,main);
+const reviewbar=el('div','verv4-reviewbar');
+reviewbar.innerHTML=[
+ '<button type="button" id="verV4Back" class="btn btn-quiet verv4-inline-back" aria-label="Back to games">← Games</button>',
+ '<div class="verv4-reviewcopy"><strong id="verV4ReviewName">Game review board</strong><small id="verV4ReviewMeta">Choose a game from your library or import a PGN</small></div>',
+ '<button type="button" id="verV4QuickAnalyze" class="btn btn-gold">✦ Analyse</button>'
+].join('');
+left.insertBefore(reviewbar,left.firstChild);
+const insightbar=el('div','verv4-insightsbar');
+insightbar.innerHTML='<button type="button" class="btn btn-quiet" id="verV4BackBoard">← Board</button><strong>Game insights</strong><span class="verv4-secondary">Stockfish · Local</span>';
+host.insertBefore(insightbar,host.firstChild);
+const panel=el('section','panel verv4-panel');
+panel.setAttribute('aria-label','Public games from Chess.com and Lichess');
+panel.innerHTML=[
+ '<div class="panel-head"><h2>00 / Discover your games</h2><span class="sub">Two platforms · One library</span></div>',
+ '<div class="body">',
+ '<div><div class="verv4-overline">Your chess studio</div><h2 class="verv4-heading">Find your games. Learn faster.</h2><p class="verv4-lead">Both platforms are ready. Type a public username in either card; no account login required.</p></div>',
+ '<div class="verv4-platforms">',
+ '<section class="verv4-platform" aria-labelledby="verV4ChessLabel">',
+ '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♜</div><h3 id="verV4ChessLabel">Chess.com</h3></div>',
+ '<form id="verV4ChessForm"><label for="verV4ChessUsername">Chess.com username</label><input type="text" id="verV4ChessUsername" maxlength="32" placeholder="e.g. hikaru" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4ChessFind" type="submit" class="btn btn-gold">Find Chess.com games</button></form>',
+ '<div class="verv4-platform-status" id="verV4ChessStatus" role="status" aria-live="polite">Public finished games</div>',
+ '</section>',
+ '<section class="verv4-platform" aria-labelledby="verV4LichessLabel">',
+ '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♞</div><h3 id="verV4LichessLabel">Lichess</h3></div>',
+ '<form id="verV4LichessForm"><label for="verV4LichessUsername">Lichess username</label><input type="text" id="verV4LichessUsername" maxlength="32" placeholder="e.g. thibault" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4LichessFind" type="submit" class="btn btn-gold">Find Lichess games</button></form>',
+ '<div class="verv4-platform-status" id="verV4LichessStatus" role="status" aria-live="polite">Public finished games</div>',
+ '</section>',
+ '</div>',
+ '<div class="verv4-results-head"><div><span class="verv4-overline">Your collection</span><h3 id="verV4ResultTitle">Saved games</h3></div><button type="button" class="verv4-clear" id="verV4Clear">Clear saved</button></div>',
+ '<div class="verv4-scope"><button type="button" id="verV4All" class="active" aria-pressed="true">All saved games</button><button type="button" id="verV4Latest" aria-pressed="false" hidden>Current search</button></div>',
+ '<p class="verv4-context" id="verV4Context" role="status" aria-live="polite">Your saved public games appear here, from either platform.</p>',
+ '<div class="verv4-filters"><select id="verV4Source" aria-label="Filter platform"><option value="all">Both platforms</option><option value="chesscom">Chess.com only</option><option value="lichess">Lichess only</option></select><select id="verV4Result" aria-label="Filter game result"><option value="all">All outcomes</option><option value="win">Wins</option><option value="loss">Losses</option><option value="draw">Draws</option></select><input type="text" id="verV4Query" placeholder="Search opponent or opening…" aria-label="Search games"/></div>',
+ '<div class="verv4-summary" id="verV4Summary" aria-label="Visible game results"></div>',
+ '<div class="verv4-list" id="verV4List" aria-live="polite"></div>',
+ '<button type="button" id="verV4More" class="btn btn-quiet verv4-loadmore" hidden>Show more games</button>',
+ '<p class="verv4-fineprint">Only public, completed standard games. Stockfish analysis runs on this device, at no paid API cost. PGNs are saved only in this browser. Unaffiliated with Chess.com or Lichess.</p>',
+ '</div>'
+].join('');
+host.insertBefore(panel,insightbar.nextSibling);
+function setView(view){
+ if(!['games','board','insights'].includes(view))return;
+ state.view=view;
+ document.body.setAttribute('data-ver-view',view);
+ nav.querySelectorAll('[data-ver-nav]').forEach(button=>{
+  const selected=button.getAttribute('data-ver-nav')===view;
+  button.setAttribute('aria-selected',String(selected));
+  button.tabIndex=selected?0:-1;
+ });
+ if(typeof window.scrollTo==='function')window.scrollTo({top:0,behavior:'instant'});
 }
-function headersOf(pgn){
- const h={};
- const re=/^\s*\[([A-Za-z0-9_]+)\s+"((?:\\.|[^"])*)"\s*\]\s*$/gm;
- let m;
- while((m=re.exec(pgn))!==null)h[m[1]]=m[2].replace(/\\"/g,'"');
- return h;
+nav.addEventListener('click',e=>{
+ const button=e.target.closest('[data-ver-nav]');
+ if(button)setView(button.getAttribute('data-ver-nav'));
+});
+$('verV4Back').addEventListener('click',()=>setView('games'));
+$('verV4BackBoard').addEventListener('click',()=>setView('board'));
+$('verV4QuickAnalyze').addEventListener('click',()=>{
+ if(state.busy){$('verV4ReviewMeta').textContent='Finish importing before analysis.';return;}
+ window.runAnalysis();
+});
+function setPlatformStatus(platform,message,kind){
+ const target=$(platform==='chesscom'?'verV4ChessStatus':'verV4LichessStatus');
+ target.textContent=message;
+ target.setAttribute('data-kind',kind||'');
 }
-function pgnParts(text){
- const clean=String(text||'').replace(/^\uFEFF/,'').trim();
- if(!clean)return [];
- return clean.split(/(?=^\[Event\s+")/gm).map(x=>x.trim()).filter(x=>x&&/^\s*\[[A-Za-z]+/m.test(x));
+function titleOf(item){return item.white+' vs '+item.black;}
+function sourceLabel(platform){return platform==='chesscom'?'Chess.com':'Lichess';}
+function getHeaders(pgn){
+ const headers={},re=/^\s*\[([A-Za-z0-9_]+)\s+"((?:\\.|[^"])*)"\s*\]\s*$/gm;
+ let m;while((m=re.exec(pgn))!==null)headers[m[1]]=m[2].replace(/\\"/g,'"');
+ return headers;
 }
-function standardFinished(h){
- if(h.Variant && !['standard','chess'].includes(h.Variant.toLowerCase()))return false;
- return ['1-0','0-1','1/2-1/2'].includes(h.Result);
+function splitPgn(raw){
+ const data=String(raw||'').replace(/^\uFEFF/,'').trim();
+ if(!data)return [];
+ const parts=data.split(/(?=^\[Event\s+")/gm).map(x=>x.trim()).filter(x=>/^\s*\[[A-Za-z]/m.test(x));
+ return parts.length?parts:[data];
 }
-function dateFrom(h){
+function gameStamp(h){
  const d=(h.UTCDate||h.Date||'').replace(/\./g,'-');
  if(!/^\d{4}-\d\d-\d\d$/.test(d))return 0;
  const t=/^\d\d:\d\d:\d\d$/.test(h.UTCTime||'')?h.UTCTime:'00:00:00';
- return Date.parse(d+'T'+t+'Z')||0;
+ const ms=Date.parse(d+'T'+t+'Z');
+ return Number.isFinite(ms)?ms:0;
 }
-function record(platform,username,pgn,source,time,classification){
- const h=headersOf(pgn);
- if(!standardFinished(h) || !pgn.trim())return null;
- const white=String(h.White||'White'),black=String(h.Black||'Black');
- const player=String(username||'').toLowerCase();
+function identity(platform,url,pgn){
+ if(url && /^https:\/\//i.test(url))return platform+':'+url.split('?')[0].toLowerCase();
+ let hash=2166136261;
+ for(let i=0;i<pgn.length;i++){hash^=pgn.charCodeAt(i);hash=Math.imul(hash,16777619);}
+ return platform+':'+(hash>>>0);
+}
+function record(platform,username,pgn,url,at,timeClass){
+ if(typeof pgn!=='string'||!pgn.trim()||pgn.length>80000)return null;
+ const h=getHeaders(pgn);
+ if(h.Variant&&!['standard','chess'].includes(h.Variant.toLowerCase()))return null;
+ if(!['1-0','0-1','1/2-1/2'].includes(h.Result))return null;
+ const white=h.White||'White',black=h.Black||'Black',player=username.toLowerCase();
  if(white.toLowerCase()!==player && black.toLowerCase()!==player)return null;
- const url=typeof source==='string' && /^https:\/\//i.test(source)?source:(h.Site||'');
- const key=keyFor(platform,url,pgn);
- return {key,platform,username,white,black,result:h.Result,event:String(h.Event||'Game'),opening:String(h.Opening||''),timeClass:String(classification||h.TimeControl||''),url,pgn,at:Number(time)||dateFrom(h)};
+ const source=url||h.Site||'',opening=h.Opening||'';
+ return {key:identity(platform,source,pgn),platform,username,white,black,result:h.Result,
+  opening,event:h.Event||'Chess game',timeClass:timeClass||h.TimeControl||'',url:source,
+  at:Number(at)||gameStamp(h),pgn};
 }
-function outcome(item){
- if(item.result==='1/2-1/2')return 'draw';
- const white=item.white.toLowerCase()===item.username.toLowerCase();
- const won=item.result==='1-0'?white:!white;
- return won?'win':'loss';
+function outcome(x){
+ if(x.result==='1/2-1/2')return 'draw';
+ const isWhite=x.white.toLowerCase()===x.username.toLowerCase();
+ return (x.result==='1-0')===isWhite?'win':'loss';
 }
-function loadSaved(){
- try {
-  const saved=JSON.parse(localStorage.getItem(STORE)||'null');
-  if(saved && Array.isArray(saved.items)){
-   state.items=saved.items.filter(x=>x&&typeof x.pgn==='string'&&x.pgn.length<80000&&['lichess','chesscom'].includes(x.platform)&&typeof x.key==='string').slice(0,MAX_ITEMS);
-   if(saved.accounts && typeof saved.accounts==='object'){
-    for(const k of ['chesscom','lichess'])if(typeof saved.accounts[k]==='string')state.accounts[k]=saved.accounts[k].slice(0,32);
-   }
-  }
- }catch(_){status('Browser storage unavailable. You can still import games for this session.');}
-}
-function save(){
- try{localStorage.setItem(STORE,JSON.stringify({items:state.items,accounts:state.accounts}));}
- catch(_){status('Game list is available now, but this browser could not save it offline (storage full or restricted).');}
-}
-function showDate(ts){
- if(!Number.isFinite(ts)||ts<1)return 'Date unavailable';
- try{return new Date(ts).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});}
- catch(_){return 'Date unavailable';}
-}
-function sourceLabel(x){return x==='chesscom'?'Chess.com':'Lichess';}
-function safeGameUrl(item){
+function safeSource(x){
  try{
-  const u=new URL(item.url);
+  const u=new URL(x.url);
   if(u.protocol!=='https:')return '';
-  if(item.platform==='lichess' && ['lichess.org','www.lichess.org'].includes(u.hostname))return u.href;
-  if(item.platform==='chesscom' && ['chess.com','www.chess.com'].includes(u.hostname))return u.href;
+  if(x.platform==='chesscom'&&['chess.com','www.chess.com'].includes(u.hostname))return u.href;
+  if(x.platform==='lichess'&&['lichess.org','www.lichess.org'].includes(u.hostname))return u.href;
  }catch(_){}
  return '';
 }
-function filtered(){
- const src=$('verV4Source').value,res=$('verV4Result').value,q=$('verV4Query').value.toLowerCase().trim();
- return state.items.filter(x=>(src==='all'||x.platform===src)&&(res==='all'||outcome(x)===res)&&(!q||[x.white,x.black,x.opening,x.event,x.username].some(t=>String(t).toLowerCase().includes(q))));
+function displayDate(at){
+ if(!at)return 'Date unavailable';
+ const d=new Date(at);
+ return Number.isNaN(d.valueOf())?'Date unavailable':d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'});
 }
-function addText(parent,tag,content,cls){
- const el=document.createElement(tag);
- if(cls)el.className=cls;
- el.textContent=content;
- parent.append(el);
- return el;
+function loadSaved(){
+ try{
+  const data=JSON.parse(localStorage.getItem(STORE)||'null');
+  if(data&&Array.isArray(data.items))state.items=data.items.filter(x=>x&&typeof x.pgn==='string'&&x.pgn.length<80000&&['chesscom','lichess'].includes(x.platform)&&typeof x.key==='string').slice(0,MAX_ITEMS);
+  if(data?.accounts)for(const p of ['chesscom','lichess'])if(typeof data.accounts[p]==='string')state.accounts[p]=data.accounts[p].slice(0,32);
+ }catch(_){}
 }
-function showItem(item){
- const row=document.createElement('article');row.className='verv4-game';
- const main=document.createElement('div');main.className='verv4-game-main';
- const desc=document.createElement('div');
- addText(desc,'strong',item.white+' vs '+item.black);
- const kind=sourceLabel(item.platform)+' · '+showDate(item.at)+(item.timeClass?' · '+item.timeClass:'');
- addText(desc,'small',kind);
- if(item.opening)addText(desc,'small',item.opening);
- main.append(desc);
- const result=outcome(item);
- addText(main,'span',result==='win'?'WIN':result==='loss'?'LOSS':'DRAW','verv4-result '+result);
- row.append(main);
- const actions=document.createElement('div');actions.className='verv4-actions';
- const load=document.createElement('button');load.className='btn btn-quiet';load.type='button';load.textContent='Open board';load.addEventListener('click',()=>openGame(item,false));
- const analyse=document.createElement('button');analyse.className='btn btn-gold';analyse.type='button';analyse.textContent='✦ Analyse';analyse.addEventListener('click',()=>openGame(item,true));
- actions.append(load,analyse);
- const url=safeGameUrl(item);
- if(url){const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Source';link.setAttribute('aria-label','Open original game on '+sourceLabel(item.platform));actions.append(link);}
- row.append(actions);
- return row;
+function persist(){
+ try{localStorage.setItem(STORE,JSON.stringify({items:state.items,accounts:state.accounts}));}
+ catch(_){$('verV4Context').textContent='Browser storage is full or disabled; games remain available this session only.';}
+}
+function visibleItems(){
+ let pool=state.scope==='latest'?state.items.filter(x=>state.currentKeys.includes(x.key)):[...state.items];
+ const src=$('verV4Source').value,win=$('verV4Result').value,q=$('verV4Query').value.trim().toLowerCase();
+ return pool.filter(x=>(src==='all'||x.platform===src)&&(win==='all'||outcome(x)===win)&&(!q||[x.username,x.white,x.black,x.opening,x.event].some(s=>String(s).toLowerCase().includes(q))));
+}
+function showGame(item){
+ const article=el('article','verv4-game');
+ const top=el('div','verv4-game-top');
+ const info=el('div','verv4-game-info');
+ const topline=el('div','verv4-game-top');
+ topline.append(el('span','verv4-tag '+item.platform,sourceLabel(item.platform)));
+ topline.append(el('span','verv4-result '+outcome(item),outcome(item).toUpperCase()));
+ info.append(topline);
+ info.append(el('strong',null,titleOf(item)));
+ info.append(el('small',null,displayDate(item.at)+(item.timeClass?' · '+item.timeClass:'')+(item.opening?' · '+item.opening:'')));
+ top.append(info);
+ article.append(top);
+ const actions=el('div','verv4-game-actions');
+ const board=el('button','btn btn-quiet','View board');
+ board.type='button';board.addEventListener('click',()=>openItem(item,false));
+ const analyze=el('button','btn btn-gold','✦ Analyse');
+ analyze.type='button';analyze.addEventListener('click',()=>openItem(item,true));
+ actions.append(board,analyze);
+ const source=safeSource(item);
+ if(source){
+  const link=el('a',null,'Source');
+  link.href=source;link.target='_blank';link.rel='noopener noreferrer';
+  link.setAttribute('aria-label','Open original game on '+sourceLabel(item.platform));
+  actions.append(link);
+ } else actions.append(el('span',null,''));
+ article.append(actions);
+ return article;
 }
 function render(){
- const sum=$('verV4Summary');sum.replaceChildren();
+ $('verV4Count').textContent=String(state.items.length);
+ $('verV4All').classList.toggle('active',state.scope==='all');
+ $('verV4All').setAttribute('aria-pressed',String(state.scope==='all'));
+ $('verV4Latest').classList.toggle('active',state.scope==='latest');
+ $('verV4Latest').setAttribute('aria-pressed',String(state.scope==='latest'));
+ $('verV4Latest').hidden=!state.active;
+ const all=visibleItems();
+ const title=state.scope==='latest'&&state.active?'Results: '+sourceLabel(state.active.platform)+' @'+state.active.username:'Saved games';
+ $('verV4ResultTitle').textContent=title;
+ const summary=$('verV4Summary');
+ summary.replaceChildren();
  const counts={win:0,loss:0,draw:0};
- for(const x of state.items)counts[outcome(x)]++;
- for(const t of [state.items.length+' games',counts.win+' wins',counts.loss+' losses',counts.draw+' draws'])addText(sum,'span',t);
- const items=filtered(),list=$('verV4List');list.replaceChildren();
- if(!items.length)addText(list,'p',state.items.length?'No games match those filters.':'Your library is empty. Search a username to get started.','verv4-empty');
- else for(const x of items.slice(0,state.shown))list.append(showItem(x));
- $('verV4More').hidden=items.length<=state.shown;
- $('verV4More').textContent='Show more ('+Math.max(0,items.length-state.shown)+' remaining)';
+ for(const item of all)counts[outcome(item)]++;
+ for(const val of [all.length+' shown',counts.win+' wins',counts.loss+' losses',counts.draw+' draws'])summary.append(el('span',null,val));
+ const list=$('verV4List');list.replaceChildren();
+ if(all.length===0){
+  const empty=el('div','verv4-empty');
+  let heading='No games to display',message='Enter a username above to search public completed games.';
+  if(state.scope==='latest'&&state.active){
+   heading='No results for '+sourceLabel(state.active.platform)+' @'+state.active.username;
+   message='This search returned no completed standard games, failed, or matches your filters. Older saved accounts are hidden here. Tap “All saved games” to see them.';
+  }else if(state.items.length){
+   message='Try changing the result, platform or opponent filters.';
+  }
+  empty.append(el('strong',null,heading),el('span',null,message));list.append(empty);
+ }else{
+  for(const game of all.slice(0,state.shown))list.append(showGame(game));
+ }
+ $('verV4More').hidden=all.length<=state.shown;
+ $('verV4More').textContent='Show more · '+Math.max(0,all.length-state.shown)+' remaining';
 }
-function openGame(item,analyse){
- if(state.busy){status('Finish importing before opening a game.');return;}
+function switchScope(scope){
+ if(scope==='latest'&&!state.active)return;
+ state.scope=scope;state.shown=10;
+ $('verV4Source').value='all';
+ $('verV4Result').value='all';$('verV4Query').value='';
+ $('verV4Context').textContent=scope==='all'?'Showing saved public games from both platforms and all previous accounts.':('Showing only the newest '+sourceLabel(state.active.platform)+' search for @'+state.active.username+'.');
+ render();
+}
+function openItem(item,analyze){
+ if(state.busy)return;
  try{
   window.importText(item.pgn);
-  status('Opened '+item.white+' vs '+item.black+'. '+(analyse?'Starting local Stockfish review…':'Choose Analyse when you are ready.'));
-  if(analyse)window.runAnalysis();
-  else $('board').scrollIntoView({behavior:'smooth',block:'start'});
- }catch(err){status('Could not parse this PGN: '+(err?.message||String(err))+'. Try another standard chess game.');}
+  state.selected=item;
+  $('verV4ReviewName').textContent=titleOf(item);
+  $('verV4ReviewMeta').textContent=sourceLabel(item.platform)+' · '+displayDate(item.at);
+  setView('board');
+  if(analyze)window.runAnalysis();
+ }catch(err){
+  $('verV4Context').textContent='Unable to open this game: '+(err?.message||String(err))+'. Try another completed standard game.';
+ }
 }
-async function readApi(url,type){
- const controller=new AbortController();
- const timer=setTimeout(()=>controller.abort(),20000);
+async function api(url,type){
+ const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),20000);
  try{
-  const response=await fetch(url,{method:'GET',mode:'cors',credentials:'omit',headers:{Accept:type==='json'?'application/json':'application/x-chess-pgn'},signal:controller.signal});
+  const response=await fetch(url,{method:'GET',credentials:'omit',mode:'cors',signal:ctrl.signal,headers:{Accept:type==='json'?'application/json':'application/x-chess-pgn'}});
   if(!response.ok){
-   if(response.status===404)throw Error('Player not found or games unavailable (404).');
-   if(response.status===429)throw Error('Platform rate limit reached (429). Please try again later.');
-   throw Error('Platform returned HTTP '+response.status+'.');
+   if(response.status===404)throw Error('Username or public game archive not found (404).');
+   if(response.status===429)throw Error('Rate limited (429). Try again later.');
+   throw Error('Provider returned HTTP '+response.status+'.');
   }
   return type==='json'?await response.json():await response.text();
  }catch(err){
-  if(err?.name==='AbortError')throw Error('Request timed out. Try again on a stable connection.');
-  if(err instanceof TypeError)throw Error('Network or browser cross-origin (CORS) restriction. Try again online or upload a PGN.');
+  if(err?.name==='AbortError')throw Error('Request timed out; check your connection.');
+  if(err instanceof TypeError)throw Error('Network or browser CORS restriction; manual PGN import is still available.');
   throw err;
  }finally{clearTimeout(timer);}
 }
-async function chessComGames(username){
- const base='https://api.chess.com/pub/player/'+encodeURIComponent(username);
- const index=await readApi(base+'/games/archives','json');
+async function importChessCom(username){
+ const base='https://api.chess.com/pub/player/'+encodeURIComponent(username)+'/games/';
+ const index=await api(base+'archives','json');
  const archives=Array.isArray(index.archives)?index.archives.slice(-6).reverse():[];
- const out=[];
- for(const raw of archives){
-  if(out.length>=MAX_PER_REQUEST)break;
-  let u;
-  try{u=new URL(raw);}catch(_){continue;}
-  if(u.origin!=='https://api.chess.com' || !u.pathname.startsWith('/pub/player/'))continue;
-  const result=await readApi(u.href,'json');
-  const games=Array.isArray(result.games)?result.games:[];
-  for(const g of games){
-   if(g.rules && g.rules!=='chess')continue;
-   if(!g.pgn || !g.end_time)continue;
-   const rec=record('chesscom',username,g.pgn,g.url,g.end_time*1000,g.time_class);
-   if(rec)out.push(rec);
+ const found=new Map();
+ for(let n=0;n<archives.length;n++){
+  if(found.size>=MAX_FETCH)break;
+  const url=new URL(archives[n]);
+  if(url.origin!=='https://api.chess.com'||!url.pathname.startsWith('/pub/player/'))continue;
+  setPlatformStatus('chesscom','Checking month '+(n+1)+' of '+archives.length+' · '+found.size+' games…','loading');
+  const result=await api(url.href,'json');
+  for(const g of (Array.isArray(result.games)?result.games:[])){
+   if(!g||g.rules&&g.rules!=='chess'||!g.end_time||!g.pgn)continue;
+   const item=record('chesscom',username,g.pgn,g.url,g.end_time*1000,g.time_class);
+   if(item)found.set(item.key,item);
   }
-  status('Chess.com: checked '+Math.min(6,archives.indexOf(raw)+1)+' monthly archive(s), found '+out.length+' completed standard games…');
  }
- return out.sort((a,b)=>b.at-a.at).slice(0,MAX_PER_REQUEST);
+ return Array.from(found.values()).sort((a,b)=>b.at-a.at).slice(0,MAX_FETCH);
 }
-async function lichessGames(username){
- const url='https://lichess.org/api/games/user/'+encodeURIComponent(username)+'?max='+MAX_PER_REQUEST+'&clocks=false&evals=false&opening=true';
- const data=await readApi(url,'pgn');
- return pgnParts(data).map(pgn=>{
-  const h=headersOf(pgn);
-  return record('lichess',username,pgn,h.Site||'',0,h.Event||'');
- }).filter(Boolean).slice(0,MAX_PER_REQUEST);
+async function importLichess(username){
+ const url='https://lichess.org/api/games/user/'+encodeURIComponent(username)+'?max='+MAX_FETCH+'&finished=true&clocks=false&evals=false&opening=true';
+ const body=await api(url,'pgn');
+ return splitPgn(body).map(pgn=>{
+  const h=getHeaders(pgn);
+  return record('lichess',username,pgn,h.Site||'',0,h.TimeControl||'');
+ }).filter(Boolean).slice(0,MAX_FETCH);
 }
-async function searchUser(e){
- e.preventDefault();
+async function findGames(platform,evt){
+ evt.preventDefault();
  if(state.busy)return;
- const platform=$('verV4Platform').value,username=$('verV4Username').value.trim();
- if(!/^[A-Za-z0-9_.-]{2,32}$/.test(username)){status('Use a valid public username (2–32 letters, numbers, dots, underscores or hyphens).');return;}
+ const input=$(platform==='chesscom'?'verV4ChessUsername':'verV4LichessUsername');
+ const username=input.value.trim();
+ if(!/^[A-Za-z0-9_.-]{2,32}$/.test(username)){
+  setPlatformStatus(platform,'Use 2–32 letters, numbers, dots, hyphens or underscores.','error');
+  return;
+ }
+ state.active={platform,username};
+ state.currentKeys=[];state.scope='latest';state.shown=10;
+ $('verV4Source').value='all';$('verV4Result').value='all';$('verV4Query').value='';
+ $('verV4Context').textContent='Searching '+sourceLabel(platform)+' for @'+username+'… Other saved accounts are hidden until you choose All saved games.';
+ render();
  state.busy=true;
- const btn=$('verV4Find');btn.disabled=true;btn.textContent='Finding…';
- status('Fetching '+sourceLabel(platform)+' games for '+username+'…');
+ const buttons=[$('verV4ChessFind'),$('verV4LichessFind')];
+ buttons.forEach(b=>b.disabled=true);
+ $(platform==='chesscom'?'verV4ChessFind':'verV4LichessFind').textContent='Searching…';
+ setPlatformStatus(platform,'Connecting to '+sourceLabel(platform)+'…','loading');
  try{
-  const incoming=platform==='chesscom'?await chessComGames(username):await lichessGames(username);
-  const map=new Map(state.items.map(x=>[x.key,x]));
-  for(const item of incoming)map.set(item.key,item);
+  const fresh=platform==='chesscom'?await importChessCom(username):await importLichess(username);
+  state.currentKeys=fresh.map(x=>x.key);
+  const map=new Map(state.items.map(item=>[item.key,item]));
+  for(const item of fresh)map.set(item.key,item);
   state.items=Array.from(map.values()).sort((a,b)=>b.at-a.at).slice(0,MAX_ITEMS);
+  // The library has a storage cap; don't promise records that were not retained.
+  state.currentKeys=state.currentKeys.filter(k=>state.items.some(x=>x.key===k));
   state.accounts[platform]=username;
-  state.shown=10;
-  save();render();
-  status(incoming.length?'Found '+incoming.length+' recent public games for '+username+'. Tap Analyse on any game.':'No finished standard games returned for '+username+'. Try a different username or platform.');
- }catch(err){status(sourceLabel(platform)+': '+(err?.message||String(err))+' Your existing library is unchanged.');}
- finally{state.busy=false;btn.disabled=false;btn.textContent='Find games';}
+  persist();
+  if(fresh.length){
+   const message='Found '+fresh.length+' finished games for @'+username+'. Select View board or Analyse below.';
+   setPlatformStatus(platform,message,'ok');$('verV4Context').textContent=message;
+  }else{
+   const message='No finished standard games returned for @'+username+'. Previous saved games are hidden from this search.';
+   setPlatformStatus(platform,message,'error');$('verV4Context').textContent=message;
+  }
+ }catch(err){
+  const message='Could not load @'+username+': '+(err?.message||String(err));
+  setPlatformStatus(platform,message,'error');
+  $('verV4Context').textContent=message+' Your previous saved games are safe. Choose All saved games to view them.';
+ }finally{
+  state.busy=false;
+  buttons.forEach(b=>b.disabled=false);
+  $('verV4ChessFind').textContent='Find Chess.com games';
+  $('verV4LichessFind').textContent='Find Lichess games';
+  render();
+ }
 }
-$('verV4Form').addEventListener('submit',searchUser);
-$('verV4Platform').addEventListener('change',()=>{$('verV4Username').value=state.accounts[$('verV4Platform').value]||'';});
+$('verV4ChessForm').addEventListener('submit',e=>findGames('chesscom',e));
+$('verV4LichessForm').addEventListener('submit',e=>findGames('lichess',e));
+$('verV4All').addEventListener('click',()=>switchScope('all'));
+$('verV4Latest').addEventListener('click',()=>switchScope('latest'));
 for(const id of ['verV4Source','verV4Result','verV4Query'])$(id).addEventListener(id==='verV4Query'?'input':'change',()=>{state.shown=10;render();});
 $('verV4More').addEventListener('click',()=>{state.shown+=10;render();});
 $('verV4Clear').addEventListener('click',()=>{
  if(state.busy)return;
- if(!window.confirm('Clear saved public game records from this browser? This will not delete anything on Chess.com or Lichess.'))return;
- state.items=[];state.shown=10;save();render();status('Local game library cleared. Your chess accounts are untouched.');
+ if(!window.confirm('Clear saved public PGNs from this browser? Original accounts and online games will not be affected.'))return;
+ state.items=[];state.currentKeys=[];state.active=null;state.scope='all';state.shown=10;
+ persist();switchScope('all');
+ $('verV4Context').textContent='Local games cleared. Both platforms are ready for a new search.';
 });
 loadSaved();
-$('verV4Username').value=state.accounts.chesscom||'';
-render();
-window.VERChessLibraryV4={version:'4.0-phase1'};
+$('verV4ChessUsername').value=state.accounts.chesscom||'';
+$('verV4LichessUsername').value=state.accounts.lichess||'';
+render();setView('games');
+window.VERChessLibraryV4={version:'4.1-mobile-ux',openGames:()=>setView('games')};
 })();
