@@ -107,7 +107,7 @@ test.describe('Mobile board release blocker — full visibility', () => {
         // An invisible 0-height board or a tiny 100px board MUST fail this check.
         const minimumComfortableSize = Math.min(
           viewport.width - 24, viewport.height - 270
-        ) * 0.65;
+        ) * 0.84;
         expect(m.width, 'Board width').toBeGreaterThan(minimumComfortableSize);
         expect(m.height, 'Board height').toBeGreaterThan(minimumComfortableSize);
         expect(Math.abs(m.width - m.height), 'Board remains square').toBeLessThan(3);
@@ -118,10 +118,64 @@ test.describe('Mobile board release blocker — full visibility', () => {
         expect(m.pieces, 'Starting position has 32 pieces').toBe(32);
         expect(m.boardDisplay).not.toBe('none');
         expect(errors, 'Uncaught browser exceptions').toEqual([]);
+        if (viewport.width === 390) {
+          await page.screenshot({ path: 'test-results/stability-board-390x820.png' });
+        }
       } finally {
         await context.close();
       }
     });
+  }
+});
+
+
+test('Board survives mobile viewport contraction and expansion without clipping', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 },
+    deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+    serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await openBoard(page);
+    const sizes = [
+      { width: 390, height: 680 },
+      { width: 390, height: 820 },
+      { width: 360, height: 720 }
+    ];
+    for (const size of sizes) {
+      await page.setViewportSize(size);
+      await expect.poll(async () => (await measureBoard(page)).visibleFraction).toBeGreaterThan(0.97);
+      const m = await measureBoard(page);
+      expect(m.squares).toBe(64);
+      expect(m.pieces).toBe(32);
+      expect(m.width).toBeGreaterThan(Math.min(size.width - 24, size.height - 270) * 0.8);
+      expect(m.boardBottom).toBeLessThanOrEqual(m.dockTop + 2);
+    }
+  } finally {
+    await context.close();
+  }
+});
+
+test('Reset Board has consistent styled appearance rather than native white button', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 }, isMobile: true,
+    hasTouch: true, serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await openBoard(page);
+    const reset = page.locator('#v5Reset');
+    await expect(reset).toBeVisible();
+    await expect(reset).toContainText('Reset board');
+    const style = await reset.evaluate(el => ({
+      background: getComputedStyle(el).backgroundColor,
+      radius: getComputedStyle(el).borderRadius
+    }));
+    expect(style.background).toBe('rgb(217, 194, 127)');
+    expect(parseFloat(style.radius)).toBeGreaterThan(8);
+  } finally {
+    await context.close();
   }
 });
 
