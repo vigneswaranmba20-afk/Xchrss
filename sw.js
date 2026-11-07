@@ -1,9 +1,9 @@
 /* VER Chess Intelligence PWA service worker. App assets are self-hosted under GitHub Pages /Xchrss/. */
 'use strict';
-const APP_CACHE='ver-chess-shell-v3-2026-11-04';
+const APP_CACHE='ver-chess-shell-v4-2026-11-07';
 const ENGINE_CACHE='ver-chess-stockfish-19-0-1';
 const ART_CACHE='ver-chess-cburnett-piece-art-v1';
-const APP_SHELL=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./icon-180.png'];
+const APP_SHELL=['./','./index.html','./ver-chess-v4-library.js','./manifest.json','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./icon-180.png'];
 const ENGINE_FILES=['./engine/stockfish-19-lite-single.js','./engine/stockfish-19-lite-single.wasm'];
 const root=new URL(self.registration.scope);
 const withinScope=url=>url.origin===root.origin && url.pathname.startsWith(root.pathname);
@@ -40,7 +40,7 @@ self.addEventListener('fetch',event=>{
   if(!withinScope(url))return;
   if(engineAsset(url)){event.respondWith(cacheFirst(request,ENGINE_CACHE));return;}
   if(request.mode==='navigate'){event.respondWith(navigationFirst(request));return;}
-  if(url.pathname.endsWith('/index.html') || url.pathname===root.pathname || url.pathname.endsWith('/manifest.json') || url.pathname.split('/').pop().startsWith('icon-')){
+  if(url.pathname.endsWith('/index.html') || url.pathname.endsWith('/ver-chess-v4-library.js') || url.pathname===root.pathname || url.pathname.endsWith('/manifest.json') || url.pathname.split('/').pop().startsWith('icon-')){
     event.respondWith(cacheFirst(request,APP_CACHE));
   }
 });
