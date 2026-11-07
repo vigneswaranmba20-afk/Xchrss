@@ -20,11 +20,11 @@ dock.innerHTML=[
  '<div class="v5-dock-inner">',
  ' <div class="v5-dock-row">',
  '  <button type="button" class="v5-thumb" id="v5Previous" aria-label="Previous chess move"><span aria-hidden="true">◀</span> Previous</button>',
- '  <div class="v5-dock-center"><small>REVIEW POSITION</small><strong id="v5MoveNumber" aria-live="polite">0 / 0</strong></div>',
+ '  <button type="button" class="v5-dock-reset" id="v5Reset" aria-label="Reset board to the starting position"><span aria-hidden="true">↺</span><strong>Reset board</strong></button>',
  '  <button type="button" class="v5-thumb" id="v5Next" aria-label="Next chess move">Next <span aria-hidden="true">▶</span></button>',
  ' </div>',
  ' <div class="v5-dock-actions">',
- '  <input type="range" id="v5Scrubber" min="0" max="1" value="0" step="1" aria-label="Choose move position" />',
+ '  <div class="v5-dock-scrub"><input type="range" id="v5Scrubber" min="0" max="1" value="0" step="1" aria-label="Choose move position" /><span id="v5MoveNumber" aria-live="polite">0 / 0</span></div>',
  '  <button type="button" id="v5Analyze" class="v5-dock-analyze">✦ Analyse</button>',
  ' </div>',
  '</div>'
@@ -34,6 +34,7 @@ const controller=()=>window.VERChessReviewControls;
 const moveTo=ply=>{const r=controller();if(r?.jumpTo)r.jumpTo(ply);};
 $('v5Previous').addEventListener('click',()=>prev.click());
 $('v5Next').addEventListener('click',()=>next.click());
+$('v5Reset').addEventListener('click',()=>{if(!$('v5Reset').disabled)moveTo(0);});
 $('v5Analyze').addEventListener('click',()=>{
  if(run.disabled)return;
  run.click();
@@ -75,6 +76,7 @@ function sync(details){
  $('v5Scrubber').value=String(Math.min(at,Math.max(1,total)));
  $('v5Scrubber').disabled=busy||total===0;
  $('v5Previous').disabled=busy||at===0;
+ $('v5Reset').disabled=busy||at===0||total===0;
  $('v5Next').disabled=busy||at>=total;
  $('v5Analyze').disabled=busy||run.disabled||total===0;
  $('v5Analyze').textContent=busy?'Analysing…':'✦ Analyse';
