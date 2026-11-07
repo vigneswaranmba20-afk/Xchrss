@@ -24,8 +24,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Verify v7.2 geometric motif fixtures
-        run: node --test tests/ver-chess-motifs.test.cjs
+      - name: Verify all tactical motif and skewer position fixtures
+        run: node --test tests/ver-chess-*.test.cjs
 
       - name: Install pinned test tools
         run: npm install --ignore-scripts --no-audit --no-fund
