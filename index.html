@@ -134,6 +134,7 @@ body.analysis-open{overflow:hidden}
 <link rel="stylesheet" href="./ver-chess-v6-1-fit.css" />
 <link rel="stylesheet" href="./ver-chess-v6-2-board-rescue.css" />
 <link rel="stylesheet" href="./ver-chess-coach-on-board.css" />
+<link rel="stylesheet" href="./ver-chess-learn.css" />
 <script src="./ver-chess-board-themes.js"></script>
 </head>
 <body>
@@ -601,6 +602,8 @@ $('gameSelect').onchange=e=>{
 $('sideFilter').onchange=e=>{filter=e.target.value;renderCritical();renderCoach();};
 $('evalChart').addEventListener('click',e=>{const bounds=e.currentTarget.getBoundingClientRect();if(bounds.width)jump(Math.round((e.clientX-bounds.left)/bounds.width*game.moves.length));});
 window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;if(e.key==='ArrowLeft')jump(at-1);if(e.key==='ArrowRight')jump(at+1);});
+// Strictly legal chess-rule primitives for the separate, original Learn board.
+window.VERChessLessonRules=Object.freeze({parseFen,findUci,apply,san,uci,idx});
 window.VERChessReviewControls={
  jumpTo:ply=>jump(Number(ply)||0),
  state:()=>({at,total:game.moves.length,running}),
@@ -721,5 +724,6 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
 <script defer src="./ver-chess-touch-review-v6-1.js"></script>
 <script defer src="./ver-chess-viewport-fit-v6-1.js"></script>
 <script defer src="./ver-chess-coach-on-board.js"></script>
+<script defer src="./ver-chess-learn.js"></script>
 </body>
 </html>
