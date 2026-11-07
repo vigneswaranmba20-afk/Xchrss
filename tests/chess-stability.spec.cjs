@@ -254,3 +254,61 @@ test('Installed PWA can still load its app shell offline', async ({ browser }) =
     await context.close();
   }
 });
+
+test('Both account searches appear on Games and Lichess search loads completed PGNs', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 }, isMobile: true,
+    hasTouch: true, serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await expect(page.locator('#verV4ChessForm')).toBeVisible();
+    await expect(page.locator('#verV4LichessForm')).toBeVisible();
+    await expect(page.locator('#verV4LichessUsername')).toBeVisible();
+    await expect(page.locator('#verV4LichessFind')).toBeVisible();
+    await page.route('https://lichess.org/api/games/user/**', async route => {
+      await route.fulfill({
+        status: 200, contentType: 'application/x-chess-pgn',
+        headers: { 'access-control-allow-origin': '*' },
+        body: SAMPLE_PGN.replace('[White "TestWhite"]', '[White "thibault"]')
+      });
+    });
+    await page.locator('#verV4LichessUsername').fill('thibault');
+    await page.locator('#verV4LichessFind').click();
+    await expect(page.locator('#verV4LichessStatus')).toContainText('Found 1 finished game');
+    await expect(page.locator('#verV4List')).toContainText('thibault');
+  } finally {
+    await context.close();
+  }
+});
+
+test('Full coach comments are accessible without shrinking the mobile chessboard', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 }, isMobile: true,
+    hasTouch: true, serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await importSampleGame(page);
+    const first = await measureBoard(page);
+    const complete = 'The decisive continuation keeps pressure on the pinned defender. '.repeat(5) +
+      'The final sentence must remain visible in full.';
+    await page.evaluate(message => {
+      window.VERChessFloatingCoach.update({
+        ply: 1, flag: 'mistake', label: '1. e4', best: 'd4', message
+      });
+    }, complete);
+    const read = page.locator('#v6CoachReadFull');
+    await expect(read).toBeVisible();
+    await read.click();
+    await expect(page.locator('#v6CoachDialog')).toBeVisible();
+    await expect(page.locator('#v6CoachFullText')).toContainText('The final sentence must remain visible in full.');
+    await page.locator('#v6CoachDialog button:has-text("Back to board")').click();
+    await expect(page.locator('#v6CoachDialog')).not.toBeVisible();
+    const after = await measureBoard(page);
+    expect(after.visibleFraction).toBeGreaterThan(0.97);
+    expect(Math.abs(first.width - after.width)).toBeLessThan(3);
+  } finally {
+    await context.close();
+  }
+});

@@ -47,16 +47,16 @@ panel.setAttribute('aria-label','Public games from Chess.com and Lichess');
 panel.innerHTML=[
  '<div class="panel-head v6-panel-title"><h2>Find games</h2></div>',
  '<div class="body">',
- '<p class="v6-lookup-help">Chess.com public games · No sign-in required</p>',
+ '<p class="v6-lookup-help">Find public, completed games from Chess.com or Lichess · No sign-in required</p>',
  '<div class="verv4-platforms">',
  '<section class="verv4-platform v6-primary-search" aria-labelledby="verV4ChessLabel">',
  '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♜</div><h3 id="verV4ChessLabel">Chess.com</h3></div>',
  '<form id="verV4ChessForm"><label for="verV4ChessUsername">Chess.com username</label><div class="v6-search-row"><input type="text" id="verV4ChessUsername" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4ChessFind" type="submit" class="btn btn-gold" aria-label="Find Chess.com games">Find</button></div></form>',
  '<div class="verv4-platform-status" id="verV4ChessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
- '<section class="verv4-platform" hidden aria-hidden="true" aria-labelledby="verV4LichessLabel">',
+ '<section class="verv4-platform v6-primary-search" aria-labelledby="verV4LichessLabel">',
  '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♞</div><h3 id="verV4LichessLabel">Lichess</h3></div>',
- '<form id="verV4LichessForm"><label for="verV4LichessUsername">Lichess username</label><input type="text" id="verV4LichessUsername" maxlength="32" placeholder="e.g. thibault" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4LichessFind" type="submit" class="btn btn-gold">Find Lichess games</button></form>',
+ '<form id="verV4LichessForm"><label for="verV4LichessUsername">Lichess username</label><div class="v6-search-row"><input type="text" id="verV4LichessUsername" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4LichessFind" type="submit" class="btn btn-gold" aria-label="Find Lichess games">Find</button></div></form>',
  '<div class="verv4-platform-status" id="verV4LichessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
  '</div>',
@@ -375,7 +375,7 @@ async function findGames(platform,evt){
   state.busy=false;
   buttons.forEach(b=>b.disabled=false);
   $('verV4ChessFind').textContent='Find';
-  $('verV4LichessFind').textContent='Find Lichess games';
+  $('verV4LichessFind').textContent='Find';
   render();
  }
 }
