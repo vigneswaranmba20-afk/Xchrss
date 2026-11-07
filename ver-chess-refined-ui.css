@@ -76,3 +76,37 @@ body[data-ver-view="insights"] .hero{display:none}
  .ver-theme-options{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(prefers-reduced-motion:reduce){.ver-theme-option,.ver-theme-trigger{transition:none!important}}
+
+/* v5.2 — Fingerprint-first Insights; learning moments live on Games. */
+#verEngineAnalysisPanel,#verMoveExplorerCompatibility{display:none!important}
+body[data-ver-view="insights"] #verFingerprintPanel{
+ scroll-margin-top:calc(env(safe-area-inset-top,0px) + 80px);
+ margin-top:0;
+}
+.ver-moments-slot{min-width:0;display:block}
+.ver-moments-slot .ver-learning-moments-panel{
+ border:1px solid #b6a16d66;
+ box-shadow:none;
+ margin:0;
+ border-radius:14px;
+ background:linear-gradient(155deg,#1b3a2d,#0d261f);
+}
+.ver-moments-slot .ver-learning-moments-panel .panel-head{padding:12px 13px}
+.ver-moments-slot .ver-learning-moments-panel .panel-head h2{font-size:12px;letter-spacing:.08em}
+.ver-moments-slot .ver-learning-moments-panel .body{padding:11px 12px 13px}
+.ver-moments-slot .critical{max-height:350px;gap:7px;overflow-y:auto}
+.ver-moments-slot .critical button{min-height:50px;padding:10px 12px;border-radius:11px}
+.ver-moments-slot .critical button:focus-visible{
+ outline:3px solid #f0d58b;
+ outline-offset:2px;
+}
+.ver-moments-slot .critical button:active{background:#34513b}
+.ver-moments-help{font-size:11px;color:#b4cdb8;margin:0 0 10px;line-height:1.55}
+@media(max-width:750px){
+ .ver-moments-slot .ver-learning-moments-panel .panel-head{padding:11px}
+ .ver-moments-slot .ver-learning-moments-panel .body{padding:10px 11px}
+ .ver-moments-slot .critical{max-height:310px}
+ body[data-ver-view="insights"] #verFingerprintPanel{
+  scroll-margin-top:calc(env(safe-area-inset-top,0px) + 65px);
+ }
+}
