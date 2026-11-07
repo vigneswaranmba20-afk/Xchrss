@@ -1,0 +1,202 @@
+const { test, expect } = require('@playwright/test');
+
+const MOBILE_VIEWPORTS = [
+  { width: 320, height: 600 },
+  { width: 360, height: 720 },
+  { width: 390, height: 820 },
+  { width: 430, height: 900 }
+];
+
+const SAMPLE_PGN = [
+  '[Event "Stability regression"]',
+  '[Site "Local test"]',
+  '[Date "2026.11.07"]',
+  '[White "TestWhite"]',
+  '[Black "TestBlack"]',
+  '[Result "1-0"]',
+  '',
+  '1. e4 e5 2. Nf3 Nc6 3. Bb5 a6 1-0'
+].join('\n');
+
+async function openChess(context) {
+  const page = await context.newPage();
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await expect(page.locator('[data-ver-nav="games"]')).toBeVisible();
+  await expect(page.locator('#verV4ChessUsername')).toBeVisible();
+  return page;
+}
+
+async function openBoard(page) {
+  await page.locator('[data-ver-nav="board"]').click();
+  await expect(page.locator('body')).toHaveAttribute('data-ver-view', 'board');
+  await expect(page.locator('#board .v5-square')).toHaveCount(64);
+  // Allow requestAnimationFrame and ResizeObserver to update their dimensions.
+  await expect.poll(async () => {
+    return page.locator('#board').evaluate(el => el.getBoundingClientRect().width);
+  }).toBeGreaterThan(100);
+}
+
+async function measureBoard(page) {
+  return page.evaluate(() => {
+    const rect = selector => document.querySelector(selector)?.getBoundingClientRect();
+    const b = rect('#board');
+    const wrap = rect('.board-wrap');
+    const panel = rect('.ver-board-panel');
+    const main = rect('main.main');
+    const nav = rect('.verv4-appnav');
+    const dock = rect('#v5Dock');
+    if (![b, wrap, panel, main, nav, dock].every(Boolean)) {
+      throw Error('A required Board element is missing from the DOM');
+    }
+
+    const visibleTop = Math.max(0, b.top, wrap.top, panel.top, main.top, nav.bottom);
+    const visibleBottom = Math.min(
+      window.innerHeight, b.bottom, wrap.bottom, panel.bottom, main.bottom, dock.top
+    );
+    const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+    const visibleLeft = Math.max(0, b.left, wrap.left, panel.left, main.left);
+    const visibleRight = Math.min(window.innerWidth, b.right, wrap.right, panel.right, main.right);
+    const visibleWidth = Math.max(0, visibleRight - visibleLeft);
+
+    return {
+      width: b.width, height: b.height,
+      visibleFraction: b.width > 0 && b.height > 0
+        ? (visibleWidth * visibleHeight) / (b.width * b.height)
+        : 0,
+      boardTop: b.top, boardBottom: b.bottom,
+      navBottom: nav.bottom, dockTop: dock.top,
+      squares: document.querySelectorAll('#board .v5-square').length,
+      pieces: document.querySelectorAll('#board .v5-piece').length,
+      boardDisplay: getComputedStyle(document.querySelector('#board')).display,
+      panelDisplay: getComputedStyle(document.querySelector('.ver-board-panel')).display
+    };
+  });
+}
+
+async function importSampleGame(page) {
+  await page.locator('[data-ver-nav="games"]').click();
+  await page.locator('.v6-optional-pgn > summary').click();
+  await page.locator('.ver-pgn-details > summary').click();
+  await page.locator('#pgnText').fill(SAMPLE_PGN);
+  await page.locator('#pasteBtn').click();
+  await expect(page.locator('body')).toHaveAttribute('data-ver-view', 'board');
+  await expect(page.locator('#playerNames')).toContainText('TestWhite');
+  await expect(page.locator('#playerNames')).toContainText('TestBlack');
+  await expect(page.locator('#v5MoveNumber')).toContainText('0 / 6');
+}
+
+test.describe('Mobile board release blocker — full visibility', () => {
+  for (const viewport of MOBILE_VIEWPORTS) {
+    test('all 64 squares visible at ' + viewport.width + '×' + viewport.height, async ({ browser }) => {
+      const context = await browser.newContext({
+        viewport, deviceScaleFactor: 2, isMobile: true, hasTouch: true,
+        serviceWorkers: 'block'
+      });
+      try {
+        const page = await openChess(context);
+        const errors = [];
+        page.on('pageerror', error => errors.push(error.message));
+        await openBoard(page);
+
+        await expect.poll(async () => {
+          const result = await measureBoard(page);
+          return result.visibleFraction;
+        }).toBeGreaterThan(0.97);
+
+        const m = await measureBoard(page);
+        // An invisible 0-height board or a tiny 100px board MUST fail this check.
+        const minimumComfortableSize = Math.min(
+          viewport.width - 24, viewport.height - 270
+        ) * 0.65;
+        expect(m.width, 'Board width').toBeGreaterThan(minimumComfortableSize);
+        expect(m.height, 'Board height').toBeGreaterThan(minimumComfortableSize);
+        expect(Math.abs(m.width - m.height), 'Board remains square').toBeLessThan(3);
+        expect(m.visibleFraction, 'Board is not clipped by parent or dock').toBeGreaterThan(0.97);
+        expect(m.boardTop, 'Board must sit below tabs').toBeGreaterThanOrEqual(m.navBottom - 2);
+        expect(m.boardBottom, 'Board must end before thumb controls').toBeLessThanOrEqual(m.dockTop + 2);
+        expect(m.squares).toBe(64);
+        expect(m.pieces, 'Starting position has 32 pieces').toBe(32);
+        expect(m.boardDisplay).not.toBe('none');
+        expect(errors, 'Uncaught browser exceptions').toEqual([]);
+      } finally {
+        await context.close();
+      }
+    });
+  }
+});
+
+test('PGN import, two-thumb navigation, Reset and Flip remain functional', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 }, deviceScaleFactor: 2,
+    isMobile: true, hasTouch: true, serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await importSampleGame(page);
+
+    await page.locator('#v5Next').click();
+    await expect(page.locator('#v5MoveNumber')).toContainText('1 / 6');
+    await page.locator('#v5Next').click();
+    await expect(page.locator('#v5MoveNumber')).toContainText('2 / 6');
+
+    await page.locator('#v5Previous').click();
+    await expect(page.locator('#v5MoveNumber')).toContainText('1 / 6');
+
+    await page.locator('#v5Reset').click();
+    await expect(page.locator('#v5MoveNumber')).toContainText('0 / 6');
+
+    await expect(page.locator('#flipBtn')).toBeVisible();
+    await page.locator('#flipBtn').click();
+    await expect(page.locator('#board .v5-square')).toHaveCount(64);
+    expect((await measureBoard(page)).visibleFraction).toBeGreaterThan(0.97);
+    await expect(page.locator('#v5Analyze')).toBeVisible();
+  } finally {
+    await context.close();
+  }
+});
+
+test('Games / Board / Insights work without losing the selected game', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 }, isMobile: true,
+    hasTouch: true, serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await importSampleGame(page);
+    await page.locator('[data-ver-nav="insights"]').click();
+    await expect(page.locator('body')).toHaveAttribute('data-ver-view', 'insights');
+    await expect(page.locator('#verFingerprintPanel')).toBeVisible();
+    await page.locator('[data-ver-nav="games"]').click();
+    await expect(page.locator('#verV4ChessUsername')).toBeVisible();
+    await page.locator('[data-ver-nav="board"]').click();
+    await expect(page.locator('body')).toHaveAttribute('data-ver-view', 'board');
+    await expect(page.locator('#playerNames')).toContainText('TestWhite');
+    expect((await measureBoard(page)).visibleFraction).toBeGreaterThan(0.97);
+  } finally {
+    await context.close();
+  }
+});
+
+test('Installed PWA can still load its app shell offline', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 820 }, isMobile: true,
+    hasTouch: true, serviceWorkers: 'allow'
+  });
+  try {
+    const page = await context.newPage();
+    await page.goto('/', { waitUntil: 'load' });
+    await page.evaluate(async () => {
+      await navigator.serviceWorker.ready;
+    });
+    await page.reload({ waitUntil: 'load' });
+    await expect(page.locator('[data-ver-nav="games"]')).toBeVisible();
+    // The first controlled navigation needs to populate navigationFirst cache.
+    await context.setOffline(true);
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await openBoard(page);
+    expect((await measureBoard(page)).visibleFraction).toBeGreaterThan(0.97);
+  } finally {
+    await context.setOffline(false);
+    await context.close();
+  }
+});
