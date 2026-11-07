@@ -19,3 +19,24 @@ test('rook pin along file',()=>assert.deepEqual(absolutePins('4k3/4n3/8/8/8/8/4R
 test('malformed FEN rejected',()=>{
  for(const fen of ['8/8/8/8/8/8/8/8 w - - 0 1','8/8/8/8/8/8/8/K7 w - - 0 1','9/8/8/8/8/8/8/K6k w - - 0 1'])assert.throws(()=>parseFen(fen));
 });
+
+test('black knight fork is detected with correct side and sorted targets',()=>{
+ const hits=knightForks('k7/8/8/8/8/5n2/3R3Q/7K w - - 0 1');
+ assert.deepEqual(hits.map(x=>[x.side,x.from,x.targets]),[['b','f3',['d2','h2']]]);
+ assert.match(hits[0].note,/not proof/i);
+});
+test('queen creates an absolute diagonal pin',()=>{
+ const hits=absolutePins('6k1/5n2/8/8/2Q5/8/8/K7 b - - 0 1');
+ assert.deepEqual(hits.map(x=>[x.side,x.attacker,x.pinned,x.king]),[['w','c4','f7','g8']]);
+});
+test('a friendly blocker in front of enemy piece defeats the pin',()=>{
+ const hits=absolutePins('6k1/5n2/4P3/8/2B5/8/8/K7 w - - 0 1');
+ assert.deepEqual(hits,[]);
+});
+test('an opposing bishop cannot pin on a straight file',()=>{
+ const hits=absolutePins('4k3/4n3/8/8/8/8/4B3/K7 w - - 0 1');
+ assert.deepEqual(hits,[]);
+});
+test('overfilled FEN rank and illegal characters are rejected',()=>{
+ for(const fen of ['8/8/8/8/8/8/8/K7k w - - 0 1','8/8/8/8/8/8/8/K6x w - - 0 1','8/8/8/8/8/8/8/K6k x - - 0 1'])assert.throws(()=>parseFen(fen));
+});
