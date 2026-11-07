@@ -21,6 +21,7 @@ test('second opposing king is rejected by shared FEN validation', () => {
 });
 
 test('black queen can skewer along rank without claiming a forced win', () => {
-  const hits = skewerGeometry('k6q/8/8/8/8/8/8/RK6 w - - 0 1');
-  assert.deepEqual(hits.map(({side,attacker,king,behind})=>[side,attacker,king,behind]), []);
+  const hits = skewerGeometry('7k/8/8/8/8/8/RK5q/8 w - - 0 1');
+  assert.deepEqual(hits.map(({side,attacker,king,behind})=>[side,attacker,king,behind]), [['b','h2','b2','a2']]);
+  assert.match(hits[0].note, /not proof/i);
 });
