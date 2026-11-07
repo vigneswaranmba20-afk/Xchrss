@@ -48,10 +48,10 @@ body[data-ver-view="insights"] .hero{display:none}
 .ver-theme-preview{display:block;width:58px;height:54px;border:1px solid #e1e3cd6b;border-radius:6px;box-shadow:0 3px 12px #0005;background:conic-gradient(var(--theme-dark) 25%,var(--theme-light) 0 50%,var(--theme-dark) 0 75%,var(--theme-light) 0) 0 0/54px 54px}
 .ver-theme-name{line-height:1.2}
 .ver-theme-privacy{color:#a9c0ad;font-size:10px;line-height:1.5;margin:14px 0 0}
-:root{--ver-board-light:#eeeed2;--ver-board-dark:#77975d;--ver-board-highlight-light:#e6e596;--ver-board-highlight-dark:#b3c975;--ver-coord-on-light:#425a3a;--ver-coord-on-dark:#fffdf1}
-:root[data-ver-board-theme="wood"]{--ver-board-light:#f2dfc2;--ver-board-dark:#ac7952;--ver-board-highlight-light:#e6d38a;--ver-board-highlight-dark:#c1a15e;--ver-coord-on-light:#6a4b31;--ver-coord-on-dark:#fff5e7}
-:root[data-ver-board-theme="ocean"]{--ver-board-light:#e4edf3;--ver-board-dark:#668bad;--ver-board-highlight-light:#e7e7aa;--ver-board-highlight-dark:#a5b9a0;--ver-coord-on-light:#335676;--ver-coord-on-dark:#f5fbff}
-:root[data-ver-board-theme="night"]{--ver-board-light:#cfdad9;--ver-board-dark:#617a83;--ver-board-highlight-light:#dcd59a;--ver-board-highlight-dark:#91a58e;--ver-coord-on-light:#2a4b52;--ver-coord-on-dark:#f6fbfa}
+:root{--ver-board-light:#eeeed2;--ver-board-dark:#77975d;--ver-board-highlight-light:#e6e596;--ver-board-highlight-dark:#b3c975;--ver-coord-on-light:#425a3a;--ver-coord-on-dark:#0d2212}
+:root[data-ver-board-theme="wood"]{--ver-board-light:#f2dfc2;--ver-board-dark:#ac7952;--ver-board-highlight-light:#e6d38a;--ver-board-highlight-dark:#c1a15e;--ver-coord-on-light:#6a4b31;--ver-coord-on-dark:#221b15}
+:root[data-ver-board-theme="ocean"]{--ver-board-light:#e4edf3;--ver-board-dark:#668bad;--ver-board-highlight-light:#e7e7aa;--ver-board-highlight-dark:#a5b9a0;--ver-coord-on-light:#335676;--ver-coord-on-dark:#081e30}
+:root[data-ver-board-theme="night"]{--ver-board-light:#cfdad9;--ver-board-dark:#617a83;--ver-board-highlight-light:#dcd59a;--ver-board-highlight-dark:#91a58e;--ver-coord-on-light:#2a4b52;--ver-coord-on-dark:#ffffff}
 :root[data-ver-board-theme="contrast"]{--ver-board-light:#fffdf4;--ver-board-dark:#527268;--ver-board-highlight-light:#fff4a4;--ver-board-highlight-dark:#a3b663;--ver-coord-on-light:#294d43;--ver-coord-on-dark:#ffffff}
 .v5-smooth-board .v5-square.light{background:var(--ver-board-light)}
 .v5-smooth-board .v5-square.dark{background:var(--ver-board-dark)}
