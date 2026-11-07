@@ -41,9 +41,7 @@ reviewbar.innerHTML=[
  '<button type="button" id="verV4QuickAnalyze" class="btn btn-gold">✦ Analyse</button>'
 ].join('');
 left.insertBefore(reviewbar,left.firstChild);
-const insightbar=el('div','verv4-insightsbar');
-insightbar.innerHTML='<button type="button" class="btn btn-quiet" id="verV4BackBoard">← Board</button><strong>Game insights</strong><span class="verv4-secondary">Stockfish · Local</span>';
-host.insertBefore(insightbar,host.firstChild);
+// Insights now leads directly to the existing engine panel, without an intermediate header.
 const panel=el('section','panel verv4-panel');
 panel.setAttribute('aria-label','Public games from Chess.com and Lichess');
 panel.innerHTML=[
@@ -62,7 +60,11 @@ panel.innerHTML=[
  '<div class="verv4-platform-status" id="verV4LichessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
  '</div>',
- '<button type="button" id="verV4ManualImport" class="btn btn-quiet">↑ Upload or paste a PGN instead</button>',
+ '<section class="ver-pgn-widget" aria-labelledby="verPgnWidgetTitle">',
+ ' <div class="ver-pgn-widget-head"><div><span class="verv4-overline">Have a PGN file?</span><h3 id="verPgnWidgetTitle">Import a saved game</h3></div><span class="ver-pgn-small">Optional · On-device</span></div>',
+ ' <div class="ver-pgn-inputs"><div id="verPgnUploadSlot" class="ver-pgn-upload-slot"></div><details id="verPgnPasteDetails" class="ver-pgn-details"><summary>Paste PGN</summary><div id="verPgnPasteSlot"></div></details></div>',
+ ' <div id="verPgnSelectSlot"></div>',
+ '</section>',
  '<div class="verv4-results-head"><div><span class="verv4-overline">Your collection</span><h3 id="verV4ResultTitle">Saved games</h3></div><button type="button" class="verv4-clear" id="verV4Clear">Clear saved</button></div>',
  '<div class="verv4-scope"><button type="button" id="verV4All" class="active" aria-pressed="true">All saved games</button><button type="button" id="verV4Latest" aria-pressed="false" hidden>Current search</button></div>',
  '<p class="verv4-context" id="verV4Context" role="status" aria-live="polite">Your saved public games appear here, from either platform.</p>',
@@ -73,7 +75,17 @@ panel.innerHTML=[
  '<p class="verv4-fineprint">Only public, completed standard games. Stockfish analysis runs on this device, at no paid API cost. PGNs are saved only in this browser. Unaffiliated with Chess.com or Lichess.</p>',
  '</div>'
 ].join('');
-host.insertBefore(panel,insightbar.nextSibling);
+host.insertBefore(panel,host.firstChild);
+// Move the original parser-wired PGN elements into their visible home on Games.
+// No new parser and no duplicate controls — the inline handlers remain attached.
+const uploadBtn=$('uploadBtn'),fileInput=$('fileInput'),pasteText=$('pgnText'),pasteBtn=$('pasteBtn'),selector=$('gameSelectRow');
+if(uploadBtn&&fileInput&&pasteText&&pasteBtn&&selector){
+ $('verPgnUploadSlot').append(uploadBtn,fileInput);
+ $('verPgnPasteSlot').append(pasteText,pasteBtn);
+ $('verPgnSelectSlot').append(selector);
+ uploadBtn.textContent='↑ Upload PGN';
+ pasteBtn.textContent='Open pasted game';
+}
 function setView(view){
  if(!['games','board','insights'].includes(view))return;
  state.view=view;
@@ -84,6 +96,13 @@ function setView(view){
   button.tabIndex=selected?0:-1;
  });
  if(typeof window.scrollTo==='function')window.scrollTo({top:0,behavior:'instant'});
+ if(view==='insights'){
+  // Skip any import chrome: put engine depth/progress and analysis first.
+  requestAnimationFrame(()=>{
+   const engine=$('verEngineAnalysisPanel');
+   if(state.view==='insights'&&engine)engine.scrollIntoView({block:'start',behavior:'auto'});
+  });
+ }
 }
 nav.addEventListener('click',e=>{
  const button=e.target.closest('[data-ver-nav]');
@@ -100,8 +119,8 @@ nav.addEventListener('keydown',e=>{
  button.focus({preventScroll:true});
 });
 $('verV4Back').addEventListener('click',()=>setView('games'));
-$('verV4BackBoard').addEventListener('click',()=>setView('board'));
-$('verV4ManualImport').addEventListener('click',()=>setView('insights'));
+// The top navigation already provides a direct, persistent Board destination.
+// Manual PGN controls live immediately beneath the two platform searches.
 $('verV4QuickAnalyze').addEventListener('click',()=>{
  if(state.busy){$('verV4ReviewMeta').textContent='Finish importing before analysis.';return;}
  window.runAnalysis();
@@ -374,5 +393,14 @@ loadSaved();
 $('verV4ChessUsername').value=state.accounts.chesscom||'';
 $('verV4LichessUsername').value=state.accounts.lichess||'';
 render();setView('games');
-window.VERChessLibraryV4={version:'4.1-mobile-ux',openGames:()=>setView('games')};
+window.VERChessLibraryV4={
+ version:'5.1-streamlined-workflow',
+ openGames:()=>setView('games'),
+ openImportedPgn:()=>{
+  state.selected=null;
+  $('verV4ReviewName').textContent='Imported PGN';
+  $('verV4ReviewMeta').textContent='Completed game · Review on your board';
+  setView('board');
+ }
+};
 })();
