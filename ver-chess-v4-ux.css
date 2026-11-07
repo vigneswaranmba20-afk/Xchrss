@@ -1,0 +1,123 @@
+/* VER Chess Intelligence: mobile-first discover → library → review.
+   Distinctive original VER styling; no provider UI / branding copied. */
+.verv4-appnav{display:flex;gap:7px;align-items:center;margin:0 0 14px;padding:6px;border-radius:14px;background:#122a21;border:1px solid #8cae8866;position:sticky;top:env(safe-area-inset-top,0px);z-index:65;box-shadow:0 8px 24px #07150f77}
+.verv4-appnav button{flex:1;min-width:0;border:0;border-radius:10px;padding:12px 8px;color:#bacdbe;background:transparent;font-size:12px;font-weight:750}
+.verv4-appnav button[aria-selected="true"]{color:#18281c;background:#e3c780;box-shadow:0 2px 14px #d4b96a30}
+.verv4-appnav button:focus-visible{outline:2px solid #d9cf94;outline-offset:2px}
+.verv4-appnav .v4-count{display:inline-block;vertical-align:middle;border:1px solid #91aa9380;border-radius:50px;padding:0 6px;font-size:10px;font-weight:700;margin-left:3px}
+.verv4-appnav button[aria-selected="true"] .v4-count{border-color:#876a2f}
+.verv4-panel{border-color:#b9b78d50}
+.verv4-panel .body{display:grid;gap:13px}
+.verv4-overline{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#d5c38c;font-weight:750}
+.verv4-heading{font:normal clamp(24px,3vw,34px)/1.17 Georgia,serif;margin:0}
+.verv4-lead{font-size:12px;line-height:1.55;color:#b9ccbd;margin:0}
+.verv4-platforms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.verv4-platform{min-width:0;border:1px solid #6d8e7666;background:#0b231c;border-radius:14px;padding:13px;display:flex;flex-direction:column;gap:9px}
+.verv4-platform-head{display:flex;flex-wrap:wrap;align-items:center;gap:7px}
+.verv4-mark{width:28px;height:28px;border:1px solid #bdbe9f80;background:#2b4538;border-radius:9px;display:grid;place-items:center;color:#e5d59f;font-size:16px}
+.verv4-platform h3{font-size:15px;line-height:1.2;font-weight:760;margin:0;letter-spacing:0}
+.verv4-platform label{font-size:10px;color:#bdcbbb;font-weight:650}
+.verv4-platform form{display:grid;gap:8px}
+.verv4-platform input{font-size:14px;min-height:44px;width:100%}
+.verv4-platform button{min-height:42px;width:100%}
+.verv4-platform-status{font-size:11px;color:#bdd6c2;line-height:1.5;min-height:18px;overflow-wrap:anywhere}
+.verv4-platform-status[data-kind="error"]{color:#f6b1a9}
+.verv4-platform-status[data-kind="ok"]{color:#a8e0bb}
+.verv4-platform-status[data-kind="loading"]{color:#f7dfa5}
+.verv4-results-head{display:flex;align-items:start;justify-content:space-between;gap:10px;border-top:1px solid #ffffff1a;padding-top:13px}
+.verv4-results-head h3{font-size:17px;margin:3px 0 0;font-weight:650}
+.verv4-clear{border:1px solid #63766366;border-radius:8px;background:transparent;color:#aebfad;padding:7px 9px;font-size:10px}
+.verv4-scope{display:flex;gap:7px;flex-wrap:wrap}
+.verv4-scope button{font-size:11px;font-weight:720;border:1px solid #68836a77;background:#0c261e;color:#c3d7c6;border-radius:11px;padding:9px 11px;min-height:39px}
+.verv4-scope button.active{background:#d6c083;color:#1b2b20;border-color:#e3d18e}
+.verv4-filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.verv4-filters input{grid-column:1/-1;font-size:13px;min-height:42px}
+.verv4-filters select{font-size:12px;min-height:42px}
+.verv4-summary{display:flex;gap:6px;flex-wrap:wrap}
+.verv4-summary span{padding:5px 9px;font-size:11px;border-radius:8px;background:#0c251c;border:1px solid #68836c55;color:#dfecd9}
+.verv4-context{font-size:11px;line-height:1.5;color:#c6d4c3}
+.verv4-list{display:grid;gap:8px}
+.verv4-game{border:1px solid #58746080;border-radius:13px;padding:12px;background:#0c241d}
+.verv4-game-top{display:flex;align-items:start;gap:9px}
+.verv4-game-info{flex:1;min-width:0}
+.verv4-game-info strong{display:block;font-size:13px;line-height:1.45;overflow-wrap:anywhere}
+.verv4-game-info small{display:block;color:#adbeae;font-size:11px;line-height:1.5;margin-top:3px}
+.verv4-tag{font-weight:750;border-radius:7px;padding:4px 7px;background:#284b3b;font-size:10px;color:#d5f0dc;white-space:nowrap}
+.verv4-tag.chesscom{background:#4e3e2a;color:#f6d5a1}
+.verv4-result{color:#d8c990;font-size:11px;font-weight:800;white-space:nowrap}
+.verv4-result.win{color:#a9dcb0}.verv4-result.loss{color:#eab4a7}
+.verv4-game-actions{display:grid;grid-template-columns:1fr 1fr auto;gap:7px;margin-top:10px}
+.verv4-game-actions button{font-size:12px;min-height:40px}
+.verv4-game-actions a{display:grid;place-items:center;color:#eddba6;font-size:11px;padding:0 4px;text-decoration:underline}
+.verv4-empty{text-align:center;border:1px dashed #73967c70;border-radius:12px;padding:26px 14px;color:#c3d4c2;font-size:12px;line-height:1.55}
+.verv4-empty strong{display:block;color:#f4e6c1;font-size:15px;margin-bottom:4px}
+.verv4-loadmore{width:100%;min-height:42px}
+.verv4-fineprint{font-size:10px;line-height:1.55;color:#9fb4a5}
+.verv4-reviewbar,.verv4-insightsbar{display:none;align-items:center;justify-content:space-between;gap:10px;border-radius:12px;border:1px solid #9ab68c5c;padding:10px;background:#142d23;margin-bottom:10px}
+.verv4-reviewbar .verv4-reviewcopy{min-width:0;flex:1}
+.verv4-reviewbar strong{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.verv4-reviewbar small{display:block;font-size:10px;color:#a9bca9;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.verv4-reviewbar .btn{white-space:nowrap;padding:10px}
+.verv4-inline-back{padding:10px 8px!important;min-width:44px}
+.verv4-insightsbar strong{font-size:13px}
+.verv4-secondary{font-size:11px;color:#adc2af}
+body[data-ver-view="games"] .main{display:block;max-width:940px;margin:auto}
+body[data-ver-view="games"] .main>.left{display:none}
+body[data-ver-view="games"] .right>.panel:not(.verv4-panel){display:none}
+body[data-ver-view="games"] .verv4-insightsbar{display:none}
+body[data-ver-view="board"] .main{display:block;max-width:760px;margin:auto}
+body[data-ver-view="board"] .main>.right{display:none}
+body[data-ver-view="board"] .verv4-reviewbar{display:flex}
+body[data-ver-view="insights"] .main{display:block;max-width:850px;margin:auto}
+body[data-ver-view="insights"] .main>.left{display:none}
+body[data-ver-view="insights"] .right>.verv4-panel{display:none}
+body[data-ver-view="insights"] .verv4-insightsbar{display:flex}
+body[data-ver-view="board"] .left>.panel+.panel{margin-top:12px}
+body[data-ver-view="board"] .board-wrap,body[data-ver-view="board"] .board-footer{max-width:720px;margin:auto}
+body[data-ver-view="board"] .board{max-width:650px;margin:auto}
+body[data-ver-view="board"] .hero,body[data-ver-view="insights"] .hero{display:none}
+body[data-ver-view="games"] .hero{margin-bottom:10px}
+body[data-ver-view="games"] .hero h1{font-size:clamp(26px,4vw,38px);margin-top:5px}
+body[data-ver-view="games"] .hero-stat{display:none}
+body[data-ver-view="games"] .hero p{font-size:12px}
+@media(max-width:750px){
+ .shell{padding:12px 10px 26px}
+ .top{padding-bottom:10px}
+ .pwa-connect{margin-bottom:10px;padding:8px 10px}
+ .verv4-appnav{margin-bottom:10px}
+ .verv4-panel .panel-head{padding:11px 13px}
+ .verv4-panel .body{padding:13px!important;gap:12px}
+ .verv4-panel .panel-head .sub{display:none}
+ .verv4-platforms{grid-template-columns:1fr 1fr;gap:8px}
+ .verv4-platform{padding:10px;gap:7px}
+ .verv4-platform h3{font-size:13px}
+ .verv4-mark{width:23px;height:23px;font-size:13px}
+ .verv4-platform input{padding:10px 8px;font-size:13px}
+ .verv4-platform .btn{padding:9px 7px;font-size:11px}
+ .verv4-platform-status{font-size:10px}
+ .verv4-game{padding:11px}
+ .verv4-game-actions{grid-template-columns:1fr 1fr auto}
+ .verv4-game-actions .btn{padding:10px 6px}
+ .verv4-reviewbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 61px);z-index:60;box-shadow:0 8px 26px #06170fcc}
+ .verv4-reviewbar .btn{font-size:11px}
+ body[data-ver-view="board"] .board{width:100%;max-width:min(100%,480px)}
+ .game-title{padding:10px 13px 8px}
+ .board-wrap{padding:0 10px}
+ .board-footer{padding:10px}
+ .board-footer .controls{gap:5px}
+ .board-footer .btn-icon{min-width:40px;padding:9px}
+ .verv4-insightsbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 61px);z-index:60}
+}
+@media(max-width:370px){
+ .verv4-platforms{grid-template-columns:1fr 1fr;gap:6px}
+ .verv4-platform{padding:7px}
+ .verv4-platform h3{font-size:12px}
+ .verv4-platform input{font-size:12px;padding:8px 6px}
+ .verv4-platform .btn{font-size:10px;line-height:1.25}
+ .verv4-appnav button{font-size:11px;padding:11px 5px}
+ .verv4-reviewbar{flex-wrap:wrap}
+ .verv4-reviewcopy{min-width:120px}
+}
+@media(prefers-reduced-motion:reduce){
+ .verv4-appnav *, .verv4-panel * {scroll-behavior:auto!important}
+}

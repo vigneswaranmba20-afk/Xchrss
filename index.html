@@ -127,6 +127,7 @@ body.analysis-open{overflow:hidden}
 @media(max-width:680px){.top{align-items:flex-start;gap:8px}.pwa-head{gap:5px;flex-direction:column;align-items:flex-end}.pwa-head .top-note{font-size:9px}.pwa-install{min-height:38px;padding:7px 10px}.pwa-connect{align-items:flex-start;flex-direction:column;gap:6px}}
 @media(display-mode:standalone){body{padding-top:env(safe-area-inset-top)}.pwa-install{display:none}}
 </style>
+<link rel="stylesheet" href="./ver-chess-v4-ux.css" />
 </head>
 <body>
 <div class="shell">
@@ -332,7 +333,7 @@ function showAnalysisOverlay(){
 function hideAnalysisOverlay(){
  if(analysisOverlayTimer){clearTimeout(analysisOverlayTimer);analysisOverlayTimer=null;}
  $('analysisOverlay').hidden=true;document.body.classList.remove('analysis-open');
- $('analyzeBtn').focus({preventScroll:true});
+ (document.body.getAttribute('data-ver-view')==='board'&&$('verV4QuickAnalyze')?$('verV4QuickAnalyze'):$('analyzeBtn')).focus({preventScroll:true});
 }
 function setAnalysisStage(stage,message){
  const overlay=$('analysisOverlay');
@@ -588,6 +589,6 @@ renderAll();$('progressLabel').textContent='Example position ready · import a g
 </script>
 
 <!-- VER Chess Intelligence v4 — optional public-game library; original analysis/PWA scripts preserved. -->
-<script defer src="./ver-chess-v4-library.js"></script>
+<script defer src="./ver-chess-v4-library.js?v=4.1"></script>
 </body>
 </html>
