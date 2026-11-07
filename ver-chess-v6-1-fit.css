@@ -1,0 +1,40 @@
+/* v6.1 layout hotfix — stable viewport geometry, no content-driven shrinkage.
+   Added after v6 styles and paired with the new independent geometry fitter. */
+@media(max-width:850px){
+ body[data-ver-view="board"] .main{
+  top:var(--v7-nav-bottom,var(--v6-nav-bottom,56px))!important;
+  height:var(--v7-stage-height,calc(100dvh - 210px))!important;
+  min-height:0!important;
+ }
+ body[data-ver-view="board"] .main>.left,
+ body[data-ver-view="board"] .main>.left>.panel:first-child{
+  min-height:0!important;
+  height:100%!important;
+ }
+ body[data-ver-view="board"] .board-wrap{
+  flex:1 1 0px!important;
+  height:0!important;
+  min-height:0!important;
+  min-width:0!important;
+  width:100%!important;
+  max-height:none!important;
+  justify-content:center!important;
+  align-items:center!important;
+ }
+ body[data-ver-view="board"] #board{
+  /* The JS calculates a safe square size using the dock and nav positions.
+     Pure CSS provides a reasonable full-width fallback before JS is ready. */
+  width:var(--v7-board-size,min(calc(100vw - 20px),calc(100dvh - 235px)))!important;
+  height:var(--v7-board-size,min(calc(100vw - 20px),calc(100dvh - 235px)))!important;
+  flex:0 0 auto!important;
+  min-width:0!important;
+  max-width:100%!important;
+  min-height:0!important;
+  max-height:100%!important;
+  aspect-ratio:1!important;
+  place-self:center!important;
+ }
+ body[data-ver-view="board"] .v6-coach-note{
+  flex-shrink:0!important;
+ }
+}
