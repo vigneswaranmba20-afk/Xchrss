@@ -282,7 +282,7 @@ test('Both account searches appear on Games and Lichess search loads completed P
   }
 });
 
-test('Full coach comments are accessible without shrinking the mobile chessboard', async ({ browser }) => {
+test('Read full becomes board-first lesson with complete explanation and unchanged board size', async ({ browser }) => {
   const context = await browser.newContext({
     viewport: { width: 390, height: 820 }, isMobile: true,
     hasTouch: true, serviceWorkers: 'block'
@@ -290,7 +290,8 @@ test('Full coach comments are accessible without shrinking the mobile chessboard
   try {
     const page = await openChess(context);
     await importSampleGame(page);
-    const first = await measureBoard(page);
+    const before = await measureBoard(page);
+    const originalMove = await page.locator('#v5MoveNumber').textContent();
     const complete = 'The decisive continuation keeps pressure on the pinned defender. '.repeat(5) +
       'The final sentence must remain visible in full.';
     await page.evaluate(message => {
@@ -298,16 +299,71 @@ test('Full coach comments are accessible without shrinking the mobile chessboard
         ply: 1, flag: 'mistake', label: '1. e4', best: 'd4', message
       });
     }, complete);
-    const read = page.locator('#v6CoachReadFull');
-    await expect(read).toBeVisible();
-    await read.click();
-    await expect(page.locator('#v6CoachDialog')).toBeVisible();
-    await expect(page.locator('#v6CoachFullText')).toContainText('The final sentence must remain visible in full.');
-    await page.locator('#v6CoachDialog button:has-text("Back to board")').click();
-    await expect(page.locator('#v6CoachDialog')).not.toBeVisible();
+    await expect(page.locator('#v6CoachReadFull')).toBeVisible();
+    await page.locator('#v6CoachReadFull').click();
+    await expect(page.locator('#v7CoachLesson')).toBeVisible();
+    await expect(page.locator('#v7LessonFull')).toContainText('The final sentence must remain visible in full.');
+    await expect(page.locator('#v7Played')).toBeVisible();
+    await expect.poll(() => page.locator('#board').getAttribute('data-lesson-mode')).toBe('played');
+    await expect(page.locator('#board .v7-coach-origin')).toHaveAttribute('aria-label', /e2/);
+    await expect(page.locator('#board .v7-coach-destination')).toHaveAttribute('aria-label', /e4/);
+    await expect(page.locator('#v7Best')).toBeHidden();
+    await expect(page.locator('#v7Before')).toBeVisible();
+    await page.locator('#v7Before').click();
+    await expect(page.locator('#board')).toHaveAttribute('data-lesson-mode', 'before');
+    await expect(page.locator('#boardPosition')).toContainText('Before');
+    const during = await measureBoard(page);
+    expect(during.visibleFraction).toBeGreaterThan(0.97);
+    expect(Math.abs(before.width - during.width)).toBeLessThan(3);
+    await page.locator('#v7Close').click();
+    await expect(page.locator('#v7CoachLesson')).toBeHidden();
+    await expect(page.locator('#board')).not.toHaveClass(/v7-teaching-board/);
+    expect(await page.locator('#v5MoveNumber').textContent()).toBe(originalMove);
     const after = await measureBoard(page);
     expect(after.visibleFraction).toBeGreaterThan(0.97);
-    expect(Math.abs(first.width - after.width)).toBeLessThan(3);
+  } finally {
+    await context.close();
+  }
+});
+
+test('Read full shows the legal engine alternative on-board without mutating the game', async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 320, height: 600 }, isMobile: true,
+    hasTouch: true, serviceWorkers: 'block'
+  });
+  try {
+    const page = await openChess(context);
+    await importSampleGame(page);
+    await page.evaluate(() => {
+      // Test-only synthetic engine positions. The production UI must still
+      // validate d2d4 as legal before showing a hypothetical move.
+      analysis = [
+        { cpWhite: 140, bestUci: 'd2d4', pv: ['d2d4'] },
+        { cpWhite: 5, bestUci: 'g8f6', pv: [] }
+      ];
+      jump(1);
+    });
+    await expect(page.locator('#v6CoachReadFull')).toBeVisible();
+    const snapshot = await page.locator('#v5MoveNumber').textContent();
+    const size = await measureBoard(page);
+    await page.locator('#v6CoachReadFull').click();
+    await expect(page.locator('#v7Best')).toBeVisible();
+    await page.locator('#v7Best').click();
+    await expect.poll(() => page.locator('#board').getAttribute('data-lesson-mode')).toBe('best');
+    await expect(page.locator('#boardPosition')).toContainText('d4');
+    await expect(page.locator('#board .v5-square[aria-label="d4 P"]')).toHaveCount(1);
+    await expect(page.locator('#board .v5-square[aria-label="e4 empty"]')).toHaveCount(1);
+    await expect(page.locator('#board .v5-square')).toHaveCount(64);
+    const alternateSize = await measureBoard(page);
+    expect(alternateSize.visibleFraction).toBeGreaterThan(0.97);
+    expect(Math.abs(alternateSize.width - size.width)).toBeLessThan(3);
+    await page.locator('#v7Played').click();
+    await expect.poll(() => page.locator('#board').getAttribute('data-lesson-mode')).toBe('played');
+    await expect(page.locator('#board .v5-square[aria-label="e4 P"]')).toHaveCount(1);
+    await page.locator('#v7Close').click();
+    expect(await page.locator('#v5MoveNumber').textContent()).toBe(snapshot);
+    await page.locator('#v5Next').click();
+    await expect(page.locator('#v5MoveNumber')).toContainText('2 / 6');
   } finally {
     await context.close();
   }
