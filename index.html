@@ -156,15 +156,15 @@ body.analysis-open{overflow:hidden}
       </section>
     </div>
     <aside class="right">
-      <section class="panel"><div class="panel-head"><h2>01 / Import your game</h2><span class="sub">PGN · Chess.com · Lichess</span></div><div class="body">
-        <div id="drop" class="drop"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#e5c77d" stroke-width="1.35" stroke-linejoin="round" stroke-linecap="round"><path d="M12 16V3m0 0L7 8m5-5 5 5"/><path d="M4 15v4a2 2 0 002 2h12a2 2 0 002-2v-4"/></svg><h3>Drop your PGN here</h3><p>Or upload a game exported from your chess app.</p><button class="btn btn-gold" id="uploadBtn">↑ Choose PGN file</button><input id="fileInput" type="file" accept=".pgn,.txt,text/plain,application/x-chess-pgn" hidden /></div>
-        <div class="entry-row"><input id="lichessUrl" type="text" aria-label="Lichess URL" placeholder="Public Lichess game URL" /><button id="fetchGameBtn" class="btn">Import URL</button></div>
-        <details class="margintop"><summary class="hint" style="cursor:pointer">Or paste your PGN here</summary><textarea id="pgnText" aria-label="Paste PGN" placeholder="[Event &quot;Rated Blitz&quot;]&#10;1. e4 e5 2. Nf3 Nc6 ..."></textarea><button id="pasteBtn" class="btn btn-quiet margintop">Load pasted PGN</button></details>
-        <div id="gameSelectRow" class="game-select" hidden><div class="hint">Multiple games detected. Choose one to study:</div><select aria-label="Choose imported game" id="gameSelect"></select></div>
-        <div class="row-between margintop"><span class="hint">Don't have a PGN handy?</span><button class="btn btn-quiet" id="demoBtn">Try example game</button></div>
-        <details class="margintop"><summary class="hint" style="cursor:pointer">How to export a game on Android</summary><p class="hint"><b style="color:#efd393">Chess.com:</b> Open a completed game → More → Export PGN → save or share the file. <b style="color:#efd393">Lichess:</b> Open the finished game → use its PGN export, or paste the public game link above.</p></details>
-      </div></section>
-      <section class="panel"><div class="panel-head"><h2>02 / Engine analysis</h2><div class="engine-state"><i id="engineDot"></i><span id="engineStatus">Engine not loaded</span></div></div><div class="body">
+      <!-- Existing PGN handlers initialize before Games moves these controls to the profile-search area. -->
+      <div id="verPgnLegacyMount" hidden>
+        <button type="button" class="btn btn-gold" id="uploadBtn">↑ Choose PGN file</button>
+        <input id="fileInput" type="file" accept=".pgn,.txt,text/plain,application/x-chess-pgn" hidden />
+        <textarea id="pgnText" aria-label="Paste a completed chess PGN" placeholder="[Event &quot;Rated Blitz&quot;]&#10;1. e4 e5 2. Nf3 Nc6 ..."></textarea>
+        <button type="button" class="btn btn-quiet" id="pasteBtn">Load pasted PGN</button>
+        <div id="gameSelectRow" class="game-select" hidden><label class="hint" for="gameSelect">Multiple games detected. Choose one to study:</label><select aria-label="Choose imported game" id="gameSelect"></select></div>
+      </div>
+      <section class="panel" id="verEngineAnalysisPanel" tabindex="-1" aria-label="Engine analysis"><div class="panel-head"><h2>Engine analysis</h2><div class="engine-state"><i id="engineDot"></i><span id="engineStatus">Engine not loaded</span></div></div><div class="body">
         <div class="row-between"><span class="sub">Analysis strength</span><span class="micro">More depth = more time</span></div>
         <div class="depths margintop" id="depths"><button data-depth="8" class="selected">⚡ Quick · 8</button><button data-depth="11">◈ Balanced · 11</button><button data-depth="14">♛ Deep · 14</button></div>
         <div class="row-between margintop"><button id="analyzeBtn" class="btn btn-gold" style="flex:1">✦ Analyse entire game</button><button id="cancelBtn" class="btn btn-quiet" hidden>Stop</button></div>
@@ -571,9 +571,29 @@ function stopAnalysis(){
 $('exportBtn').onclick=()=>{if(analysis.length<2)return;let lines=['VER CHESS INTELLIGENCE — GAME REVIEW','',`${game.headers.White||'White'} vs ${game.headers.Black||'Black'}`,`${game.headers.Event||'Imported game'} · ${game.headers.Date||''}`,`Result: ${game.headers.Result||'*'}`,'',`Engine depth selected: ${depth}`,'All evaluations are approximate and may change at higher search depths.','','MOVE-BY-MOVE COACHING'];for(let i=1;i<=game.moves.length;i++){const move=game.moves[i-1],g=gradeAt(i),before=analysis[i-1],bm=before?.bestUci&&findUci(game.states[i-1],before.bestUci),recommended=bm?san(game.states[i-1],bm):'—';lines.push(`${moveTitle(i)}  |  ${(g?.flag||'Not analysed').toUpperCase()}  |  Loss: ${g?g.loss+' cp':'—'}  |  Best: ${recommended}`);if(g&&['blunder','mistake','miss','inaccuracy'].includes(g.flag)){const prev=at;at=i;lines.push('  '+humanSuggestion(move,recommended,g));lines.push('  Suggested line: '+previewLine(i));at=prev;}}lines.push('','Independent study tool. Use only for completed games.','Stockfish source: https://github.com/nmrugg/stockfish.js');const blob=new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='VER-chess-review.txt';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);};
 $('startBtn').onclick=()=>jump(0);$('backBtn').onclick=()=>jump(at-1);$('nextBtn').onclick=()=>jump(at+1);$('endBtn').onclick=()=>jump(game.moves.length);$('flipBtn').onclick=()=>{flipped=!flipped;renderBoard();};$('previewBtn').onclick=()=>{if(showingBefore(at)){viewBefore=false;showActual=true;}else{viewBefore=true;showActual=false;}renderAll();};$('arrowsBtn').onclick=()=>{arrowsEnabled=!arrowsEnabled;viewBefore=false;showActual=false;renderAll();};$('nextIssueBtn').onclick=()=>{const p=nextLearningIndex(at);if(p>0)jump(p);};$('analyzeBtn').onclick=runAnalysis;$('cancelBtn').onclick=stopAnalysis;
 $('depths').addEventListener('click',e=>{const el=e.target.closest('[data-depth]');if(!el||running)return;depth=Number(el.dataset.depth);$('depths').querySelectorAll('button').forEach(x=>x.classList.toggle('selected',x===el));});
-$('uploadBtn').onclick=()=>$('fileInput').click();$('fileInput').addEventListener('change',async e=>{const f=e.target.files?.[0];if(!f)return;try{importText(await f.text());}catch(err){notify(err.message);}e.target.value='';});$('pasteBtn').onclick=()=>{try{importText($('pgnText').value);}catch(e){notify(e.message);}};$('demoBtn').onclick=()=>{try{importText(examplePgn);}catch(e){notify(e.message);}};$('gameSelect').onchange=e=>{try{loadGame(allImported[Number(e.target.value)]);}catch(err){notify(err.message);}};$('sideFilter').onchange=e=>{filter=e.target.value;renderCritical();renderCoach();};
-$('drop').addEventListener('dragover',e=>{e.preventDefault();$('drop').classList.add('over');});$('drop').addEventListener('dragleave',()=>$('drop').classList.remove('over'));$('drop').addEventListener('drop',async e=>{e.preventDefault();$('drop').classList.remove('over');const f=e.dataTransfer?.files?.[0];if(f)try{importText(await f.text());}catch(err){notify(err.message);}});
-$('fetchGameBtn').onclick=async()=>{const input=$('lichessUrl').value.trim();let parsed;try{parsed=new URL(input);}catch{notify('Enter a complete public Lichess game URL, such as https://lichess.org/XXXXXXXX');return;}if(!['lichess.org','www.lichess.org'].includes(parsed.hostname)){notify('This field supports Lichess public game links. For Chess.com, export and upload your PGN.');return;}const id=parsed.pathname.split('/').filter(Boolean)[0];if(!/^[A-Za-z0-9]{8,12}$/.test(id)){notify('Could not recognise a Lichess game ID.');return;}const btn=$('fetchGameBtn');btn.disabled=true;btn.textContent='Importing…';try{const r=await fetch('https://lichess.org/game/export/'+encodeURIComponent(id)+'?clocks=false&evals=false&opening=true',{headers:{Accept:'application/x-chess-pgn'}});if(!r.ok)throw Error('Lichess returned HTTP '+r.status);importText(await r.text());}catch(e){notify('Could not fetch this game automatically ('+e.message+'). Download its PGN from Lichess and upload the file instead.');}finally{btn.disabled=false;btn.textContent='Import URL';}};
+$('uploadBtn').onclick=()=>$('fileInput').click();
+$('fileInput').addEventListener('change',async e=>{
+ const input=e.target,f=input.files?.[0];
+ if(!f)return;
+ try{
+  if(f.size>2000000)throw Error('PGN file too large (2 MB limit). Export fewer games.');
+  importText(await f.text());
+  window.VERChessLibraryV4?.openImportedPgn?.();
+ }catch(err){notify(err.message||String(err));}
+ input.value='';
+});
+$('pasteBtn').onclick=()=>{
+ try{
+  if(!$('pgnText').value.trim())throw Error('Paste a completed PGN first.');
+  importText($('pgnText').value);
+  window.VERChessLibraryV4?.openImportedPgn?.();
+ }catch(e){notify(e.message||String(e));}
+};
+$('gameSelect').onchange=e=>{
+ try{loadGame(allImported[Number(e.target.value)]);window.VERChessLibraryV4?.openImportedPgn?.();}
+ catch(err){notify(err.message||String(err));}
+};
+$('sideFilter').onchange=e=>{filter=e.target.value;renderCritical();renderCoach();};
 $('evalChart').addEventListener('click',e=>{const bounds=e.currentTarget.getBoundingClientRect();if(bounds.width)jump(Math.round((e.clientX-bounds.left)/bounds.width*game.moves.length));});
 window.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;if(e.key==='ArrowLeft')jump(at-1);if(e.key==='ArrowRight')jump(at+1);});
 window.VERChessReviewControls={
