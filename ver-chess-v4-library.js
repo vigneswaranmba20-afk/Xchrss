@@ -90,7 +90,7 @@ if(uploadBtn&&fileInput&&pasteText&&pasteBtn&&selector){
  pasteBtn.textContent='Open pasted game';
 }
 function setView(view){
- if(!['games','board','insights'].includes(view))return;
+ if(!['games','board','insights','learn'].includes(view))return;
  state.view=view;
  document.body.setAttribute('data-ver-view',view);
  nav.querySelectorAll('[data-ver-nav]').forEach(button=>{
