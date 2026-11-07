@@ -45,27 +45,27 @@ left.insertBefore(reviewbar,left.firstChild);
 const panel=el('section','panel verv4-panel');
 panel.setAttribute('aria-label','Public games from Chess.com and Lichess');
 panel.innerHTML=[
- '<div class="panel-head"><h2>00 / Discover your games</h2><span class="sub">Two platforms · One library</span></div>',
+ '<div class="panel-head v6-panel-title"><h2>Find games</h2></div>',
  '<div class="body">',
- '<div><div class="verv4-overline">Your chess studio</div><h2 class="verv4-heading">Find your games. Learn faster.</h2><p class="verv4-lead">Both platforms are ready. Type a public username in either card; no account login required.</p></div>',
+ '<p class="v6-lookup-help">Chess.com public games · No sign-in required</p>',
  '<div class="verv4-platforms">',
- '<section class="verv4-platform" aria-labelledby="verV4ChessLabel">',
+ '<section class="verv4-platform v6-primary-search" aria-labelledby="verV4ChessLabel">',
  '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♜</div><h3 id="verV4ChessLabel">Chess.com</h3></div>',
- '<form id="verV4ChessForm"><label for="verV4ChessUsername">Chess.com username</label><input type="text" id="verV4ChessUsername" maxlength="32" placeholder="e.g. hikaru" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4ChessFind" type="submit" class="btn btn-gold">Find Chess.com games</button></form>',
+ '<form id="verV4ChessForm"><label for="verV4ChessUsername">Chess.com username</label><div class="v6-search-row"><input type="text" id="verV4ChessUsername" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4ChessFind" type="submit" class="btn btn-gold" aria-label="Find Chess.com games">Find</button></div></form>',
  '<div class="verv4-platform-status" id="verV4ChessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
- '<section class="verv4-platform" aria-labelledby="verV4LichessLabel">',
+ '<section class="verv4-platform" hidden aria-hidden="true" aria-labelledby="verV4LichessLabel">',
  '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♞</div><h3 id="verV4LichessLabel">Lichess</h3></div>',
  '<form id="verV4LichessForm"><label for="verV4LichessUsername">Lichess username</label><input type="text" id="verV4LichessUsername" maxlength="32" placeholder="e.g. thibault" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4LichessFind" type="submit" class="btn btn-gold">Find Lichess games</button></form>',
  '<div class="verv4-platform-status" id="verV4LichessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
  '</div>',
- '<section class="ver-pgn-widget" aria-labelledby="verPgnWidgetTitle">',
+ '<details class="v6-optional-pgn"><summary>Import PGN instead</summary><section class="ver-pgn-widget" aria-labelledby="verPgnWidgetTitle">',
  ' <div class="ver-pgn-widget-head"><div><span class="verv4-overline">Have a PGN file?</span><h3 id="verPgnWidgetTitle">Import a saved game</h3></div><span class="ver-pgn-small">Optional · On-device</span></div>',
  ' <div class="ver-pgn-inputs"><div id="verPgnUploadSlot" class="ver-pgn-upload-slot"></div><details id="verPgnPasteDetails" class="ver-pgn-details"><summary>Paste PGN</summary><div id="verPgnPasteSlot"></div></details></div>',
  ' <div id="verPgnSelectSlot"></div>',
  '</section>',
- '<div id="verMomentsSlot" class="ver-moments-slot" aria-label="Learning moments from current chess game"></div>',
+ '</details>',
  '<div class="verv4-results-head"><div><span class="verv4-overline">Your collection</span><h3 id="verV4ResultTitle">Saved games</h3></div><button type="button" class="verv4-clear" id="verV4Clear">Clear saved</button></div>',
  '<div class="verv4-scope"><button type="button" id="verV4All" class="active" aria-pressed="true">All saved games</button><button type="button" id="verV4Latest" aria-pressed="false" hidden>Current search</button></div>',
  '<p class="verv4-context" id="verV4Context" role="status" aria-live="polite">Your saved public games appear here, from either platform.</p>',
@@ -77,10 +77,8 @@ panel.innerHTML=[
  '</div>'
 ].join('');
 host.insertBefore(panel,host.firstChild);
-// Rehome the existing Stockfish-generated moments (including side filter and
-// exact-move links) on Games, instead of showing them in the Insights area.
-const moments=$('verLearningMomentsPanel');
-if(moments)$('verMomentsSlot').append(moments);
+// The old Learning Moments list remains hidden for engine compatibility.
+
 // Move the original parser-wired PGN elements into their visible home on Games.
 // No new parser and no duplicate controls — the inline handlers remain attached.
 const uploadBtn=$('uploadBtn'),fileInput=$('fileInput'),pasteText=$('pgnText'),pasteBtn=$('pasteBtn'),selector=$('gameSelectRow');
@@ -350,7 +348,7 @@ async function findGames(platform,evt){
  render();
  const buttons=[$('verV4ChessFind'),$('verV4LichessFind')];
  buttons.forEach(b=>b.disabled=true);
- $(platform==='chesscom'?'verV4ChessFind':'verV4LichessFind').textContent='Searching…';
+ $(platform==='chesscom'?'verV4ChessFind':'verV4LichessFind').textContent=platform==='chesscom'?'Finding…':'Searching…';
  setPlatformStatus(platform,'Connecting to '+sourceLabel(platform)+'…','loading');
  try{
   const fresh=platform==='chesscom'?await importChessCom(username):await importLichess(username);
@@ -376,7 +374,7 @@ async function findGames(platform,evt){
  }finally{
   state.busy=false;
   buttons.forEach(b=>b.disabled=false);
-  $('verV4ChessFind').textContent='Find Chess.com games';
+  $('verV4ChessFind').textContent='Find';
   $('verV4LichessFind').textContent='Find Lichess games';
   render();
  }
