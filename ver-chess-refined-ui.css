@@ -110,3 +110,7 @@ body[data-ver-view="insights"] #verFingerprintPanel{
   scroll-margin-top:calc(env(safe-area-inset-top,0px) + 65px);
  }
 }
+
+/* The install/status logic remains mounted for offline support, but its large
+   message panel is intentionally absent from the mobile-first interface. */
+.pwa-connect[hidden],.pwa-connect{display:none!important}
