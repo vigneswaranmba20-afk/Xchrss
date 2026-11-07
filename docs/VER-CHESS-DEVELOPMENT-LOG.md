@@ -21,3 +21,13 @@ PR [#12](https://github.com/vigneswaranmba20-afk/Xchrss/pull/12) merged as a70ea
 ## Ongoing
 
 Existing hourly VER Chess Development automation is enabled and updated to follow [the Learn roadmap](./VER-CHESS-LEARN-ROADMAP.md), use private book references conceptually and issue concise ChatGPT status reports every run. Direct WhatsApp sending remains unavailable without a verified supported integration.
+
+## 2026-11-08 — v7.2 tactical edge-case coverage
+
+[PR #16](https://github.com/vigneswaranmba20-afk/Xchrss/pull/16) merged as [f559f378](https://github.com/vigneswaranmba20-afk/Xchrss/commit/f559f3781453c02ab85c4578632a2306888d0d4d). [Pre-merge checks passed](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42406293100), [post-merge checks passed](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42411630062), and [Pages deployment succeeded](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42411629691). These are automated browser/Node checks, not a physical Android-device certification.
+
+## 2026-11-08 — v7.3 geometric king-skewer detector
+
+[PR #17](https://github.com/vigneswaranmba20-afk/Xchrss/pull/17) merged as [28dd388](https://github.com/vigneswaranmba20-afk/Xchrss/commit/28dd388da6567a0ed139b96782d46347ab40ed54) after [successful PR checks](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42411704043). [Pages deployment succeeded](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42415874570); the post-merge stability gate must also be checked separately. This is an isolated geometric detector, **not** a claim of legal or winning tactics, and it is not yet wired into imported games or Learn.
+
+Additional queen-skewer positive/negative FEN fixtures are proposed in [PR #18](https://github.com/vigneswaranmba20-afk/Xchrss/pull/18). Do not mark those tests as passed or deployed until their CI and Pages checks finish. Next: complete edge-case validation, then implement discovered-attack observations with a clear distinction between visual alignment and forced tactical gain.
