@@ -62,6 +62,7 @@ panel.innerHTML=[
  '<div class="verv4-platform-status" id="verV4LichessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
  '</div>',
+ '<button type="button" id="verV4ManualImport" class="btn btn-quiet">↑ Upload or paste a PGN instead</button>',
  '<div class="verv4-results-head"><div><span class="verv4-overline">Your collection</span><h3 id="verV4ResultTitle">Saved games</h3></div><button type="button" class="verv4-clear" id="verV4Clear">Clear saved</button></div>',
  '<div class="verv4-scope"><button type="button" id="verV4All" class="active" aria-pressed="true">All saved games</button><button type="button" id="verV4Latest" aria-pressed="false" hidden>Current search</button></div>',
  '<p class="verv4-context" id="verV4Context" role="status" aria-live="polite">Your saved public games appear here, from either platform.</p>',
@@ -90,6 +91,7 @@ nav.addEventListener('click',e=>{
 });
 $('verV4Back').addEventListener('click',()=>setView('games'));
 $('verV4BackBoard').addEventListener('click',()=>setView('board'));
+$('verV4ManualImport').addEventListener('click',()=>setView('insights'));
 $('verV4QuickAnalyze').addEventListener('click',()=>{
  if(state.busy){$('verV4ReviewMeta').textContent='Finish importing before analysis.';return;}
  window.runAnalysis();
@@ -220,8 +222,9 @@ function render(){
   const empty=el('div','verv4-empty');
   let heading='No games to display',message='Enter a username above to search public completed games.';
   if(state.scope==='latest'&&state.active){
-   heading='No results for '+sourceLabel(state.active.platform)+' @'+state.active.username;
-   message='This search returned no completed standard games, failed, or matches your filters. Older saved accounts are hidden here. Tap “All saved games” to see them.';
+   if(state.busy){heading='Searching '+sourceLabel(state.active.platform)+' @'+state.active.username+'…';message='Fetching public completed games. Please wait…';}
+   else {heading='No results for '+sourceLabel(state.active.platform)+' @'+state.active.username;
+   message='This search returned no completed standard games, failed, or matches your filters. Older saved accounts are hidden here. Tap “All saved games” to see them.';}
   }else if(state.items.length){
    message='Try changing the result, platform or opponent filters.';
   }
@@ -307,10 +310,10 @@ async function findGames(platform,evt){
  }
  state.active={platform,username};
  state.currentKeys=[];state.scope='latest';state.shown=10;
+ state.busy=true;
  $('verV4Source').value='all';$('verV4Result').value='all';$('verV4Query').value='';
  $('verV4Context').textContent='Searching '+sourceLabel(platform)+' for @'+username+'… Other saved accounts are hidden until you choose All saved games.';
  render();
- state.busy=true;
  const buttons=[$('verV4ChessFind'),$('verV4LichessFind')];
  buttons.forEach(b=>b.disabled=true);
  $(platform==='chesscom'?'verV4ChessFind':'verV4LichessFind').textContent='Searching…';
