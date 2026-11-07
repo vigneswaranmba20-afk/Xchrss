@@ -1,0 +1,78 @@
+/* VER Chess v5.1 — streamlined import/analysis and original accessible board palettes.
+ * Works with current vanilla JS, Stockfish and SmoothBoard without layout rerender.
+ */
+.ver-pgn-widget{display:grid;gap:11px;border:1px solid #93ae8d55;border-radius:14px;padding:12px;background:linear-gradient(145deg,#203c2e,#102a20)}
+.ver-pgn-widget-head{display:flex;justify-content:space-between;align-items:center;gap:9px}
+.ver-pgn-widget-head h3{font:normal 19px/1.2 Georgia,serif;margin:4px 0 0;color:#f5efd8}
+.ver-pgn-small{font-size:10px;white-space:nowrap;color:#b7cbb6}
+.ver-pgn-inputs{display:grid;grid-template-columns:minmax(110px,.9fr) minmax(110px,1.1fr);gap:9px;align-items:start}
+.ver-pgn-upload-slot{min-width:0}
+.ver-pgn-upload-slot .btn{width:100%;min-height:49px;font-size:12px;border-radius:11px}
+.ver-pgn-details{min-width:0;position:relative;color:#e9eddc}
+.ver-pgn-details>summary{display:flex;align-items:center;justify-content:center;min-height:49px;text-align:center;padding:9px;border:1px solid #90ab9166;border-radius:11px;font-size:12px;font-weight:750;color:#e9e8d6;background:#254134;cursor:pointer;list-style:none}
+.ver-pgn-details>summary::-webkit-details-marker{display:none}
+.ver-pgn-details[open]{grid-column:1/-1}
+.ver-pgn-details[open]>summary{border-color:#e4ca80;color:#f8e4b5;background:#3c5540}
+#verPgnPasteSlot{display:grid;gap:7px;margin-top:8px}
+#verPgnPasteSlot textarea{margin:0;min-height:100px;max-height:240px;font-size:12px;line-height:1.5}
+#verPgnPasteSlot .btn{width:100%;min-height:43px}
+#verPgnSelectSlot .game-select{margin-top:1px}
+#verPgnSelectSlot .game-select select{min-height:43px}
+.ver-pgn-widget .verv4-overline{letter-spacing:.12em}
+body[data-ver-view="insights"] .verv4-insightsbar{display:none!important}
+body[data-ver-view="insights"] #verEngineAnalysisPanel{scroll-margin-top:calc(env(safe-area-inset-top,0px) + 68px)}
+body[data-ver-view="insights"] #analyzeBtn{display:inline-flex!important;min-height:48px;font-size:13px}
+body[data-ver-view="insights"] #cancelBtn:not([hidden]){display:inline-flex!important;min-height:48px}
+body[data-ver-view="insights"] #cancelBtn[hidden]{display:none!important}
+body[data-ver-view="insights"] .right>.panel:not(.verv4-panel):first-of-type{margin-top:0}
+body[data-ver-view="insights"] #verEngineAnalysisPanel .panel-head{padding:13px 15px}
+body[data-ver-view="insights"] #verEngineAnalysisPanel .body{padding:15px}
+body[data-ver-view="insights"] .hero{display:none}
+.ver-theme-trigger{display:inline-flex;align-items:center;justify-content:center;gap:7px;flex-shrink:0;min-height:42px;min-width:42px;padding:8px 10px;background:#294639;color:#e8f1e0;border:1px solid #6d9879a0;border-radius:10px;font-size:11px;font-weight:780;cursor:pointer}
+.ver-theme-trigger:hover{background:#355740}
+.ver-theme-trigger:focus-visible{outline:3px solid #ecd18b;outline-offset:2px}
+.ver-theme-trigger-swatch{width:19px;height:19px;display:block;flex:none;border:1px solid #ffffff67;border-radius:5px;background:conic-gradient(var(--ver-board-dark) 25%,var(--ver-board-light) 0 50%,var(--ver-board-dark) 0 75%,var(--ver-board-light) 0)}
+.game-title .players{min-width:0;overflow-wrap:anywhere}
+.game-title .chip{flex-shrink:0}
+.ver-theme-dialog{width:min(94vw,440px);max-height:88dvh;overflow-y:auto;border-radius:23px;padding:22px;background:linear-gradient(153deg,#203d30,#0c231a);color:#f3efd9;border:1px solid #ddc18466;box-shadow:0 25px 90px #000a}
+.ver-theme-dialog::backdrop{background:#07170de0;backdrop-filter:blur(5px)}
+.ver-theme-top{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.ver-theme-eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.12em;font-weight:750;color:#d9c18e}
+.ver-theme-top h2{font:normal 28px/1.1 Georgia,serif;margin:7px 0 0;color:#faf4e3}
+.ver-theme-close{border:1px solid #7a937f5c;background:#234333;color:#f4eedc;border-radius:9px;min-width:42px;min-height:42px;font-size:20px;cursor:pointer}
+.ver-theme-description{font-size:12px;color:#bbd0bf;line-height:1.6;margin:12px 0 15px}
+.ver-theme-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+.ver-theme-option{display:grid;gap:7px;justify-items:center;align-content:start;min-height:100px;padding:10px 7px;border:1px solid #6c907474;border-radius:12px;background:#10291f;color:#e4ece1;cursor:pointer;font-size:11px;font-weight:700;text-align:center}
+.ver-theme-option.is-selected{border:2px solid #efd38d;background:#3d4c30;color:#fff4d9;padding:9px 6px}
+.ver-theme-option:focus-visible,.ver-theme-close:focus-visible{outline:3px solid #edd58c;outline-offset:2px}
+.ver-theme-preview{display:block;width:58px;height:54px;border:1px solid #e1e3cd6b;border-radius:6px;box-shadow:0 3px 12px #0005;background:conic-gradient(var(--theme-dark) 25%,var(--theme-light) 0 50%,var(--theme-dark) 0 75%,var(--theme-light) 0) 0 0/54px 54px}
+.ver-theme-name{line-height:1.2}
+.ver-theme-privacy{color:#a9c0ad;font-size:10px;line-height:1.5;margin:14px 0 0}
+:root{--ver-board-light:#eeeed2;--ver-board-dark:#77975d;--ver-board-highlight-light:#e6e596;--ver-board-highlight-dark:#b3c975;--ver-coord-on-light:#425a3a;--ver-coord-on-dark:#0d2212}
+:root[data-ver-board-theme="wood"]{--ver-board-light:#f2dfc2;--ver-board-dark:#ac7952;--ver-board-highlight-light:#e6d38a;--ver-board-highlight-dark:#c1a15e;--ver-coord-on-light:#6a4b31;--ver-coord-on-dark:#221b15}
+:root[data-ver-board-theme="ocean"]{--ver-board-light:#e4edf3;--ver-board-dark:#668bad;--ver-board-highlight-light:#e7e7aa;--ver-board-highlight-dark:#a5b9a0;--ver-coord-on-light:#335676;--ver-coord-on-dark:#081e30}
+:root[data-ver-board-theme="night"]{--ver-board-light:#cfdad9;--ver-board-dark:#617a83;--ver-board-highlight-light:#dcd59a;--ver-board-highlight-dark:#91a58e;--ver-coord-on-light:#2a4b52;--ver-coord-on-dark:#ffffff}
+:root[data-ver-board-theme="contrast"]{--ver-board-light:#fffdf4;--ver-board-dark:#527268;--ver-board-highlight-light:#fff4a4;--ver-board-highlight-dark:#a3b663;--ver-coord-on-light:#294d43;--ver-coord-on-dark:#ffffff}
+.v5-smooth-board .v5-square.light{background:var(--ver-board-light)}
+.v5-smooth-board .v5-square.dark{background:var(--ver-board-dark)}
+.v5-smooth-board .v5-square.last.light{background:var(--ver-board-highlight-light)}
+.v5-smooth-board .v5-square.last.dark{background:var(--ver-board-highlight-dark)}
+.v5-square.light .v5-coord{color:var(--ver-coord-on-light)}
+.v5-square.dark .v5-coord{color:var(--ver-coord-on-dark)}
+@media(max-width:750px){
+ .ver-pgn-widget{padding:11px}
+ .ver-pgn-inputs{gap:7px}
+ .ver-theme-trigger{padding:7px;gap:5px;font-size:10px}
+ .ver-theme-trigger-swatch{width:18px;height:18px}
+ .game-title{gap:7px}
+ .game-title .players{font-size:clamp(15px,3.8vw,19px)}
+ .ver-theme-dialog{padding:18px}
+}
+@media(max-width:370px){
+ .ver-pgn-widget-head{flex-wrap:wrap}
+ .ver-pgn-small{font-size:9px}
+ .ver-theme-trigger span:last-child{display:none}
+ .game-title .chip{font-size:9px;padding:4px 6px}
+ .ver-theme-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(prefers-reduced-motion:reduce){.ver-theme-option,.ver-theme-trigger{transition:none!important}}
