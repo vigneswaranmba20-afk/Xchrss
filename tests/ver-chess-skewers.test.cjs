@@ -15,7 +15,7 @@ test('pawn blocker before king stops the ray',()=>{
   assert.deepEqual(summarize('q7/k7/8/p7/8/8/8/R6K b - - 0 1'),[]);
 });
 test('own blocker before king stops the ray',()=>{
-  assert.deepEqual(summarize('q7/k7/8/8/8/R7/8/R6K b - - 0 1'),[]);
+  assert.deepEqual(summarize('q7/k7/8/8/8/P7/8/R6K b - - 0 1'),[]);
 });
 test('enemy piece before king is not a king skewer',()=>{
   assert.deepEqual(summarize('q7/k7/8/n7/8/8/8/R6K b - - 0 1'),[]);
