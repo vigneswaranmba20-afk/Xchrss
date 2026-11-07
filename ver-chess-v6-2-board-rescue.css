@@ -1,0 +1,97 @@
+/* VER Chess v6.2 — restore missing board after v6/v6.1 layout regression.
+   Root cause: reviewbar is the FIRST child of .left, so .panel:first-child
+   never matches the real chessboard panel. The wrapper then gets height:0
+   with no flex parent, clipping all 64 squares. Keep this file LAST.
+*/
+@media (max-width:850px) {
+  /* The original board section now has an explicit class, unaffected by sibling order. */
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel {
+    display:flex !important;
+    flex-direction:column !important;
+    width:100% !important;
+    height:100% !important;
+    min-height:0 !important;
+    max-height:100% !important;
+    padding:0 !important;
+    margin:0 !important;
+    overflow:hidden !important;
+    background:transparent !important;
+    box-shadow:none !important;
+    border:0 !important;
+    border-radius:0 !important;
+  }
+  body[data-ver-view="board"] .main > .left {
+    display:block !important;
+    min-height:0 !important;
+    height:100% !important;
+    overflow:hidden !important;
+  }
+  /* Never force the parent of a visible board to zero height. */
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel > .board-wrap {
+    display:flex !important;
+    flex-direction:column !important;
+    flex:1 1 auto !important;
+    height:auto !important;
+    min-height:0 !important;
+    max-height:none !important;
+    min-width:0 !important;
+    width:100% !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:3px !important;
+    margin:0 !important;
+    padding:0 2px !important;
+    overflow:hidden !important;
+  }
+  body[data-ver-view="board"] #board {
+    display:grid !important;
+    visibility:visible !important;
+    opacity:1 !important;
+    flex-shrink:0 !important;
+    /* JS uses viewport geometry; CSS fallback works before JS loads. */
+    width:var(--v7-board-size,min(calc(100vw - 20px),calc(100dvh - 240px))) !important;
+    height:var(--v7-board-size,min(calc(100vw - 20px),calc(100dvh - 240px))) !important;
+    aspect-ratio:1 / 1 !important;
+    max-width:100% !important;
+    max-height:100% !important;
+    min-height:0 !important;
+    min-width:0 !important;
+    margin:auto !important;
+    overflow:hidden !important;
+  }
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel > .board-footer {
+    display:block !important;
+    flex:0 0 auto !important;
+    height:25px !important;
+    min-height:0 !important;
+    overflow:hidden !important;
+  }
+}
+/* V5.3 Reset styling is included here because older offline CSS may have
+   been served from the PWA cache while the newest toolbar JS was active. */
+body[data-ver-view="board"] #v5Reset {
+  appearance:none;
+  -webkit-appearance:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:0;
+  min-height:56px;
+  min-width:0;
+  border:1px solid #d9c27d9c;
+  border-radius:13px;
+  padding:6px 4px;
+  background:#d9c27f;
+  color:#17291c;
+  font:800 12px/1.15 system-ui,-apple-system,"Segoe UI",sans-serif;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+body[data-ver-view="board"] #v5Reset > span {font-size:22px;line-height:1.1}
+body[data-ver-view="board"] #v5Reset > strong {font-size:11px;line-height:1.2}
+body[data-ver-view="board"] #v5Reset:disabled {opacity:.45;cursor:default}
+body[data-ver-view="board"] #v5Reset:focus-visible {
+  outline:3px solid #f4d993;
+  outline-offset:2px;
+}
