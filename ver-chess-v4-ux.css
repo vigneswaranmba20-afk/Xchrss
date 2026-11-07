@@ -109,11 +109,11 @@ body[data-ver-view="games"] .hero p{font-size:12px}
  .verv4-insightsbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 61px);z-index:60}
 }
 @media(max-width:370px){
- .verv4-platforms{grid-template-columns:1fr}
- .verv4-platform form{grid-template-columns:1fr 1fr;gap:7px}
- .verv4-platform label{grid-column:1/-1}
- .verv4-platform form input{grid-column:1/-1}
- .verv4-platform button{grid-column:1/-1}
+ .verv4-platforms{grid-template-columns:1fr 1fr;gap:6px}
+ .verv4-platform{padding:7px}
+ .verv4-platform h3{font-size:12px}
+ .verv4-platform input{font-size:12px;padding:8px 6px}
+ .verv4-platform .btn{font-size:10px;line-height:1.25}
  .verv4-appnav button{font-size:11px;padding:11px 5px}
  .verv4-reviewbar{flex-wrap:wrap}
  .verv4-reviewcopy{min-width:120px}
