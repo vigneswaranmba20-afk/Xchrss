@@ -89,6 +89,16 @@ nav.addEventListener('click',e=>{
  const button=e.target.closest('[data-ver-nav]');
  if(button)setView(button.getAttribute('data-ver-nav'));
 });
+nav.addEventListener('keydown',e=>{
+ if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+ const items=Array.from(nav.querySelectorAll('[data-ver-nav]'));
+ const current=items.findIndex(button=>button.getAttribute('aria-selected')==='true');
+ const next=e.key==='Home'?0:e.key==='End'?items.length-1:(current+(e.key==='ArrowRight'?1:-1)+items.length)%items.length;
+ e.preventDefault();
+ const button=items[next];
+ setView(button.getAttribute('data-ver-nav'));
+ button.focus({preventScroll:true});
+});
 $('verV4Back').addEventListener('click',()=>setView('games'));
 $('verV4BackBoard').addEventListener('click',()=>setView('board'));
 $('verV4ManualImport').addEventListener('click',()=>setView('insights'));
