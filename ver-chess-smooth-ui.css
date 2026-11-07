@@ -1,0 +1,88 @@
+/* VER Chess v5 — original responsive review board and thumb-friendly controls.
+ * Stable vector pieces, minimal review chrome, no paid libraries or tracking.
+ */
+.v5-smooth-board{isolation:isolate;position:relative;contain:layout paint;overflow:hidden}
+.v5-smooth-board .v5-square{min-width:0;min-height:0;position:relative}
+.v5-smooth-board .v5-square.light{background:#eeeed2}
+.v5-smooth-board .v5-square.dark{background:#77975d}
+.v5-smooth-board .v5-square.last.light{background:#e6e596}
+.v5-smooth-board .v5-square.last.dark{background:#b3c975}
+.v5-piece-layer{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:hidden}
+.v5-piece{position:absolute;top:0;left:0;width:12.5%;height:12.5%;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:1;transition:transform 180ms cubic-bezier(.2,.75,.25,1),opacity 135ms ease;will-change:transform;transform-origin:top left;backface-visibility:hidden}
+.v5-piece svg{display:block;width:90%;height:90%;overflow:visible;shape-rendering:geometricPrecision;filter:drop-shadow(0 1px .35px #2c3c2a3b)}
+.v5-piece.v5-exit{opacity:0}
+.v5-piece.v5-fallback{font:normal clamp(26px,7vw,56px)/1 "DejaVu Sans","Segoe UI Symbol",serif;color:#16251e}
+.v5-coord{position:absolute;z-index:2;pointer-events:none;font:700 clamp(8px,1.1vw,11px)/1 system-ui,sans-serif;letter-spacing:0}
+.v5-rank{top:4px;left:4px}
+.v5-file{right:4px;bottom:3px}
+.v5-square.light .v5-coord{color:#627f50}
+.v5-square.dark .v5-coord{color:#f2f4da}
+.v5-smooth-board .v5-board-arrows{position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.85}
+.v5-reorienting .v5-piece{transition:none!important}
+.v5-dock{display:none;position:fixed;bottom:0;left:0;right:0;z-index:90;background:#0c211be9;border-top:1px solid #91a47f7c;box-shadow:0 -9px 30px #05130d7a;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);padding:10px max(12px,env(safe-area-inset-left)) max(12px,env(safe-area-inset-bottom,12px))}
+.v5-dock-inner{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.v5-dock-row{display:grid;grid-template-columns:minmax(85px,1fr) minmax(115px,1.15fr) minmax(85px,1fr);gap:10px;align-items:stretch}
+.v5-thumb{touch-action:manipulation;min-height:60px;display:flex;align-items:center;justify-content:center;gap:8px;background:#244435;color:#f2f6e9;border:1px solid #82ac8a88;border-radius:15px;font-size:15px;font-weight:750;line-height:1.2}
+.v5-thumb span{font-size:22px;line-height:1}
+.v5-thumb:active:not(:disabled){background:#38634e;transform:scale(.985)}
+.v5-thumb:disabled{opacity:.36}
+.v5-dock-center{min-width:0;display:grid;gap:4px;align-content:center;justify-content:center;text-align:center;background:#10271e;border:1px solid #52695366;border-radius:13px}
+.v5-dock-center small{font-size:10px;color:#bed2b9}
+.v5-dock-center strong{font-variant-numeric:tabular-nums;font-size:20px;color:#e8d195}
+.v5-dock-actions{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.v5-dock input[type=range]{margin:0;width:100%;height:22px;accent-color:#e1c780;touch-action:pan-x;cursor:pointer}
+.v5-dock-analyze{height:42px;min-width:115px;background:#e0c783;border:1px solid #e0c783;border-radius:11px;font-size:12px;font-weight:800;color:#16281d}
+.v5-dock-analyze:disabled{opacity:.55}
+.v5-dock button:focus-visible,.v5-dock input:focus-visible{outline:3px solid #f8df94;outline-offset:3px}
+.v5-reviewhint{margin:7px 0 0;font-size:11px;color:#c8d4c2;text-align:center}
+body[data-ver-view="board"] .verv4-reviewbar{display:none!important}
+body[data-ver-view="board"] .verv4-appnav{margin-bottom:8px}
+body[data-ver-view="board"] .game-title{padding:11px 14px 9px}
+body[data-ver-view="board"] .game-title .players{font-size:clamp(17px,3.4vw,22px);line-height:1.17}
+body[data-ver-view="board"] .game-title .players small{margin-top:4px;font-size:11px}
+body[data-ver-view="board"] .game-title .chip{font-size:10px;padding:5px 8px}
+body[data-ver-view="board"] .board-wrap{padding:0 10px}
+body[data-ver-view="board"] #boardReviewStatus{margin:9px 0 0;padding:8px 10px;gap:8px}
+body[data-ver-view="board"] #boardReviewStatus .review-emblem{width:26px;height:26px;font-size:16px}
+body[data-ver-view="board"] #boardReviewStatus strong{font-size:10px;letter-spacing:.06em}
+body[data-ver-view="board"] #boardReviewStatus small{font-size:10px;margin-top:2px}
+body[data-ver-view="board"] .board-footer{padding:10px 12px 12px}
+body[data-ver-view="board"] .board-footer .controls{gap:6px}
+body[data-ver-view="board"] .board-footer .btn-icon{display:none}
+body[data-ver-view="board"] .board-footer .controls .spacer{display:none}
+body[data-ver-view="board"] .board-footer .controls .btn{flex:1;min-height:38px;padding:8px 9px}
+body[data-ver-view="board"] .board-caption{margin-bottom:8px;font-size:11px}
+body[data-ver-view="board"] #arrowLegend{margin-top:7px;padding:6px 8px;font-size:10px}
+body[data-ver-view="board"] .advice-panel .panel-head{padding:11px 13px}
+body[data-ver-view="insights"] #analyzeBtn{display:none!important}
+body[data-ver-view="insights"] #cancelBtn{display:none!important}
+body[data-ver-view="insights"] .engine-state{margin-left:auto}
+body[data-ver-view="board"] .v5-dock{display:block}
+body[data-ver-view="board"]{padding-bottom:152px}
+@media(max-width:750px){
+ body[data-ver-view="board"] .shell{padding:9px 9px 18px}
+ body[data-ver-view="board"] .top{padding-bottom:7px}
+ body[data-ver-view="board"] .pwa-connect{margin-bottom:8px}
+ body[data-ver-view="board"] .verv4-appnav{padding:4px}
+ body[data-ver-view="board"] .verv4-appnav button{padding:10px 5px;font-size:12px}
+ body[data-ver-view="board"] .game-title{padding:10px 11px 7px}
+ body[data-ver-view="board"] .board-wrap{padding:0 5px}
+ body[data-ver-view="board"] .board{max-width:min(100%,520px);border-radius:5px;margin:auto}
+ body[data-ver-view="board"] .board-footer{padding:8px 6px 11px}
+ body[data-ver-view="board"] .board-footer .controls .btn{font-size:11px}
+ .v5-dock-row{grid-template-columns:minmax(81px,1fr) minmax(90px,.95fr) minmax(81px,1fr);gap:7px}
+ .v5-thumb{min-height:61px;font-size:13px;border-radius:13px;gap:4px}
+ .v5-thumb span{font-size:24px}
+ .v5-dock-center strong{font-size:18px}
+ .v5-dock-analyze{min-width:103px}
+}
+@media(max-width:350px){
+ .v5-dock-row{grid-template-columns:1fr 83px 1fr;gap:6px}
+ .v5-thumb{min-height:57px;font-size:11px}
+ .v5-thumb span{font-size:20px}
+ .v5-dock-analyze{min-width:95px}
+}
+@media(prefers-reduced-motion:reduce){
+ .v5-piece{transition:none!important}
+ .v5-thumb{transition:none!important}
+}
