@@ -33,6 +33,15 @@ jobs:
       - name: Test the real static chess website
         run: npm run test:stability
 
+      - name: Upload actual mobile board screenshot
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ver-chess-mobile-390x820
+          path: test-results/stability-board-390x820.png
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Preserve screenshots and traces on failure
         if: failure()
         uses: actions/upload-artifact@v4
