@@ -270,13 +270,13 @@ test('Both account searches appear on Games and Lichess search loads completed P
       await route.fulfill({
         status: 200, contentType: 'application/x-chess-pgn',
         headers: { 'access-control-allow-origin': '*' },
-        body: SAMPLE_PGN
+        body: SAMPLE_PGN.replace('[White "TestWhite"]', '[White "thibault"]')
       });
     });
     await page.locator('#verV4LichessUsername').fill('thibault');
     await page.locator('#verV4LichessFind').click();
     await expect(page.locator('#verV4LichessStatus')).toContainText('Found 1 finished game');
-    await expect(page.locator('#verV4List')).toContainText('TestWhite');
+    await expect(page.locator('#verV4List')).toContainText('thibault');
   } finally {
     await context.close();
   }
