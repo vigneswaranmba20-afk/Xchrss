@@ -1,0 +1,5 @@
+# Browser test artifacts only (does not affect the published chess site).
+node_modules/
+playwright-report/
+test-results/
+*.log
