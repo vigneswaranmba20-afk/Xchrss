@@ -41,6 +41,8 @@ buttons.forEach(b=>b.addEventListener('click',()=>{
   if(result.correct){
    buttons.forEach(button=>button.disabled=true);
    next.disabled=false;
+   // The selected answer becomes disabled; move keyboard focus to the next usable action.
+   next.focus({preventScroll:true});
   }
  }catch(error){
   feedback.textContent='This position could not be validated. Practice is paused.';
@@ -49,6 +51,6 @@ buttons.forEach(b=>b.addEventListener('click',()=>{
   console.error('VER observation practice:',error);
  }
 }));
-next.addEventListener('click',()=>{if(next.disabled)return;index=(index+1)%quiz.questions.length;show();});
+next.addEventListener('click',()=>{if(next.disabled)return;index=(index+1)%quiz.questions.length;show();buttons[0].focus({preventScroll:true});});
 show();
 })();
