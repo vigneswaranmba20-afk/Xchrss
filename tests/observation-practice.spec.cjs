@@ -40,3 +40,28 @@ test('loaded observation practice remains usable without network and honors redu
  await expect(practice.locator('#verObservationCount')).toHaveText('Position 2 of 3');
  await context.setOffline(false);
 });
+
+test('installed observation practice reloads from cached assets with no network', async ({page,context}) => {
+ await page.setViewportSize({width:393,height:852});
+ await page.goto('/');
+ await page.evaluate(async () => {
+   await navigator.serviceWorker.ready;
+   const expected=['ver-chess-motifs.js','ver-chess-back-rank.js','ver-chess-observation-quiz.js','ver-chess-observation-practice.js','ver-chess-observation-practice.css'];
+   const cache=await caches.open('ver-chess-shell-v7-3-observation-offline-2026-11-09');
+   for(const asset of expected){
+     if(!await cache.match(new URL(asset,location.href)))throw Error('Not precached: '+asset);
+   }
+ });
+ await context.setOffline(true);
+ try {
+   await page.reload();
+   await page.locator('[data-ver-nav="learn"]').click();
+   const practice=page.locator('#verObservationPractice');
+   await expect(practice).toBeVisible();
+   await expect(practice.locator('#verObservationCount')).toHaveText('Position 1 of 3');
+   await practice.locator('[data-answer="yes"]').click();
+   await expect(practice.locator('#verObservationFeedback')).toContainText('Correct.');
+ } finally {
+   await context.setOffline(false);
+ }
+});
