@@ -11,7 +11,7 @@ test('white corner king requires only two forward pawns', () => {
  assert.deepEqual(hits[0].blockingPawns, ['a2', 'b2']);
 });
 test('black corner king mirrored with two forward pawns', () => {
- const hits = backRankPatterns('q6k/6pp/8/8/8/8/8/K7 b - - 0 1');
+ const hits = backRankPatterns('Q6k/6pp/8/8/8/8/8/K7 b - - 0 1');
  assert.equal(hits.length, 1);
  assert.equal(hits[0].king, 'h8');
  assert.equal(hits[0].attacker, 'a8');
@@ -27,7 +27,7 @@ test('opposing attacker off home rank is not a horizontal back-rank ray', () => 
  assert.deepEqual(backRankPatterns('7k/8/8/8/8/8/r2PPP2/4K3 w - - 0 1'), []);
 });
 test('opposing piece between queen and king blocks ray', () => {
- assert.deepEqual(backRankPatterns('7k/8/8/8/8/8/3PPP2/q2rK3 w - - 0 1'), []);
+ assert.deepEqual(backRankPatterns('7k/8/8/8/8/8/3PPP2/q2RK3 w - - 0 1'), []);
 });
 test('own pawn on the king rank blocks ray', () => {
  assert.deepEqual(backRankPatterns('7k/8/8/8/8/8/3PPP2/r2PK3 w - - 0 1'), []);
