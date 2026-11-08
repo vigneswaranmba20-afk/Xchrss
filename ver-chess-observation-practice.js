@@ -20,6 +20,8 @@ const feedback=section.querySelector('#verObservationFeedback');
 const next=section.querySelector('#verObservationNext');
 const count=section.querySelector('#verObservationCount');
 const buttons=[...section.querySelectorAll('[data-answer]')];
+// Announce the current position and question when an answer receives keyboard focus.
+buttons.forEach(button=>button.setAttribute('aria-describedby','verObservationCount verObservationPrompt'));
 let index=0;
 function show(){
  const q=quiz.questions[index];
