@@ -1,0 +1,14 @@
+/* Isolated Learn practice styles: never alter the stable Board tab. */
+.ver-observation-practice{margin:18px 0 24px;padding:16px;border:1px solid #b8b48c66;border-radius:17px;background:#102c23;color:#f4f1e2}
+.ver-observation-heading small{font-size:10px;letter-spacing:.16em;color:#e4ca84}
+.ver-observation-heading h2{font:500 25px Georgia,serif;margin:6px 0}
+.ver-observation-heading p,#verObservationPrompt{font-size:13px;line-height:1.6;color:#d3e0d0}
+#verObservationBoard{max-width:420px;margin:12px auto;width:100%!important;aspect-ratio:1;height:auto!important}
+.ver-observation-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.ver-observation-actions button,#verObservationNext{min-height:48px;border:1px solid #8aa68b;border-radius:10px;background:#28523c;color:#fff3d7;padding:9px;font-weight:650}
+#verObservationNext{background:#e4ca84;color:#1c2e20;border-color:#e4ca84}
+#verObservationNext:disabled{opacity:.4}
+#verObservationFeedback{min-height:44px;line-height:1.6;color:#f1d68e;font-size:13px}
+#verObservationCount{font-size:11px;color:#c4d2c3}
+.ver-observation-practice button:focus-visible{outline:3px solid #fff2ac;outline-offset:3px}
+@media(max-width:380px){.ver-observation-practice{padding:11px}.ver-observation-actions button{font-size:12px}}
