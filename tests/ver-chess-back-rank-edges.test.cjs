@@ -11,7 +11,7 @@ test('white corner king requires only two forward pawns', () => {
  assert.deepEqual(hits[0].blockingPawns, ['a2', 'b2']);
 });
 test('black corner king mirrored with two forward pawns', () => {
- const hits = backRankPatterns('Q6k/6pp/8/8/8/8/8/K7 b - - 0 1');
+ const hits = backRankPatterns('R6k/6pp/8/8/8/8/8/K7 b - - 0 1');
  assert.equal(hits.length, 1);
  assert.equal(hits[0].king, 'h8');
  assert.equal(hits[0].attacker, 'a8');
