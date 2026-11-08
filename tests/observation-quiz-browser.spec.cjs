@@ -1,13 +1,28 @@
 const { test, expect } = require('@playwright/test');
 
+// Keep quiz globals isolated from the existing application's globals.
+// The quiz is not yet wired into the production UI.
+async function loadQuizFrame(page) {
+  await page.evaluate(() => {
+    const iframe = document.createElement('iframe');
+    iframe.id = 'observation-quiz-test-frame';
+    iframe.title = 'Isolated observation quiz test';
+    document.body.appendChild(iframe);
+  });
+  const handle = await page.locator('#observation-quiz-test-frame').elementHandle();
+  const frame = await handle.contentFrame();
+  await frame.addScriptTag({ url: '/ver-chess-back-rank.js' });
+  await frame.addScriptTag({ url: '/ver-chess-observation-quiz.js' });
+  return frame;
+}
+
 // Exercise the real browser bundles at an Android-sized viewport without
 // changing the verified production board or relying on a remote chess service.
 test('offline back-rank quiz stays deterministic on a mobile browser', async ({ page, context }) => {
   await page.setViewportSize({ width: 393, height: 852 });
   await page.goto('/');
-  await page.addScriptTag({ url: '/ver-chess-back-rank.js' });
-  await page.addScriptTag({ url: '/ver-chess-observation-quiz.js' });
-  const initial = await page.evaluate(() => {
+  const frame = await loadQuizFrame(page);
+  const initial = await frame.evaluate(() => {
     const quiz = globalThis.VERChessObservationQuiz;
     return quiz.questions.map(q => ({
       id: q.id,
@@ -25,7 +40,7 @@ test('offline back-rank quiz stays deterministic on a mobile browser', async ({ 
     expect(item.yes).not.toHaveProperty('evaluation');
   }
   await context.setOffline(true);
-  const offline = await page.evaluate(() => {
+  const offline = await frame.evaluate(() => {
     const quiz = globalThis.VERChessObservationQuiz;
     return quiz.questions.map(q => ({
       id: q.id,
@@ -40,9 +55,8 @@ test('offline back-rank quiz stays deterministic on a mobile browser', async ({ 
 
 test('browser quiz rejects malformed input without touching game state', async ({ page }) => {
   await page.goto('/');
-  await page.addScriptTag({ url: '/ver-chess-back-rank.js' });
-  await page.addScriptTag({ url: '/ver-chess-observation-quiz.js' });
-  const result = await page.evaluate(() => {
+  const frame = await loadQuizFrame(page);
+  const result = await frame.evaluate(() => {
     const quiz = globalThis.VERChessObservationQuiz;
     const errors = [];
     for (const [id, answer] of [['missing', true], [quiz.questions[0].id, 'yes']]) {
