@@ -1,5 +1,12 @@
 # VER Chess — development log
 
+## 2026-11-08 · v7.3 visible observation practice — pending PR verification
+- Added an isolated, in-app Learn practice card with three detector-checked back-rank geometry questions, yes/no feedback, a separate SmoothBoard, and touch-friendly controls. Existing review Board and saved-game state are not intentionally mutated.
+- Added actual-site Playwright checks for 393×852 viewport, incorrect/correct answers, board DOM preservation, and loaded-then-offline interaction with reduced motion.
+- **Release gate: NOT VERIFIED.** Branch CI and browser screenshots must pass before merging; Pages deployment and physical Android verification remain pending. Do not claim this feature is live.
+- Scope is geometric observations only, never forced checkmate or objective accuracy. No paid services or new third-party dependencies.
+
+
 ## 2026-11-08 · v7.3 PR #25 verified post-merge CI and Pages workflow
 - PR #25 merged as `f68149bed05d43214da4c6889d0cd4e23d6033ac` after successful pre-merge CI (run 42485200882). Browser coverage includes a 393×852 Chromium viewport and loaded-then-offline quiz behavior; it does **not** establish fresh offline startup or physical Android functionality.
 - **Post-merge verification:** stability run [42490397466](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42490397466) completed successfully: tactical fixtures, actual-site Chromium tests, and mobile screenshot upload all passed.
