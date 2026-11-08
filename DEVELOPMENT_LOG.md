@@ -1,5 +1,11 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.3 keyboard-accessible observation practice — awaiting CI
+- Proposed focused keyboard focus management: after a correct answer disables the answer buttons, focus moves to Next; advancing a position returns focus to the first enabled answer.
+- Added a real-site Playwright 393×852 keyboard-only regression covering Enter activation and focus transitions.
+- **Release gate: NOT VERIFIED.** Await branch CI and browser checks; do not merge or claim deployment before passing. No review Board, saved games, Stockfish, or PWA cache changes.
+
+
 ## 2026-11-08 · v7.3 visible observation practice — pending PR verification
 - Added an isolated, in-app Learn practice card with three detector-checked back-rank geometry questions, yes/no feedback, a separate SmoothBoard, and touch-friendly controls. Existing review Board and saved-game state are not intentionally mutated.
 - Added actual-site Playwright checks for 393×852 viewport, incorrect/correct answers, board DOM preservation, and loaded-then-offline interaction with reduced motion.
