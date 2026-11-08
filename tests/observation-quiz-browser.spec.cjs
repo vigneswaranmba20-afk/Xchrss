@@ -11,6 +11,8 @@ async function loadQuizFrame(page) {
   });
   const handle = await page.locator('#observation-quiz-test-frame').elementHandle();
   const frame = await handle.contentFrame();
+  // Back-rank detector depends on the motif parser; load in dependency order.
+  await frame.addScriptTag({ url: '/ver-chess-motifs.js' });
   await frame.addScriptTag({ url: '/ver-chess-back-rank.js' });
   await frame.addScriptTag({ url: '/ver-chess-observation-quiz.js' });
   return frame;
