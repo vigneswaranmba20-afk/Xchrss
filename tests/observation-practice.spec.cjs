@@ -65,3 +65,20 @@ test('installed observation practice reloads from cached assets with no network'
    await context.setOffline(false);
  }
 });
+
+
+test('keyboard focus remains usable after a correct observation answer', async ({page}) => {
+ await page.setViewportSize({width:393,height:852});
+ await page.goto('/');
+ await page.locator('[data-ver-nav="learn"]').click();
+ const practice=page.locator('#verObservationPractice');
+ await expect(practice).toBeVisible();
+ await practice.locator('[data-answer="yes"]').focus();
+ await page.keyboard.press('Enter');
+ await expect(practice.locator('#verObservationFeedback')).toContainText('Correct.');
+ await expect(practice.locator('#verObservationNext')).toBeFocused();
+ await page.keyboard.press('Enter');
+ await expect(practice.locator('#verObservationCount')).toHaveText('Position 2 of 3');
+ await expect(practice.locator('[data-answer="yes"]')).toBeFocused();
+ await expect(practice.locator('[data-answer="yes"]')).toBeEnabled();
+});
