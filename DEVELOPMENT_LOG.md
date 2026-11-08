@@ -1,5 +1,12 @@
 # VER Chess — development log
 
+## 2026-11-08 · v7.3 PR #25 verified post-merge CI and Pages workflow
+- PR #25 merged as `f68149bed05d43214da4c6889d0cd4e23d6033ac` after successful pre-merge CI (run 42485200882). Browser coverage includes a 393×852 Chromium viewport and loaded-then-offline quiz behavior; it does **not** establish fresh offline startup or physical Android functionality.
+- **Post-merge verification:** stability run [42490397466](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42490397466) completed successfully: tactical fixtures, actual-site Chromium tests, and mobile screenshot upload all passed.
+- **Pages workflow:** [42490397250](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42490397250) completed successfully, including build, deploy and report-build-status jobs. This confirms GitHub Actions reported a successful Pages deployment, **not** independent live-site accessibility or mobile-device functionality.
+- **Release scope:** tests and development documentation only; existing Board, Stockfish, local games and PWA application code unchanged. Quiz module is still not integrated into the visible Learn interface.
+- **Next:** independently open the live Pages site, verify loaded assets/offline launch and Android UI; then build an accessible Learn quiz UI in a separate focused PR with Playwright checks.
+
 ## 2026-11-08 · v7.3 Learn observation quiz (PR #24 merged; Pages unverified)
 - Added original, offline, FEN-based **back-rank geometry** questions with detector-checked yes/no feedback; isolated module, not yet wired into the Learn UI.
 - Added Node regression tests for positive/negative fixtures, input validation and non-misleading explanations.
