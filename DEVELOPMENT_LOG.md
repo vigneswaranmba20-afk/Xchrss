@@ -1,5 +1,10 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.3 quiz answer accessibility context — PR pending
+- Proposed a small, isolated improvement: both observation answer buttons reference the current position counter and question using `aria-describedby`, so keyboard/screen-reader focus has position context after advancing.
+- Added a 393×852 Playwright browser regression checking answer descriptions and updated position context.
+- **Release gate: NOT VERIFIED.** Branch CI, mobile browser checks and Pages deployment pending; do not merge until tests pass. No stable Board, Stockfish, PGN, saved-game or PWA changes.
+
 ## 2026-11-09 · v7.3 keyboard-accessible observation practice — awaiting CI
 - Proposed focused keyboard focus management: after a correct answer disables the answer buttons, focus moves to Next; advancing a position returns focus to the first enabled answer.
 - Added a real-site Playwright 393×852 keyboard-only regression covering Enter activation and focus transitions.

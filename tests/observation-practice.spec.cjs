@@ -82,3 +82,25 @@ test('keyboard focus remains usable after a correct observation answer', async (
  await expect(practice.locator('[data-answer="yes"]')).toBeFocused();
  await expect(practice.locator('[data-answer="yes"]')).toBeEnabled();
 });
+
+
+test('answer buttons expose the current question and position to assistive technology', async ({page}) => {
+ await page.setViewportSize({width:393,height:852});
+ await page.goto('/');
+ await page.locator('[data-ver-nav="learn"]').click();
+ const practice=page.locator('#verObservationPractice');
+ const yes=practice.locator('[data-answer="yes"]');
+ const no=practice.locator('[data-answer="no"]');
+ await expect(yes).toHaveAttribute('aria-describedby','verObservationCount verObservationPrompt');
+ await expect(no).toHaveAttribute('aria-describedby','verObservationCount verObservationPrompt');
+ await expect(practice.locator('#verObservationCount')).toHaveText('Position 1 of 3');
+ const firstPrompt=await practice.locator('#verObservationPrompt').textContent();
+ expect(firstPrompt.trim().length).toBeGreaterThan(0);
+ await yes.click();
+ await practice.locator('#verObservationNext').click();
+ await expect(practice.locator('#verObservationCount')).toHaveText('Position 2 of 3');
+ await expect(yes).toBeFocused();
+ await expect(yes).toHaveAttribute('aria-describedby','verObservationCount verObservationPrompt');
+ const secondPrompt=await practice.locator('#verObservationPrompt').textContent();
+ expect(secondPrompt.trim().length).toBeGreaterThan(0);
+});
