@@ -1,5 +1,9 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.4 piece-count FEN guard — PR validation pending, NOT RELEASED
+- Proposed conservative rejection of positions with more than eight pawns or sixteen total pieces for either side. Added positive/negative Playwright fixtures for nine pawns (both colors), seventeen white pieces and existing valid positions.
+- No claim of complete FEN legality or tactical soundness; no board, PGN, engine, storage, or PWA changes. Require branch CI and post-merge Pages verification before release.
+
 ## 2026-11-09 · v7.4 matcher invalid-position hardening — PR pending, NOT RELEASED
 - Reject FEN inventories without exactly one king of each color, or with pawns on rank one/eight; avoid suggesting lessons for clearly impossible positions.
 - Added positive and negative Playwright fixtures and non-mutation checks. Does not establish full FEN legality, check constraints, forced tactics or chess accuracy.
