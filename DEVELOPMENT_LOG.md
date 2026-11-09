@@ -1,5 +1,14 @@
 # VER Chess — development log
 
+## 2026-11-09 · PWA online freshness and installed-app update recovery
+
+- Confirmed the public GitHub Pages assets were published for PR #37, but the installed service worker could keep serving cached JS/CSS instead of fetching newer releases.
+- Switches same-origin app-shell assets to network-first with offline cache fallback; Stockfish engine remains cache-first, preserving offline analysis and avoiding repeated large downloads.
+- Added a visible **Reload update** action when a new service worker takes control; never interrupt an in-progress game automatically.
+- Requests service-worker update checks after app launch and on registration; includes browser regression coverage for stale cache replacement, offline fallback and the reload prompt.
+- Remaining manual check: installed Android PWA must be opened online once and the update reload tapped to take the new release; avoid clearing app storage or uninstalling, which can delete locally saved PGNs.
+
+
 ## 2026-11-09 · Independent, horizontal account searches
 
 - Each Find button now has its own loading state, duplicate-submit guard, and accessible busy indicator. Searching one platform leaves the other platform's controls and status alone.
