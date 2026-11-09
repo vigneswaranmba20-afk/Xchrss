@@ -1,5 +1,14 @@
 # VER Chess — development log
 
+## 2026-11-09 · Playable Learn lesson boards
+
+- Fixed the display-only Knight fork and Absolute pin lesson boards: white pieces now accept tap/click-to-move, mouse/touch dragging, and keyboard selection.
+- Legal destinations appear as dots. Illegal moves leave the position unchanged; legal attempts move the piece and update the commentary below the board. Correct moves draw the tactical relationships and satisfy the Practice step.
+- Added Try again, retained the attempted position and feedback when flipping, and made quiz answers use the same board/feedback path. Lesson state remains separate from imported games and analysis.
+- Bumped the app-shell cache for installed/offline users. The observation cache regression now checks the active cache instead of an obsolete version name.
+- Validation: seven new Chromium interaction/offline tests pass; all nine Node fixture suites pass. The existing browser checks passed apart from their obsolete cache-name assertion, and all six observation tests passed after updating that assertion. Pull-request CI and Pages deployment are verified separately in GitHub.
+- Physical Android verification remains a user-device check. Open online once, then close and reopen the installed app to receive the new cached lesson code.
+
 ## 2026-11-09 · v7.4 matcher invalid-position hardening — PR pending, NOT RELEASED
 - Reject FEN inventories without exactly one king of each color, or with pawns on rank one/eight; avoid suggesting lessons for clearly impossible positions.
 - Added positive and negative Playwright fixtures and non-mutation checks. Does not establish full FEN legality, check constraints, forced tactics or chess accuracy.

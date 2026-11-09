@@ -47,7 +47,9 @@ test('installed observation practice reloads from cached assets with no network'
  await page.evaluate(async () => {
    await navigator.serviceWorker.ready;
    const expected=['ver-chess-motifs.js','ver-chess-back-rank.js','ver-chess-observation-quiz.js','ver-chess-observation-practice.js','ver-chess-observation-practice.css'];
-   const cache=await caches.open('ver-chess-shell-v7-3-observation-offline-2026-11-09');
+   const shellCaches=(await caches.keys()).filter(name=>name.startsWith('ver-chess-shell-'));
+   if(shellCaches.length!==1)throw Error('Expected one active app-shell cache');
+   const cache=await caches.open(shellCaches[0]);
    for(const asset of expected){
      if(!await cache.match(new URL(asset,location.href)))throw Error('Not precached: '+asset);
    }

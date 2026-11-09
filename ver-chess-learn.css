@@ -34,6 +34,16 @@ body[data-ver-view="learn"] .shell{padding:12px 12px 26px}
 .ver-learn-board-wrap{min-width:0}
 .ver-learn-board{display:grid;width:100%!important;max-width:430px;height:auto!important;aspect-ratio:1!important;min-width:0;min-height:0;border-radius:8px!important;overflow:hidden;box-shadow:0 3px 25px #0006}
 .ver-learn-board .v5-board-arrows{opacity:.9}
+.ver-learn-board{touch-action:none;user-select:none;-webkit-user-select:none}
+.ver-learn-board .v5-square{cursor:pointer}
+.ver-learn-board .v5-square.ver-learn-movable{cursor:grab}
+.ver-learn-board.ver-learn-dragging{cursor:grabbing}
+.ver-learn-board .ver-learn-selected{box-shadow:inset 0 0 0 4px #16664c!important}
+.ver-learn-board .ver-learn-legal::after{content:"";position:absolute;width:25%;height:25%;left:37.5%;top:37.5%;border-radius:50%;background:#16664cbf;box-shadow:0 0 0 2px #ffffff70;pointer-events:none}
+.ver-learn-board .v5-square:focus-visible{outline:3px solid #16664c;outline-offset:-3px}
+.ver-learn-drag-piece{position:fixed;z-index:10000;pointer-events:none;transform:translate(-50%,-50%);filter:drop-shadow(0 5px 4px #0006)}
+.ver-learn-drag-piece svg{display:block;width:100%;height:100%}
+.ver-learn-retry{display:block;margin:8px auto 0;min-height:44px;padding:8px 18px;border:1px solid #819e8980;border-radius:9px;background:#244536;color:#eff5e5;font-size:12px;font-weight:750}
 .ver-learn-board-foot{display:block;font-size:10px;color:#c4d1b5;line-height:1.4;margin:7px 0;text-align:center}
 .ver-learn-copy{display:flex;flex-direction:column;min-width:0;gap:10px;min-height:260px}
 .ver-learn-copy>strong{align-self:start;color:#172b20;background:#e4cb88;border-radius:100px;padding:5px 12px;font-size:11px;letter-spacing:.05em}
