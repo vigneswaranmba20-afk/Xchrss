@@ -12,7 +12,7 @@ function positionKey(fen){
   if(fields.length<2||!['w','b'].includes(fields[1]))return null;
   const rows=fields[0].split('/');
   if(rows.length!==8)return null;
-  for(const row of rows){
+  // Reject impossible piece inventories before suggesting a lesson.\n  const placement=rows.join('');\n  if((placement.match(/K/g)||[]).length!==1||(placement.match(/k/g)||[]).length!==1)return null;\n  if(/[Pp]/.test(rows[0])||/[Pp]/.test(rows[7]))return null;\n  for(const row of rows){
     let width=0;
     for(const c of row){
       if(/[1-8]/.test(c))width+=Number(c);
