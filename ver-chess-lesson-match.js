@@ -16,6 +16,12 @@ function positionKey(fen){
   const placement=rows.join('');
   if((placement.match(/K/g)||[]).length!==1||(placement.match(/k/g)||[]).length!==1)return null;
   if(/[Pp]/.test(rows[0])||/[Pp]/.test(rows[7]))return null;
+  // A side starts with eight pawns and sixteen pieces; promotions cannot increase either total.
+  for(const side of ['white','black']){
+    const pieces=side==='white'?placement.match(/[PNBRQK]/g):placement.match(/[pnbrqk]/g);
+    const pawns=side==='white'?placement.match(/P/g):placement.match(/p/g);
+    if((pieces||[]).length>16||(pawns||[]).length>8)return null;
+  }
   for(const row of rows){
     let width=0;
     for(const c of row){
