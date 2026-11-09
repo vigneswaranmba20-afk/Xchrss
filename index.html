@@ -127,7 +127,7 @@ body.analysis-open{overflow:hidden}
 @media(max-width:680px){.top{align-items:flex-start;gap:8px}.pwa-head{gap:5px;flex-direction:column;align-items:flex-end}.pwa-head .top-note{font-size:9px}.pwa-install{min-height:38px;padding:7px 10px}.pwa-connect{align-items:flex-start;flex-direction:column;gap:6px}}
 @media(display-mode:standalone){body{padding-top:env(safe-area-inset-top)}.pwa-install{display:none}}
 </style>
-<link rel="stylesheet" href="./ver-chess-v4-ux.css" />
+<link rel="stylesheet" href="./ver-chess-v4-ux.css?v=7.7" />
 <link rel="stylesheet" href="./ver-chess-smooth-ui.css?v=5.3" />
 <link rel="stylesheet" href="./ver-chess-refined-ui.css?v=5.2" />
 <link rel="stylesheet" href="./ver-chess-v6-mobile.css?v=6" />
@@ -699,6 +699,28 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
  window.addEventListener('offline',connectivity);
  connectivity();
  if(!('serviceWorker' in navigator)){state('You can use this chess website, but offline support is not available in this browser.');return;}
+ // Give installed Android users a visible way to pick up a newly activated release.
+ // Do not reload automatically: the user may be halfway through reviewing a game.
+ const wasControlledOnOpen=Boolean(navigator.serviceWorker.controller);
+ let updatePromptVisible=false;
+ function offerVersionRefresh(){
+   if(updatePromptVisible||!navigator.onLine)return;
+   updatePromptVisible=true;
+   const banner=document.createElement('div');
+   banner.id='verUpdateBanner';
+   banner.setAttribute('role','status');
+   banner.style.cssText='position:fixed;z-index:130;bottom:calc(12px + env(safe-area-inset-bottom,0px));left:12px;right:12px;max-width:540px;margin:auto;background:#18372d;color:#f6efd9;border:1px solid #ddc17e;border-radius:14px;box-shadow:0 10px 32px #0009;padding:12px;display:flex;align-items:center;gap:12px;justify-content:space-between;font-size:13px';
+   const message=document.createElement('span');
+   message.textContent='A newer VER Chess version is ready.';
+   const action=document.createElement('button');
+   action.type='button';action.textContent='Reload update';
+   action.style.cssText='flex:none;border:0;border-radius:9px;min-height:44px;padding:9px 12px;background:#dfbf77;color:#14271e;font-weight:750';
+   action.addEventListener('click',()=>window.location.reload());
+   banner.append(message,action);document.body.append(banner);
+ }
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{
+   if(wasControlledOnOpen)offerVersionRefresh();
+ });
  // Service worker requires HTTPS; GitHub Pages supplies it.
  window.addEventListener('load',()=>{
    navigator.serviceWorker.register('./sw.js',{scope:'./'}).then(async registration=>{
@@ -713,7 +735,15 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
        if(msg.type==='ENGINE_CACHED')state('Offline-ready ✓ Stockfish 19 saved on this device. Import PGN files and analyse without internet.');
        if(msg.type==='ENGINE_CACHE_FAILED')state('App installed ✓ Connect to the internet once to cache Stockfish for offline game analysis.');
      });
-     if(registration.waiting)state('An app update is available. Close and reopen to receive the new version.');
+     if(registration.waiting&&navigator.serviceWorker.controller)offerVersionRefresh();
+     registration.addEventListener('updatefound',()=>{
+       const installing=registration.installing;
+       if(!installing)return;
+       installing.addEventListener('statechange',()=>{
+         if(installing.state==='installed'&&navigator.serviceWorker.controller)offerVersionRefresh();
+       });
+     });
+     if(navigator.onLine)registration.update().catch(err=>console.warn('Update check unavailable:',err));
    }).catch(err=>{console.warn('Offline setup unavailable:',err);state('Web chess is ready. Offline install could not be enabled in this browser.');});
  });
 })();
@@ -721,7 +751,7 @@ renderAll();$('progressLabel').textContent='Choose a completed game from Games t
 </script>
 
 <!-- VER Chess Intelligence v4 — optional public-game library; original analysis/PWA scripts preserved. -->
-<script defer src="./ver-chess-v4-library.js?v=6"></script>
+<script defer src="./ver-chess-v4-library.js?v=7.7"></script>
 <script defer src="./ver-chess-touch-review-v6-1.js"></script>
 <script defer src="./ver-chess-viewport-fit-v6-1.js"></script>
 <script defer src="./ver-chess-coach-on-board.js"></script>
