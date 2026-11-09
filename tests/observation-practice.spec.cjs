@@ -104,3 +104,30 @@ test('answer buttons expose the current question and position to assistive techn
  const secondPrompt=await practice.locator('#verObservationPrompt').textContent();
  expect(secondPrompt.trim().length).toBeGreaterThan(0);
 });
+
+
+test('practice review reports first attempts without claiming chess accuracy and resets', async ({page}) => {
+ await page.setViewportSize({width:393,height:852});
+ await page.goto('/');
+ await page.locator('[data-ver-nav="learn"]').click();
+ const practice=page.locator('#verObservationPractice');
+ const review=practice.locator('#verObservationReview');
+ await expect(review).toBeEmpty();
+ await practice.locator('[data-answer="no"]').click(); // first position: incorrect
+ await practice.locator('[data-answer="yes"]').click();
+ await practice.locator('#verObservationNext').click();
+ await practice.locator('[data-answer="no"]').click(); // second position: correct
+ await practice.locator('#verObservationNext').click();
+ await practice.locator('[data-answer="no"]').click(); // third position: correct
+ await expect(review).toContainText('2 of 3 positions correct on the first attempt');
+ await expect(review).toContainText('not chess move accuracy');
+ await practice.locator('#verObservationNext').click();
+ await expect(review).toBeEmpty();
+ await expect(practice.locator('#verObservationCount')).toHaveText('Position 1 of 3');
+ await practice.locator('[data-answer="yes"]').click();
+ await practice.locator('#verObservationNext').click();
+ await practice.locator('[data-answer="no"]').click();
+ await practice.locator('#verObservationNext').click();
+ await practice.locator('[data-answer="no"]').click();
+ await expect(review).toContainText('3 of 3 positions correct on the first attempt');
+});

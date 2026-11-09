@@ -1,5 +1,10 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.3 observation practice review — PR awaiting validation
+- Proposed a session-only first-attempt practice summary after all three detector-checked questions, with an explicit warning that it is **not chess move accuracy**. Restart clears the session tally. No persistent storage or engine metrics.
+- Added 393×852 Playwright browser regression for incorrect/correct attempts, summary and reset. Review Board, PGN, Stockfish and PWA unchanged.
+- **NOT RELEASED:** branch CI, mobile/offline regressions and Pages deployment must pass before merge. Physical Android and independent live-site checks outstanding.
+
 ## 2026-11-09 · v7.3 quiz answer accessibility context — PR pending
 - Proposed a small, isolated improvement: both observation answer buttons reference the current position counter and question using `aria-describedby`, so keyboard/screen-reader focus has position context after advancing.
 - Added a 393×852 Playwright browser regression checking answer descriptions and updated position context.
