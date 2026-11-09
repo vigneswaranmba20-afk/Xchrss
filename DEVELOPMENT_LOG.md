@@ -1,5 +1,11 @@
 # VER Chess — development log
 
+## 2026-11-10 · v7.4 read-only review position snapshots — PROPOSED, NOT RELEASED
+
+- Expose `VERChessReviewControls.positionFens()` as a frozen array of serialized board positions, starting at ply zero. It copies FEN strings from existing in-memory game states; no PGN, saved games, Stockfish or board rendering is changed.
+- Added mobile Chromium regression asserting immutable snapshots, initial-position format, ply count, and unchanged board/review state.
+- Foundation for a future visible Game-to-Lesson recommendation bridge; this alone does not imply tactical opportunities or accuracy. Await CI, merge and deployment verification.
+
 ## 2026-11-10 · v7.4 browser-runtime/offline regression — PROPOSED, NOT RELEASED
 
 - Added an actual-site Playwright check for the browser-global Game-to-Lesson index at 393×852 with reduced motion and network disabled after initial loading.
