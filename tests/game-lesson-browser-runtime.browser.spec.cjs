@@ -5,7 +5,8 @@ test('v7.4 lesson index runs in the actual mobile browser, including offline',as
  await page.emulateMedia({reducedMotion:'reduce'});
  await page.goto('/');
  const board=page.locator('.board').first();
- await expect(board).toBeVisible();
+ // Learn's board is intentionally hidden until its tab is opened; verify DOM preservation without forcing navigation.
+ await expect(board).toBeAttached();
  const original=await board.evaluate(el=>el.outerHTML);
  // Exercise browser globals, not the CommonJS helper imported by the test runner.
  await page.addScriptTag({url:'./ver-chess-lesson-match.js'});
