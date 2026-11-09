@@ -1,5 +1,10 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.4 matcher invalid-position hardening — PR pending, NOT RELEASED
+- Reject FEN inventories without exactly one king of each color, or with pawns on rank one/eight; avoid suggesting lessons for clearly impossible positions.
+- Added positive and negative Playwright fixtures and non-mutation checks. Does not establish full FEN legality, check constraints, forced tactics or chess accuracy.
+- No changes to review Board, game data, engine or offline service worker. Await PR CI, post-merge Pages verification and physical Android testing before claiming release.
+
 ## 2026-11-09 · v7.4 exact-position lesson matching foundation — proposed, NOT RELEASED
 - Added a standalone, offline-capable helper that matches a game's FEN to a lesson only when piece placement and side to move agree exactly. Halfmove/fullmove counters are ignored; no tactical opportunity or accuracy is inferred.
 - Added a 393×852 Playwright regression for positive/negative/invalid matches and unchanged existing board DOM.
