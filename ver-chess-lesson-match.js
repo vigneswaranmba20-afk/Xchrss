@@ -16,6 +16,12 @@ function positionKey(fen){
   const placement=rows.join('');
   if((placement.match(/K/g)||[]).length!==1||(placement.match(/k/g)||[]).length!==1)return null;
   if(/[Pp]/.test(rows[0])||/[Pp]/.test(rows[7]))return null;
+  // Promotions cannot increase the original eight-pawn or sixteen-piece inventory.
+  for(const white of [true,false]){
+    const pieces=placement.match(white?/[PNBRQK]/g:/[pnbrqk]/g)||[];
+    const pawns=placement.match(white?/P/g:/p/g)||[];
+    if(pieces.length>16||pawns.length>8)return null;
+  }
   for(const row of rows){
     let width=0;
     for(const c of row){

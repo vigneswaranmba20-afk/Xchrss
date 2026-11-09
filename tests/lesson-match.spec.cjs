@@ -20,7 +20,10 @@ test('v7.4 refuses impossible inventories without mutating lessons',()=>{
     '3q3k/8/8/4N3/8/8/8/8 w - - 0 1', // missing white king
     '3q2kk/8/8/4N3/8/8/8/K7 w - - 0 1', // duplicate black king
     '3q3k/8/8/4N3/8/8/8/K6P w - - 0 1', // pawn on rank one
-    'P2q3k/8/8/4N3/8/8/8/K7 w - - 0 1' // pawn on rank eight
+    'P2q3k/8/8/4N3/8/8/8/K7 w - - 0 1', // pawn on rank eight
+    '7k/8/8/8/8/P7/PPPPPPPP/K7 w - - 0 1', // nine white pawns
+    '7k/pppppppp/p7/8/8/8/8/K7 b - - 0 1', // nine black pawns
+    '7k/8/8/8/8/NNNNNNNN/PPPPPPPP/K7 w - - 0 1' // seventeen white pieces
   ]){
     expect(matcher.positionKey(invalid)).toBeNull();
     expect(matcher.matchExactPosition(invalid,lessons)).toEqual([]);
