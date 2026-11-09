@@ -1,5 +1,12 @@
 # VER Chess — development log
 
+## 2026-11-09 · Independent, horizontal account searches
+
+- Each Find button now has its own loading state, duplicate-submit guard, and accessible busy indicator. Searching one platform leaves the other platform's controls and status alone.
+- Searches can complete in either order: only the most recently submitted search updates Current search; both platforms still save their results. A late failure stays with its own platform, and selecting Saved games during a search preserves that view.
+- Chess.com and Lichess now appear in two equal columns on phones and larger screens, with aligned username fields and Find buttons. Input labels remain distinct for screen readers.
+- Updated the installed app's shell cache. Added browser regressions for isolated requests, overlapping responses, failures, saved-view preservation, and layout at 320, 390, 720, and 1280 pixels. CI and deployment evidence are recorded on the associated GitHub PR and Actions runs.
+
 ## 2026-11-09 · Playable Learn lesson boards
 
 - Fixed the display-only Knight fork and Absolute pin lesson boards: white pieces now accept tap/click-to-move, mouse/touch dragging, and keyboard selection.

@@ -15,9 +15,10 @@ const $=id=>document.getElementById(id);
 const STORE='ver-chess-v4-public-library-v1';
 const MAX_ITEMS=80,MAX_FETCH=40;
 const state={
- items:[],accounts:{chesscom:'',lichess:''},shown:10,busy:false,
+ items:[],accounts:{chesscom:'',lichess:''},shown:10,busy:{chesscom:false,lichess:false},
  active:null,currentKeys:[],scope:'all',view:'games',selected:null
 };
+const anySearchBusy=()=>state.busy.chesscom||state.busy.lichess;
 const nameFor=k=>k==='chesscom'?'Chess.com':'Lichess';
 function el(tag,cls,text){
  const n=document.createElement(tag);
@@ -51,12 +52,12 @@ panel.innerHTML=[
  '<div class="verv4-platforms">',
  '<section class="verv4-platform v6-primary-search" aria-labelledby="verV4ChessLabel">',
  '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♜</div><h3 id="verV4ChessLabel">Chess.com</h3></div>',
- '<form id="verV4ChessForm"><label for="verV4ChessUsername">Chess.com username</label><div class="v6-search-row"><input type="text" id="verV4ChessUsername" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4ChessFind" type="submit" class="btn btn-gold" aria-label="Find Chess.com games">Find</button></div></form>',
+ '<form id="verV4ChessForm" aria-busy="false"><label id="verV4ChessUsernameLabel" for="verV4ChessUsername">Username</label><div class="v6-search-row"><input type="text" id="verV4ChessUsername" aria-labelledby="verV4ChessLabel verV4ChessUsernameLabel" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4ChessFind" type="submit" class="btn btn-gold" aria-label="Find Chess.com games">Find</button></div></form>',
  '<div class="verv4-platform-status" id="verV4ChessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
  '<section class="verv4-platform v6-primary-search" aria-labelledby="verV4LichessLabel">',
  '<div class="verv4-platform-head"><div class="verv4-mark" aria-hidden="true">♞</div><h3 id="verV4LichessLabel">Lichess</h3></div>',
- '<form id="verV4LichessForm"><label for="verV4LichessUsername">Lichess username</label><div class="v6-search-row"><input type="text" id="verV4LichessUsername" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4LichessFind" type="submit" class="btn btn-gold" aria-label="Find Lichess games">Find</button></div></form>',
+ '<form id="verV4LichessForm" aria-busy="false"><label id="verV4LichessUsernameLabel" for="verV4LichessUsername">Username</label><div class="v6-search-row"><input type="text" id="verV4LichessUsername" aria-labelledby="verV4LichessLabel verV4LichessUsernameLabel" maxlength="32" placeholder="Enter username" autocomplete="off" autocapitalize="none" spellcheck="false" required/><button id="verV4LichessFind" type="submit" class="btn btn-gold" aria-label="Find Lichess games">Find</button></div></form>',
  '<div class="verv4-platform-status" id="verV4LichessStatus" role="status" aria-live="polite">Public finished games</div>',
  '</section>',
  '</div>',
@@ -125,7 +126,7 @@ $('verV4Back').addEventListener('click',()=>setView('games'));
 // The top navigation already provides a direct, persistent Board destination.
 // Manual PGN controls live immediately beneath the two platform searches.
 $('verV4QuickAnalyze').addEventListener('click',()=>{
- if(state.busy){$('verV4ReviewMeta').textContent='Finish importing before analysis.';return;}
+ if(anySearchBusy()){$('verV4ReviewMeta').textContent='Finish importing before analysis.';return;}
  window.runAnalysis();
 });
 function setPlatformStatus(platform,message,kind){
@@ -254,7 +255,7 @@ function render(){
   const empty=el('div','verv4-empty');
   let heading='No games to display',message='Enter a username above to search public completed games.';
   if(state.scope==='latest'&&state.active){
-   if(state.busy){heading='Searching '+sourceLabel(state.active.platform)+' @'+state.active.username+'…';message='Fetching public completed games. Please wait…';}
+   if(state.busy[state.active.platform]){heading='Searching '+sourceLabel(state.active.platform)+' @'+state.active.username+'…';message='Fetching public completed games. Please wait…';}
    else {heading='No results for '+sourceLabel(state.active.platform)+' @'+state.active.username;
    message='This search returned no completed standard games, failed, or matches your filters. Older saved accounts are hidden here. Tap “All saved games” to see them.';}
   }else if(state.items.length){
@@ -276,7 +277,7 @@ function switchScope(scope){
  render();
 }
 function openItem(item,analyze){
- if(state.busy)return;
+ if(anySearchBusy())return;
  try{
   window.importText(item.pgn);
   state.selected=item;
@@ -333,26 +334,28 @@ async function importLichess(username){
 }
 async function findGames(platform,evt){
  evt.preventDefault();
- if(state.busy)return;
+ if(state.busy[platform])return;
  const input=$(platform==='chesscom'?'verV4ChessUsername':'verV4LichessUsername');
  const username=input.value.trim();
  if(!/^[A-Za-z0-9_.-]{2,32}$/.test(username)){
   setPlatformStatus(platform,'Use 2–32 letters, numbers, dots, hyphens or underscores.','error');
   return;
  }
- state.active={platform,username};
+ const search={platform,username};
+ state.active=search;
  state.currentKeys=[];state.scope='latest';state.shown=10;
- state.busy=true;
+ state.busy[platform]=true;
  $('verV4Source').value='all';$('verV4Result').value='all';$('verV4Query').value='';
  $('verV4Context').textContent='Searching '+sourceLabel(platform)+' for @'+username+'… Other saved accounts are hidden until you choose All saved games.';
  render();
- const buttons=[$('verV4ChessFind'),$('verV4LichessFind')];
- buttons.forEach(b=>b.disabled=true);
- $(platform==='chesscom'?'verV4ChessFind':'verV4LichessFind').textContent=platform==='chesscom'?'Finding…':'Searching…';
+ const button=$(platform==='chesscom'?'verV4ChessFind':'verV4LichessFind');
+ const form=input.form;
+ button.disabled=true;button.textContent='Finding…';form.setAttribute('aria-busy','true');
  setPlatformStatus(platform,'Connecting to '+sourceLabel(platform)+'…','loading');
  try{
   const fresh=platform==='chesscom'?await importChessCom(username):await importLichess(username);
-  state.currentKeys=fresh.map(x=>x.key);
+  // Both platforms can run independently; only the last submitted search owns the results panel.
+  if(state.active===search)state.currentKeys=fresh.map(x=>x.key);
   const map=new Map(state.items.map(item=>[item.key,item]));
   for(const item of fresh)map.set(item.key,item);
   state.items=Array.from(map.values()).sort((a,b)=>b.at-a.at).slice(0,MAX_ITEMS);
@@ -362,20 +365,20 @@ async function findGames(platform,evt){
   persist();
   if(fresh.length){
    const message='Found '+fresh.length+' finished games for @'+username+'. Select View board or Analyse below.';
-   setPlatformStatus(platform,message,'ok');$('verV4Context').textContent=message;
+   setPlatformStatus(platform,message,'ok');
+   if(state.active===search&&state.scope==='latest')$('verV4Context').textContent=message;
   }else{
    const message='No finished standard games returned for @'+username+'. Previous saved games are hidden from this search.';
-   setPlatformStatus(platform,message,'error');$('verV4Context').textContent=message;
+   setPlatformStatus(platform,message,'error');
+   if(state.active===search&&state.scope==='latest')$('verV4Context').textContent=message;
   }
  }catch(err){
   const message='Could not load @'+username+': '+(err?.message||String(err));
   setPlatformStatus(platform,message,'error');
-  $('verV4Context').textContent=message+' Your previous saved games are safe. Choose All saved games to view them.';
+  if(state.active===search&&state.scope==='latest')$('verV4Context').textContent=message+' Your previous saved games are safe. Choose All saved games to view them.';
  }finally{
-  state.busy=false;
-  buttons.forEach(b=>b.disabled=false);
-  $('verV4ChessFind').textContent='Find';
-  $('verV4LichessFind').textContent='Find';
+  state.busy[platform]=false;
+  button.disabled=false;button.textContent='Find';form.setAttribute('aria-busy','false');
   render();
  }
 }
@@ -386,7 +389,7 @@ $('verV4Latest').addEventListener('click',()=>switchScope('latest'));
 for(const id of ['verV4Source','verV4Result','verV4Query'])$(id).addEventListener(id==='verV4Query'?'input':'change',()=>{state.shown=10;render();});
 $('verV4More').addEventListener('click',()=>{state.shown+=10;render();});
 $('verV4Clear').addEventListener('click',()=>{
- if(state.busy)return;
+ if(anySearchBusy())return;
  if(!window.confirm('Clear saved public PGNs from this browser? Original accounts and online games will not be affected.'))return;
  state.items=[];state.currentKeys=[];state.active=null;state.scope='all';state.shown=10;
  persist();switchScope('all');
