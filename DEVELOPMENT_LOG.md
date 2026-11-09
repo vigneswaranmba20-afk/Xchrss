@@ -1,5 +1,12 @@
 # VER Chess — development log
 
+## 2026-11-10 · v7.4 browser-runtime/offline regression — PROPOSED, NOT RELEASED
+
+- Added an actual-site Playwright check for the browser-global Game-to-Lesson index at 393×852 with reduced motion and network disabled after initial loading.
+- Checks exact-position results, input immutability, frozen results, and preservation of the existing board markup. Unlike the earlier browser test, this exercises loaded browser scripts rather than importing the Node module.
+- Test-only change; no app code, storage, service worker, or dependencies changed. Requires passing CI before merge and post-merge deployment verification.
+- Historical pending-release entries below reflect their status when written; PR #39 and PR #40 were subsequently merged. Their live-site status must be verified independently.
+
 ## 2026-11-09 · v7.4 read-only game position index — proposed, NOT RELEASED
 
 - Added a standalone offline helper that scans a supplied array of game FENs and returns zero-based ply indices with exact lesson matches. Does not modify games, lessons, engine state or storage.
