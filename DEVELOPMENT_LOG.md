@@ -1,5 +1,12 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.4 read-only game position index — proposed, NOT RELEASED
+
+- Added a standalone offline helper that scans a supplied array of game FENs and returns zero-based ply indices with exact lesson matches. Does not modify games, lessons, engine state or storage.
+- Added positive/negative Node fixtures and a 393×852 actual-site Playwright board-preservation regression. Matching means identical placement and side to move, **not** tactical merit or chess accuracy.
+- Not yet wired to the game-review UI; no new dependencies or service-worker changes. Await PR CI, mobile/offline gates, merge and Pages verification before claiming release.
+
+
 ## 2026-11-09 · v7.4 conservative piece-count validation — CI pending, NOT RELEASED
 
 - Rebased the previously conflicted PR #35 change onto the latest main after the PWA freshness release. Reject positions with more than eight pawns or sixteen pieces per side in the offline exact-position lesson matcher.
