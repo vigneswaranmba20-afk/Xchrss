@@ -1,5 +1,19 @@
 # VER Chess — development log
 
+## 2026-11-09 · Verified v7.3 release ledger (supersedes earlier pending-status wording)
+Earlier entries below were written at PR creation time and retain their historical status snapshots. The following later checks supersede those *pending* labels; they are not evidence of physical Android testing or independent public-site accessibility.
+
+| PR | Scope | Merge commit | Post-merge evidence | Limitations |
+| --- | --- | --- | --- | --- |
+| [#27](https://github.com/vigneswaranmba20-afk/Xchrss/pull/27) | Visible observation practice | Previously merged | [Stability](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42510227796), [Pages](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42510227166) reported successful | No physical Android check |
+| [#28](https://github.com/vigneswaranmba20-afk/Xchrss/pull/28) | Offline precache and reload test | `234da411cf62db91be95a78c37d4cf95e56e4cf9` | [Stability](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42520052876), [Pages](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42520053759) reported successful | Independent offline launch on device outstanding |
+| [#29](https://github.com/vigneswaranmba20-afk/Xchrss/pull/29) | Keyboard focus | `bed5e870c0fb6d6db9141a1540cfaf430367ad06` | [Pre-merge CI](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42525176556) passed | Post-merge run not recorded here |
+| [#30](https://github.com/vigneswaranmba20-afk/Xchrss/pull/30) | Answer accessibility context | `9c2e40969170da9251cd9a3c24ba369c11b82787` | [Stability](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42540316770), [Pages](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42540316397) reported successful | Screen-reader/device testing outstanding |
+| [#31](https://github.com/vigneswaranmba20-afk/Xchrss/pull/31) | First-attempt session review | `5ecd4b342f1f38266ef60916dc25fef6cb545192` | [Stability](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42556407364), [Pages](https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/42556406982) reported successful | Live public-site and physical Android tests outstanding |
+
+These workflow results are based on previously reported GitHub Actions outcomes. They must be rechecked against the GitHub UI before a new release; a successful Pages job is not proof that the public site loads on every Android device. No objective chess accuracy is inferred from practice results. Next: v7.4 game-to-lesson bridge with positive/negative fixtures, board-preservation checks, offline and mobile regressions.
+
+
 ## 2026-11-09 · v7.3 observation practice review — PR awaiting validation
 - Proposed a session-only first-attempt practice summary after all three detector-checked questions, with an explicit warning that it is **not chess move accuracy**. Restart clears the session tally. No persistent storage or engine metrics.
 - Added 393×852 Playwright browser regression for incorrect/correct attempts, summary and reset. Review Board, PGN, Stockfish and PWA unchanged.
