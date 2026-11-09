@@ -1,5 +1,12 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.4 exact-position lesson matching foundation — proposed, NOT RELEASED
+- Added a standalone, offline-capable helper that matches a game's FEN to a lesson only when piece placement and side to move agree exactly. Halfmove/fullmove counters are ignored; no tactical opportunity or accuracy is inferred.
+- Added a 393×852 Playwright regression for positive/negative/invalid matches and unchanged existing board DOM.
+- Not wired to the visible game library or Learn UI yet. This is a cautious foundation, not a completed game-to-lesson bridge.
+- Release gate: PR CI and all existing browser/position/offline checks must pass before merge; Pages deployment and independent Android verification outstanding.
+
+
 ## 2026-11-09 · Verified v7.3 release ledger (supersedes earlier pending-status wording)
 Earlier entries below were written at PR creation time and retain their historical status snapshots. The following later checks supersede those *pending* labels; they are not evidence of physical Android testing or independent public-site accessibility.
 
