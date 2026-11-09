@@ -71,3 +71,12 @@ These workflow results are based on previously reported GitHub Actions outcomes.
 ## 2026-11-08 · v7.3 tactical foundations
 - PRs #18–#23 previously merged, adding and testing skewer, discovered-attack and back-rank geometry observations.
 - Pre-merge GitHub Actions stability runs were reported passing for PRs #18–#23, but post-merge Pages deployment has not been independently confirmed. Geometry is **not** proof of legal checkmate, forced wins, or objective move accuracy.
+# 2026-11-09 · Playable Learn lesson boards
+
+- Fixed the display-only Knight fork and Absolute pin lesson boards: white pieces now accept tap/click-to-move, mouse/touch dragging, and keyboard selection.
+- Legal destinations appear as dots. Illegal moves leave the position unchanged; legal attempts move the piece and update the commentary below the board. Correct moves draw the tactical relationships and satisfy the Practice step.
+- Added Try again, retained the attempted position and feedback when flipping, and made quiz answers use the same board/feedback path. Lesson state remains separate from imported games and analysis.
+- Bumped the app-shell cache for installed/offline users. The observation cache regression now checks the active cache instead of an obsolete version name.
+- Validation: seven new Chromium interaction/offline tests pass; all nine Node fixture suites pass. The existing browser checks passed apart from their obsolete cache-name assertion, and all six observation tests passed after updating that assertion. Pull-request CI and Pages deployment are verified separately in GitHub.
+- Physical Android verification remains a user-device check. Open online once, then close and reopen the installed app to receive the new cached lesson code.
+

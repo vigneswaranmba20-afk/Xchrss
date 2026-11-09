@@ -1,4 +1,4 @@
-/* VER Chess Learn v7.1 — original offline interactive lessons.
+/* VER Chess Learn v7.5 — playable offline tactical lessons.
    The chess rule engine validates every played and quiz move.
    No paid APIs, tracking, copyrighted book figures or external animation libraries. */
 (function(){
@@ -49,11 +49,12 @@ root.innerHTML=[
  '<button id="verLearnClose" type="button">✕ Close</button></div>',
  '<div class="ver-learn-progress"><span id="verLearnProgress" aria-live="polite"></span><div aria-hidden="true"><span id="verLearnProgressFill"></span></div></div>',
  '<div class="ver-learn-stage-layout"><div class="ver-learn-board-wrap">',
- '<div id="verLearnBoard" class="board ver-learn-board" role="img" aria-label="Chess lesson position"></div>',
- '<small class="ver-learn-board-foot">Gold: teaching move · Mint: tactical relationship</small></div>',
+ '<div id="verLearnBoard" class="board ver-learn-board" role="group" aria-label="Chess lesson position" aria-describedby="verLearnInstructions"></div>',
+ '<small id="verLearnInstructions" class="ver-learn-board-foot">Tap a white piece, then a dotted square, or drag it to move.</small>',
+ '<button id="verLearnRetry" class="ver-learn-retry" type="button">↺ Try again</button></div>',
  '<div class="ver-learn-copy"><strong id="verLearnStage"></strong><p id="verLearnText"></p>',
  '<div id="verLearnChoicesQuiz" class="ver-learn-quiz" hidden></div>',
- '<p id="verLearnFeedback" role="status" aria-live="polite"></p>',
+ '<p id="verLearnFeedback" class="ver-learn-feedback" role="status" aria-live="polite"></p>',
  '<div class="ver-learn-actions">',
  '<button id="verLearnBack" type="button">← Back</button>',
  '<button id="verLearnNext" type="button">Next →</button>',
@@ -85,8 +86,16 @@ for(const l of LESSONS){
 }
 const rules=window.VERChessLessonRules;
 let lesson=null,step=0,flipped=false,solved=false,animation=null;
+let selected=null,attempt=null,phase='before',drag=null,ghost=null;
+const board=$('verLearnBoard'),files='abcdefgh';
+const pieceNames={K:'king',Q:'queen',R:'rook',B:'bishop',N:'knight',P:'pawn'};
+const canPlay=()=>lesson&&phase==='before'&&!attempt;
 const reduce=()=>matchMedia('(prefers-reduced-motion: reduce)').matches;
 function stop(){if(animation!==null){clearTimeout(animation);animation=null;}}
+function clearDrag(){
+ if(drag&&board.hasPointerCapture?.(drag.id))board.releasePointerCapture(drag.id);
+ drag=null;ghost?.remove();ghost=null;board.classList.remove('ver-learn-dragging');
+}
 function verify(l){
  if(!rules)throw Error('Chess rules not initialized');
  const before=rules.parseFen(l.fen),m=rules.findUci(before,l.uci);
@@ -110,19 +119,144 @@ function beam(from,to,color){
  const a=point(from),b=point(to);
  return '<path d="M '+a.join(' ')+' L '+b.join(' ')+'" stroke="'+color+'" stroke-width="13" fill="none" stroke-dasharray="18 12" stroke-linecap="round" opacity=".88"/><circle cx="'+b[0]+'" cy="'+b[1]+'" r="24" stroke="'+color+'" stroke-width="9" fill="none"/>';
 }
-function paint(phase){
+function paint(nextPhase=phase){
+ phase=nextPhase;
  const l=lesson,{before,after}=verify(l),start=l.uci.slice(0,2),end=l.uci.slice(2,4);
- const state=phase==='before'?before:after;
+ const state=attempt?attempt.state:phase==='before'?before:after;
  let squares=[],arrows='';
  if(step===1||step===2){squares=[start,end];arrows=beam(start,end,'#e8c579');}
- if(step===3||step===5){
+ if((step===3||step===5)&&phase==='after'){
   squares=[end,...l.targets];
   arrows=l.id==='pin'?beam('c4','g8','#4de5b5'):l.targets.map(t=>beam(end,t,'#4de5b5')).join('');
  }
  if(step===4)squares=[start];
- window.VERChessSmoothBoard.render($('verLearnBoard'),{state,flipped,focusSquares:squares,arrows});
- $('verLearnBoard').setAttribute('aria-label',l.name+' '+STAGES[step]+': '+(phase==='before'?'before':'after')+' '+l.uci);
+ if(attempt){
+  squares=[attempt.uci.slice(0,2),attempt.uci.slice(2,4)];arrows='';
+  if(attempt.correct){
+   squares.push(...l.targets);
+   arrows=l.id==='pin'?beam('c4','g8','#4de5b5'):l.targets.map(t=>beam(end,t,'#4de5b5')).join('');
+  }
+ }
+ if(selected){squares=[selected];arrows='';}
+ window.VERChessSmoothBoard.render(board,{state,flipped,focusSquares:squares,arrows});
+ board.setAttribute('aria-label',l.name+': '+(attempt?'after '+attempt.label:phase+' '+l.uci));
+ const destinations=new Set();
+ if(selected&&canPlay())for(const file of files)for(let rank=1;rank<=8;rank++){
+  const to=file+rank;if(rules.findUci(before,selected+to))destinations.add(to);
+ }
+ board.querySelectorAll('.v5-square').forEach((cell,index)=>{
+  const row=Math.floor(index/8),col=index%8;
+  const square=files[flipped?7-col:col]+(flipped?row+1:8-row);
+  cell.dataset.square=square;cell.removeAttribute('aria-hidden');
+  cell.setAttribute('role','button');cell.tabIndex=0;
+  cell.setAttribute('aria-pressed',String(selected===square));
+  cell.setAttribute('aria-description',destinations.has(square)?'Legal destination':canPlay()?'Select a white piece or a destination':'Use Try again to play this position');
+  cell.classList.toggle('ver-learn-selected',selected===square);
+  cell.classList.toggle('ver-learn-legal',destinations.has(square));
+  const piece=state.b[rules.idx(square)];
+  cell.classList.toggle('ver-learn-movable',!!canPlay()&&piece!=='.'&&piece===piece.toUpperCase());
+ });
+ $('verLearnInstructions').textContent=canPlay()
+  ?'Tap a white piece, then a dotted square, or drag it to move.'
+  :'Tap Try again to play this position. Mint lines show the tactical relationship.';
 }
+function selectSquare(square){
+ if(!canPlay()){
+  $('verLearnFeedback').textContent='Tap Try again to reset the position and make another move.';return;
+ }
+ const before=rules.parseFen(lesson.fen),piece=before.b[rules.idx(square)];
+ if(piece!=='.'&&piece===piece.toUpperCase()){
+  stop();
+  selected=selected===square?null:square;
+  $('verLearnFeedback').textContent=selected?'Selected '+pieceNames[piece]+' on '+square+'. Choose a dotted square.':'';
+  paint();return;
+ }
+ if(selected){tryMove(selected+square);return;}
+ $('verLearnFeedback').textContent='White to move. Select a white piece first.';
+}
+function tryMove(uci){
+ if(!lesson||solved)return;
+ stop();
+ const before=rules.parseFen(lesson.fen),move=rules.findUci(before,uci);
+ if(!move){
+  $('verLearnFeedback').textContent='That move is not legal. Choose one of the dotted squares.';
+  return;
+ }
+ const label=rules.san(before,move),correct=uci===lesson.uci;
+ attempt={state:rules.apply(before,move),uci,label,correct};selected=null;solved=correct;
+ const played='You played '+label+' ('+uci.slice(0,2)+' → '+uci.slice(2,4)+'). ';
+ $('verLearnText').textContent=played+(correct?lesson.text[3]:lesson.id==='fork'
+  ?'This move does not attack the king on h8 and queen on d8 together. Try again and look for a knight jump that creates both threats.'
+  :'This move does not pin the knight on f7 to the king on g8. Try again and find the bishop diagonal through both pieces.');
+ $('verLearnFeedback').textContent=correct?'Correct! '+label+' creates the pattern. Continue with Next, or Try again.':'Not quite. This is a legal move, but it does not create the lesson’s pattern. Tap Try again.';
+ $('verLearnNext').disabled=step===4&&!solved;
+ showQuiz();paint();
+}
+function retry(){
+ if(!lesson)return;
+ stop();clearDrag();selected=null;attempt=null;solved=false;
+ $('verLearnText').textContent=lesson.text[step===4?4:0];
+ $('verLearnFeedback').textContent='Your turn. Move a white piece to try the tactic.';
+ $('verLearnNext').disabled=step===4;
+ showQuiz();paint('before');
+}
+function squareAt(x,y){
+ const rect=board.getBoundingClientRect();
+ if(x<rect.left||x>=rect.right||y<rect.top||y>=rect.bottom)return null;
+ const col=Math.floor((x-rect.left)/rect.width*8),row=Math.floor((y-rect.top)/rect.height*8);
+ return files[flipped?7-col:col]+(flipped?row+1:8-row);
+}
+board.addEventListener('pointerdown',event=>{
+ if(event.button!==0||event.isPrimary===false||drag||!lesson)return;
+ const square=squareAt(event.clientX,event.clientY);if(!square)return;
+ const before=rules.parseFen(lesson.fen),piece=before.b[rules.idx(square)];
+ const movable=canPlay()&&piece!=='.'&&piece===piece.toUpperCase();
+ drag={id:event.pointerId,from:square,x:event.clientX,y:event.clientY,movable,piece,previous:selected,moved:false};
+ if(movable){stop();selected=square;paint();}
+ board.setPointerCapture(event.pointerId);
+});
+board.addEventListener('pointermove',event=>{
+ if(!drag||drag.id!==event.pointerId||!drag.movable)return;
+ if(!drag.moved&&Math.hypot(event.clientX-drag.x,event.clientY-drag.y)<8)return;
+ drag.moved=true;event.preventDefault();
+ if(!ghost){
+  ghost=document.createElement('div');ghost.className='ver-learn-drag-piece';
+  ghost.innerHTML=window.VERChessPieceArt?.['w'+drag.piece]||'';
+  ghost.style.width=ghost.style.height=board.getBoundingClientRect().width/8+'px';
+  ghost.setAttribute('aria-hidden','true');document.body.append(ghost);
+  board.classList.add('ver-learn-dragging');
+ }
+ ghost.style.left=event.clientX+'px';ghost.style.top=event.clientY+'px';
+});
+board.addEventListener('pointerup',event=>{
+ if(!drag||drag.id!==event.pointerId)return;
+ const gesture=drag,to=squareAt(event.clientX,event.clientY);clearDrag();
+ if(gesture.moved){
+  if(to&&to!==gesture.from)tryMove(gesture.from+to);
+  else $('verLearnFeedback').textContent='Move cancelled. Choose a dotted square or drag the piece again.';
+  return;
+ }
+ if(!to)return;
+ if(gesture.movable){selected=gesture.previous;selectSquare(to);}
+ else selectSquare(to);
+});
+board.addEventListener('pointercancel',()=>{clearDrag();});
+board.addEventListener('lostpointercapture',()=>{if(drag)clearDrag();});
+board.addEventListener('dragstart',event=>event.preventDefault());
+board.addEventListener('click',event=>{
+ // Pointer gestures are handled above. A zero-detail click comes from a keyboard or assistive technology.
+ if(event.detail===0){const square=event.target.closest('[data-square]')?.dataset.square;if(square)selectSquare(square);}
+});
+board.addEventListener('keydown',event=>{
+ const cell=event.target.closest('[data-square]');if(!cell)return;
+ if(event.key==='Enter'||event.key===' '){event.preventDefault();selectSquare(cell.dataset.square);}
+ if(event.key==='Escape'){selected=null;clearDrag();paint();}
+ const offset={ArrowLeft:-1,ArrowRight:1,ArrowUp:-8,ArrowDown:8}[event.key];
+ if(offset){
+  event.preventDefault();const cells=[...board.querySelectorAll('.v5-square')],next=cells.indexOf(cell)+offset;
+  if(next>=0&&next<64)cells[next].focus();
+ }
+});
 function showQuiz(){
  const quiz=$('verLearnChoicesQuiz');quiz.replaceChildren();quiz.hidden=step!==4;
  if(step!==4)return;
@@ -130,17 +264,14 @@ function showQuiz(){
   const button=document.createElement('button');button.type='button';button.textContent=label;button.disabled=solved;
   button.addEventListener('click',()=>{
    if(solved)return;
-   if(uci!==lesson.uci){$('verLearnFeedback').textContent='Not quite. Look for the move that creates the tactical relationship.';return;}
-   solved=true;$('verLearnFeedback').textContent='Correct! '+label+' creates the pattern.';
-   quiz.querySelectorAll('button').forEach(b=>b.disabled=true);
-   $('verLearnNext').disabled=false;
+   tryMove(uci);
   });
   quiz.append(button);
  }
 }
 function draw(){
  if(!lesson)return;
- stop();
+ stop();clearDrag();selected=null;attempt=null;solved=false;
  $('verLearnTitle').textContent=lesson.name;
  $('verLearnStage').textContent=STAGES[step];
  $('verLearnText').textContent=lesson.text[step];
@@ -168,8 +299,9 @@ function open(id){
 $('verLearnNext').onclick=()=>{if(!lesson||step===4&&!solved)return;if(step===5){step=0;solved=false;}else{step++;if(step===4)solved=false;}draw();};
 $('verLearnBack').onclick=()=>{if(step){step--;draw();}};
 $('verLearnReplay').onclick=()=>draw();
-$('verLearnFlip').onclick=()=>{flipped=!flipped;draw();};
-$('verLearnClose').onclick=()=>{stop();lesson=null;$('verLearnPlayer').hidden=true;catalog.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));};
-document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
-window.VERChessLearn={version:'7.1',open,lessons:LESSONS.map(x=>({id:x.id,name:x.name,fen:x.fen,uci:x.uci})),verify:()=>LESSONS.every(l=>!!verify(l))};
+$('verLearnRetry').onclick=retry;
+$('verLearnFlip').onclick=()=>{if(!lesson)return;clearDrag();flipped=!flipped;paint();};
+$('verLearnClose').onclick=()=>{stop();clearDrag();lesson=null;$('verLearnPlayer').hidden=true;catalog.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));};
+document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();clearDrag();}});
+window.VERChessLearn={version:'7.5',open,lessons:LESSONS.map(x=>({id:x.id,name:x.name,fen:x.fen,uci:x.uci})),verify:()=>LESSONS.every(l=>!!verify(l))};
 })();
