@@ -1,5 +1,11 @@
 # VER Chess — development log
 
+## 2026-11-09 · v7.4 conservative piece-count validation — CI pending, NOT RELEASED
+
+- Rebased the previously conflicted PR #35 change onto the latest main after the PWA freshness release. Reject positions with more than eight pawns or sixteen pieces per side in the offline exact-position lesson matcher.
+- Added positive/negative Playwright fixtures. This is not complete FEN legality or tactical evaluation. No stable board, PGN, saved-game or service-worker changes.
+- Require full PR stability checks, mobile/offline regression review, merge and post-merge Pages verification before marking released.
+
 ## 2026-11-09 · PWA online freshness and installed-app update recovery
 
 - Confirmed the public GitHub Pages assets were published for PR #37, but the installed service worker could keep serving cached JS/CSS instead of fetching newer releases.
