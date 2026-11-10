@@ -1,3 +1,10 @@
+## 2026-11-10 · v7.4 visible exact-position Learn suggestions — PROPOSED, NOT RELEASED
+
+- Proposed an isolated, read-only card adjacent to the existing review Board. It compares immutable reviewed-position FEN snapshots with the two original Learn lesson positions and offers touch-friendly navigation only on exact matches.
+- The card explains that matching is not tactical evaluation, forced material gain or chess accuracy. No game state, saved data, Stockfish, board renderer or PWA cache implementation is changed.
+- Added a 393×852 Chromium offline/reduced-motion regression and board-markup preservation check. Await CI and real-device/deployment verification; do not merge if tests fail.
+- The current two-lesson catalog may rarely match imported games. A later separately tested feature can introduce validated motif-based recommendations rather than falsely presenting exact matches as discovered tactics.
+
 # VER Chess — development log
 
 ## 2026-11-10 · v7.4 read-only review position snapshots — PROPOSED, NOT RELEASED
