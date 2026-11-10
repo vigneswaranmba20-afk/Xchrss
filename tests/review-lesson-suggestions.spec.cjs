@@ -18,4 +18,46 @@ test('v7.4 read-only Learn suggestions load on mobile and remain usable offline'
  expect(result.state).toEqual(initial.state);
  expect(result.fens).toEqual(initial.fens);
  expect(await board.evaluate(el=>el.outerHTML)).toBe(original);
+ await page.locator('[data-ver-nav="insights"]').click();
+ await expect(page.locator('#verReviewLessonSuggestions')).toBeVisible();
+ await expect(page.locator('#verReviewLessonResults')).toContainText('No exact lesson positions');
+ await page.locator('[data-ver-nav="board"]').click();
+ await expect(page.locator('#verReviewLessonSuggestions')).toBeHidden();
+ expect(await page.locator('.main > .left').evaluate(el=>el.scrollHeight-el.clientHeight)).toBe(0);
+});
+
+test('matching imported positions open Learn from Insights after a fresh offline reload',async({page,context})=>{
+ await page.setViewportSize({width:393,height:852});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ await page.goto('./');
+ await page.evaluate(async()=>{await navigator.serviceWorker.ready;});
+ await page.reload();
+ const assets=['ver-chess-lesson-match.js','ver-chess-game-lesson-index.js','ver-chess-review-lesson-suggestions.js'];
+ expect(await page.evaluate(async assets=>{
+  const name=(await caches.keys()).find(key=>key.startsWith('ver-chess-shell-'));
+  const cache=await caches.open(name);
+  return Promise.all(assets.map(async asset=>Boolean(await cache.match(new URL(asset,location.href)))));
+ },assets)).toEqual([true,true,true]);
+ await context.setOffline(true);
+ await page.reload();
+ await expect(page.locator('#verReviewLessonSuggestions')).toBeAttached();
+ await page.locator('.v6-optional-pgn > summary').click();
+ await page.locator('.ver-pgn-details > summary').click();
+ await page.locator('#pgnText').fill('[Event "Lesson bridge fixture"]\n[SetUp "1"]\n[FEN "3q3k/8/8/4N3/8/8/8/K7 w - - 0 1"]\n\n1. Nf7+ *');
+ await page.locator('#pasteBtn').click();
+ await expect(page.locator('body')).toHaveAttribute('data-ver-view','board');
+ const snapshot=await page.evaluate(()=>({state:VERChessReviewControls.state(),fens:VERChessReviewControls.positionFens(),storage:{...localStorage}}));
+ await page.locator('[data-ver-nav="insights"]').click();
+ const recommendation=page.locator('#verReviewLessonResults button');
+ await expect(recommendation).toHaveText('Knight fork · position 0 → Learn');
+ await page.screenshot({path:'test-results/review-lessons-insights-393x852.png'});
+ await recommendation.click();
+ await expect(page.locator('body')).toHaveAttribute('data-ver-view','learn');
+ await expect(page.locator('#verLearnTitle')).toContainText('Knight fork');
+ await expect(page.locator('#verLearnBoard .v5-square')).toHaveCount(64);
+ expect(await page.evaluate(()=>({state:VERChessReviewControls.state(),fens:VERChessReviewControls.positionFens(),storage:{...localStorage}}))).toEqual(snapshot);
+ await page.locator('[data-ver-nav="board"]').click();
+ await expect(page.locator('#verReviewLessonSuggestions')).toBeHidden();
+ await expect(page.locator('#v5MoveNumber')).toContainText('0 / 1');
+ await context.setOffline(false);
 });

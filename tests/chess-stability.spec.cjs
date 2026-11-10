@@ -326,9 +326,10 @@ test('Read full becomes board-first lesson with complete explanation and unchang
   }
 });
 
-test('Read full shows the legal engine alternative on-board without mutating the game', async ({ browser }) => {
+for (const viewport of [{ width: 320, height: 600 }, { width: 393, height: 852 }]) {
+test('Read full shows the legal engine alternative on-board without mutating the game at ' + viewport.width + '×' + viewport.height, async ({ browser }) => {
   const context = await browser.newContext({
-    viewport: { width: 320, height: 600 }, isMobile: true,
+    viewport, isMobile: true,
     hasTouch: true, serviceWorkers: 'block'
   });
   try {
@@ -361,9 +362,17 @@ test('Read full shows the legal engine alternative on-board without mutating the
       innerHeight: window.innerHeight,
       board: document.querySelector('#board')?.getBoundingClientRect().toJSON(),
       dock: document.querySelector('#v5Dock')?.getBoundingClientRect().toJSON(),
-      suggestions: document.querySelector('#verReviewLessonSuggestions')?.getBoundingClientRect().toJSON()
+      suggestions: document.querySelector('#verReviewLessonSuggestions')?.getBoundingClientRect().toJSON(),
+      leftScrollTop: document.querySelector('.main > .left')?.scrollTop,
+      container: document.querySelector('.ver-board-panel')?.getBoundingClientRect().toJSON()
     }));
+    await test.info().attach('alternative-board-geometry', {
+      body: JSON.stringify({viewport,before:size,after:alternateSize,viewportGeometry},null,2), contentType:'application/json'
+    });
     expect(alternateSize.visibleFraction, JSON.stringify({before:size,after:alternateSize,viewportGeometry})).toBeGreaterThan(0.97);
+    expect(viewportGeometry.leftScrollTop).toBe(0);
+    await expect(page.locator('#verReviewLessonSuggestions')).toBeHidden();
+    await page.screenshot({path:'test-results/alternative-board-'+viewport.width+'x'+viewport.height+'.png'});
     expect(Math.abs(alternateSize.width - size.width)).toBeLessThan(3);
     await page.locator('#v7Played').click();
     await expect.poll(() => page.locator('#board').getAttribute('data-lesson-mode')).toBe('played');
@@ -377,6 +386,7 @@ test('Read full shows the legal engine alternative on-board without mutating the
   }
 });
 
+}
 
 test('Learn offers original fork and pin lessons with a separate chessboard on mobile', async ({ browser }) => {
  const context=await browser.newContext({

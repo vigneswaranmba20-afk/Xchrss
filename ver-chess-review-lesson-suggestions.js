@@ -21,10 +21,19 @@ const results=document.createElement('div');
 results.id='verReviewLessonResults';
 results.setAttribute('aria-live','polite');
 host.append(heading,note,results);
-const board=document.getElementById('board');
-const panel=board?.closest('.panel');
-if(!panel)return;
-panel.insertAdjacentElement('afterend',host);
+// The mobile Board is a fixed, clipped stage. Extra siblings there create
+// scrollable overflow and can displace ranks when the coach receives focus.
+// Keep recommendations in the scrollable Insights view instead.
+const insights=document.querySelector('.main > .right');
+if(!insights)return;
+insights.prepend(host);
+function syncView(){
+ host.hidden=document.body.getAttribute('data-ver-view')!=='insights';
+ if(!host.hidden)render();
+}
+const viewObserver=new MutationObserver(syncView);
+viewObserver.observe(document.body,{attributes:true,attributeFilter:['data-ver-view']});
+syncView();
 function render(){
  const fens=review.positionFens();
  const matches=index.findLessonMoments(fens,lessons);
