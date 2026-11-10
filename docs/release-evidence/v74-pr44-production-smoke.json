@@ -1,0 +1,65 @@
+{
+  "url": "https://vigneswaranmba20-afk.github.io/Xchrss/",
+  "checkedAt": "2026-11-10T07:19:45.772Z",
+  "assets": {
+    "index.html": "c9edac0ef29661fd7f1f7c1bfd1a7b977f850fa4cf634bec5db69bf635034b6f",
+    "ver-chess-review-lesson-suggestions.js": "f2c40d2b4f5662e6e13938e15c80493571b4d478c7193d0cae8f166e09cdcb7a",
+    "ver-chess-lesson-match.js": "8a02eeb42a78beb2d26126ed8bec3e9a32e1e3aeb5022f69debf48b23d43fcf0",
+    "ver-chess-game-lesson-index.js": "e3aef8feca4a90569e0dde15b4c29ca5474be7185fe84c6cee31f7f7a42f49fc",
+    "sw.js": "261955a9a2ffd4a14faa08178c00c71d205de61aab596c9de40acb9797a24813"
+  },
+  "boards": [
+    {
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "board": {
+        "x": 10,
+        "y": 189,
+        "width": 373,
+        "height": 375,
+        "top": 189,
+        "right": 383,
+        "bottom": 564,
+        "left": 10
+      },
+      "visibleFraction": 1,
+      "leftScrollTop": 0,
+      "scrollY": 0,
+      "squares": 64
+    },
+    {
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "board": {
+        "x": 15.5,
+        "y": 131.5,
+        "width": 289,
+        "height": 289,
+        "top": 131.5,
+        "right": 304.5,
+        "bottom": 420.5,
+        "left": 15.5
+      },
+      "visibleFraction": 1,
+      "leftScrollTop": 0,
+      "scrollY": 0,
+      "squares": 64
+    }
+  ],
+  "checks": [
+    "five live asset hashes match release tree",
+    "Read full / legal alternative animation / Played / Done / Next / Previous / Flip / Reset at 393×852 and 320×600",
+    "Insights recommendations and user-controlled Android/PWA reload prompt",
+    "fresh offline reload / imported exact-position recommendation / Learn animation / reduced motion / unchanged game and storage"
+  ],
+  "cacheNames": [
+    "ver-chess-shell-v7-7-review-lessons-2026-11-10",
+    "ver-chess-stockfish-19-0-1"
+  ],
+  "pageErrors": [],
+  "result": "PASS"
+}
