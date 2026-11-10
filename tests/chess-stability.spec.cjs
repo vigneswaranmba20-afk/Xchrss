@@ -355,7 +355,15 @@ test('Read full shows the legal engine alternative on-board without mutating the
     await expect(page.locator('#board .v5-square[aria-label="e4 empty"]')).toHaveCount(1);
     await expect(page.locator('#board .v5-square')).toHaveCount(64);
     const alternateSize = await measureBoard(page);
-    expect(alternateSize.visibleFraction).toBeGreaterThan(0.97);
+    // Report geometry on CI failures: distinguish scroll displacement from board resizing.
+    const viewportGeometry = await page.evaluate(() => ({
+      scrollY: window.scrollY,
+      innerHeight: window.innerHeight,
+      board: document.querySelector('#board')?.getBoundingClientRect().toJSON(),
+      dock: document.querySelector('#v5Dock')?.getBoundingClientRect().toJSON(),
+      suggestions: document.querySelector('#verReviewLessonSuggestions')?.getBoundingClientRect().toJSON()
+    }));
+    expect(alternateSize.visibleFraction, JSON.stringify({before:size,after:alternateSize,viewportGeometry})).toBeGreaterThan(0.97);
     expect(Math.abs(alternateSize.width - size.width)).toBeLessThan(3);
     await page.locator('#v7Played').click();
     await expect.poll(() => page.locator('#board').getAttribute('data-lesson-mode')).toBe('played');
