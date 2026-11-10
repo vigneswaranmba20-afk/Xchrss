@@ -608,6 +608,9 @@ window.VERChessLessonRules=Object.freeze({parseFen,findUci,apply,san,uci,idx});
 window.VERChessReviewControls={
  jumpTo:ply=>jump(Number(ply)||0),
  state:()=>({at,total:game.moves.length,running}),
+ // Read-only snapshots for exact-position lesson matching. Index 0 is the
+ // initial position; index N is the board after N plies. Never expose states.
+ positionFens:()=>Object.freeze(game.states.map(state=>fen(state))),
 };
 
 // Public, read-only explanation context and a dedicated ephemeral board renderer.
