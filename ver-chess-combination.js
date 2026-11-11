@@ -76,9 +76,9 @@ function paint(instant=false){
  player.dataset.stage=String(stage);player.setAttribute('aria-busy',String(busy));
  $('verComboStage').textContent=stages[stage];$('verComboProgress').textContent=(stage+1)+' / 6';
  $('verComboPosition').textContent=(state.t===1?'White':'Black')+' to move'+(stage>=2?' · Position '+ply+' / 5'+(last?' · '+last.san:''):'');
- $('verComboText').textContent=stage===0?'White to move. Is the king already on a knight-fork square?':stage===1?'Choose a forcing move that changes the king’s square. Tap a white piece to see its legal destinations.':stage===4?(solved?'You found the whole combination. Ready to review the pattern?':ply===0?'Your turn. Find the lure, then follow through without move hints.':ply===2?'Your turn. Find a checking continuation.':ply===4?'Your turn. Complete the combination.':line.text[ply]):stage===5?'Lure the king onto a fork square, then check with the knight. A forcing check gives you time to take the second target. Calculate every reply before sacrificing.':line.text[ply];
+ $('verComboText').textContent=stage===0?'White to move. Is the king already on a knight-fork square?':stage===1?'Choose a forcing move that changes the king’s square. Tap a white piece to see its legal destinations.':stage===4?(solved?'You found the whole combination. Ready to review the pattern?':ply===0?'Your turn. Find the lure, then follow through without move hints.':ply===2?'Your turn. Find a checking continuation.':ply===4?'Your turn. Complete the combination.':line.text[ply]):stage===5?'Lure the king onto a fork square. Check with the knight, then take the queen. Calculate every reply before sacrificing.':line.text[ply];
  $('verComboFeedback').hidden=!feedback;$('verComboFeedback').textContent=feedback;
- $('verComboMore').hidden=stage<3;
+ $('verComboMore').hidden=stage<3||stage===5;
  $('verComboDetail').textContent=line.detail[ply];
  $('verComboDefenseLabel').hidden=stage<3;
  $('verComboDefense').disabled=busy||playing||(stage===4&&ply>0);

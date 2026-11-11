@@ -27,7 +27,7 @@ body.ver-combination-active[data-ver-view="learn"] .footer{visibility:hidden}
 .ver-combo-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px}
 #verComboNext{background:#e4ca84;color:#1b2d1f;border-color:#e9d493}
 .ver-combo-still .v5-piece{transition:none!important}
-@media(max-width:370px){.ver-combo{gap:5px;padding:8px}.ver-combo-head h2{font-size:20px}.ver-combo-copy>p{font-size:12px}.ver-combo-copy{max-height:145px}}
+@media(max-width:370px){.ver-combo{gap:5px;padding:8px}.ver-combo-head h2{font-size:20px}.ver-combo-copy>p{font-size:12px}.ver-combo-copy{max-height:120px}}
 @media(orientation:landscape) and (max-height:480px) and (min-width:600px){
  .ver-combo{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:5px 12px}
  .ver-combo-head{grid-column:1/-1;grid-row:1}

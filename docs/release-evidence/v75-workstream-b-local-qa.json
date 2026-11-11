@@ -1,5 +1,5 @@
 {
-  "recordedAt": "2026-11-11T19:55:21.529705+00:00",
+  "recordedAt": "2026-11-11T20:07:29.701266+00:00",
   "branch": "feature/v75-animated-combination-20261111",
   "baseCommit": "639e65fb4d2fd985f5862a3ce965169cccfab531",
   "browser": {
@@ -18,16 +18,16 @@
     "index.html": "ca1c3f0400589c531bdaba6debe880c8839c604adcbae3b9f0d0fb0db2b09db8",
     "sw.js": "23e047684c20419b4c5c0cdaf233e5f3bdd52b93990f542bd5bc0cfe19747034",
     "ver-chess-learn.js": "25ff12d8a64d91b2cd21161969f6d43e1327561baec294b6aee4730417862ad9",
-    "ver-chess-combination.js": "d3d3d885e9d12cf441833badf802052a22af6e4550b49075e00d539e2e3d4590",
+    "ver-chess-combination.js": "634c317ab90043d5676d11326bb9d038669791fcdad94f6dc7a10563910e13dc",
     "ver-chess-combination-content.js": "f525007d3aaa97442c18ef0ef639d90782fbf9ed55f4bdd157b6e7ec3b0c2a7e",
-    "ver-chess-combination.css": "1a6f9c629044834e03667495050c2a1d4bf2cbca1a9b68a9bb5f49697f360259"
+    "ver-chess-combination.css": "b0f94255942498831eec83375f777ad3177f7700ffc693c856a40ba4b47b6a55"
   },
   "frameMeasurements": [
     {
-      "samples": 20,
-      "meanMs": 21.666700000000002,
-      "p95Ms": 83.29999999999995,
-      "maxMs": 83.29999999999995,
+      "samples": 26,
+      "meanMs": 16.661538461538463,
+      "p95Ms": 16.700000000000045,
+      "maxMs": 16.700000000000045,
       "environment": "Headless Chromium; not a physical Android FPS certification"
     }
   ],
@@ -119,14 +119,14 @@
         "width": 360,
         "height": 800
       },
-      "width": 278,
-      "height": 278,
+      "width": 318,
+      "height": 318,
       "visible": 1,
-      "playerBottom": 592,
+      "playerBottom": 792,
       "overflow": 0,
       "rows": 8,
       "columns": 8,
-      "minSquareWidth": 34.75
+      "minSquareWidth": 39.75
     },
     {
       "stage": "discover",
@@ -295,14 +295,14 @@
         "width": 320,
         "height": 600
       },
-      "width": 146,
-      "height": 146,
-      "visible": 0.9982876712328768,
+      "width": 171,
+      "height": 171,
+      "visible": 0.9985380116959064,
       "playerBottom": 592,
       "overflow": 0,
       "rows": 8,
       "columns": 8,
-      "minSquareWidth": 18.25
+      "minSquareWidth": 21.375
     },
     {
       "stage": "deeper",
@@ -423,14 +423,14 @@
         "width": 320,
         "height": 600
       },
-      "width": 185,
-      "height": 185,
-      "visible": 0.9998310810810811,
+      "width": 238,
+      "height": 238,
+      "visible": 1,
       "playerBottom": 592,
       "overflow": 0,
       "rows": 8,
       "columns": 8,
-      "minSquareWidth": 23.125
+      "minSquareWidth": 29.75
     },
     {
       "stage": "review",
@@ -551,5 +551,12 @@
   "isolatedMotionCheck": {
     "passed": 1,
     "failed": 0
+  },
+  "isolatedMotionSourceCommit": "e43a33ed81341b272a8b463b77fe324a22c47aea",
+  "ciLayoutCorrection": {
+    "failedRun": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43091980548",
+    "failedBoardWidthPx": 130,
+    "unchangedExpandedMinimumPx": 140,
+    "smallCopyMaxHeightPx": 120
   }
 }
