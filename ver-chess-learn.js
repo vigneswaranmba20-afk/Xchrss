@@ -41,7 +41,7 @@ root.id='verLearnPanel';root.className='ver-learn';
 root.setAttribute('aria-label','Learn chess through visual lessons');
 root.innerHTML=[
  '<div class="ver-learn-hero"><div><small>VER · CHESS LEARN</small><h1>See the idea. Play the move.</h1>',
- '<p>Two original, interactive tactical lessons. Beautifully visual. Completely free and offline-friendly.</p></div>',
+ '<p>Original interactive tactics, one clear idea at a time. Free and offline-friendly.</p></div>',
  '<span class="ver-learn-mark" aria-hidden="true">♞</span></div>',
  '<div id="verLearnChoices" class="ver-learn-grid" aria-label="Available lessons"></div>',
  '<section id="verLearnPlayer" class="ver-learn-player" aria-label="Visual chess lesson" hidden>',
@@ -288,6 +288,8 @@ function draw(){
  }else paint(step===0||step===1||step===4?'before':'after');
 }
 function open(id){
+ if(window.VERChessCombination?.id===id){$('verLearnClose').click();return window.VERChessCombination.open();}
+ window.VERChessCombination?.close(false);
  const l=LESSONS.find(l=>l.id===id);if(!l)return;
  try{verify(l);}catch(e){console.warn('Could not open lesson:',e);return;}
  lesson=l;step=0;flipped=false;solved=false;
@@ -303,5 +305,5 @@ $('verLearnRetry').onclick=retry;
 $('verLearnFlip').onclick=()=>{if(!lesson)return;clearDrag();flipped=!flipped;paint();};
 $('verLearnClose').onclick=()=>{stop();clearDrag();lesson=null;$('verLearnPlayer').hidden=true;catalog.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed','false'));};
 document.addEventListener('visibilitychange',()=>{if(document.hidden){stop();clearDrag();}});
-window.VERChessLearn={version:'7.5',open,lessons:LESSONS.map(x=>({id:x.id,name:x.name,fen:x.fen,uci:x.uci})),verify:()=>LESSONS.every(l=>!!verify(l))};
+window.VERChessLearn={version:'7.5',open,lessons:LESSONS.map(x=>({id:x.id,name:x.name,fen:x.fen,uci:x.uci})),verify:()=>LESSONS.every(l=>!!verify(l))&&(!window.VERChessCombination||window.VERChessCombination.verify())};
 })();

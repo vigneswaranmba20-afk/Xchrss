@@ -130,3 +130,18 @@ test('installed app can move lesson pieces while offline', async ({ page, contex
   await expect(square(page, 'c4')).toHaveAttribute('aria-label', 'c4 B');
   await expect(page.locator('#verLearnFeedback')).toContainText('Correct');
 });
+
+for(const id of ['fork','pin'])test(`legacy ${id} keyboard focus preserves the imported review position`,async({page})=>{
+  await page.goto('/');
+  await page.locator('#fileInput').setInputFiles({name:'keyboard.pgn',mimeType:'text/plain',buffer:Buffer.from('1. e4 e5 *')});
+  await page.locator('#v5Next').click();
+  const before=await page.evaluate(()=>VERChessReviewControls.state());
+  await page.locator('[data-ver-nav="learn"]').click();await page.locator(`[data-lesson="${id}"]`).click();
+  await square(page,id==='fork'?'e5':'e2').focus();await page.keyboard.press('ArrowLeft');
+  expect(await page.evaluate(()=>VERChessReviewControls.state())).toEqual(before);
+  await page.locator('[data-ver-nav="learn"]').focus();await page.keyboard.press('ArrowLeft');
+  expect(await page.evaluate(()=>VERChessReviewControls.state())).toEqual(before);
+  await page.locator('[data-ver-nav="board"]').click();await page.evaluate(()=>document.activeElement.blur());
+  await page.keyboard.press('ArrowRight');
+  expect(await page.evaluate(()=>VERChessReviewControls.state().at)).toBe(before.at+1);
+});
