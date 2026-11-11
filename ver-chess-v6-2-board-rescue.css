@@ -67,6 +67,14 @@
     overflow:hidden !important;
   }
 }
+/* The short-screen footer rule was overridden by the rescue rule above.
+   Restore it only in landscape so the fitter has room for a square board;
+   portrait review geometry stays exactly as protected by the stability suite. */
+@media (max-width:850px) and (max-height:480px) and (orientation:landscape) {
+  body[data-ver-view="board"] .main > .left > section.ver-board-panel > .board-footer {
+    display:none !important;
+  }
+}
 /* V5.3 Reset styling is included here because older offline CSS may have
    been served from the PWA cache while the newest toolbar JS was active. */
 body[data-ver-view="board"] #v5Reset {
