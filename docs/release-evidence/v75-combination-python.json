@@ -1,0 +1,187 @@
+{
+  "validator": "python-chess 1.11.2",
+  "fen": "3q2k1/8/5P2/4N3/8/8/8/K6R w - - 0 1",
+  "valid": true,
+  "lines": [
+    {
+      "defense": "h8h7",
+      "moves": [
+        {
+          "before": "3q2k1/8/5P2/4N3/8/8/8/K6R w - - 0 1",
+          "uci": "h1h8",
+          "san": "Rh8+",
+          "legalResponses": [
+            "a1a2",
+            "a1b1",
+            "a1b2",
+            "e5c4",
+            "e5c6",
+            "e5d3",
+            "e5d7",
+            "e5f3",
+            "e5f7",
+            "e5g4",
+            "e5g6",
+            "f6f7",
+            "h1b1",
+            "h1c1",
+            "h1d1",
+            "h1e1",
+            "h1f1",
+            "h1g1",
+            "h1h2",
+            "h1h3",
+            "h1h4",
+            "h1h5",
+            "h1h6",
+            "h1h7",
+            "h1h8"
+          ]
+        },
+        {
+          "before": "3q2kR/8/5P2/4N3/8/8/8/K7 b - - 1 1",
+          "uci": "g8h8",
+          "san": "Kxh8",
+          "legalResponses": [
+            "g8h8"
+          ]
+        },
+        {
+          "before": "3q3k/8/5P2/4N3/8/8/8/K7 w - - 0 2",
+          "uci": "e5f7",
+          "san": "Nf7+",
+          "legalResponses": [
+            "a1a2",
+            "a1b1",
+            "a1b2",
+            "e5c4",
+            "e5c6",
+            "e5d3",
+            "e5d7",
+            "e5f3",
+            "e5f7",
+            "e5g4",
+            "e5g6",
+            "f6f7"
+          ]
+        },
+        {
+          "before": "3q3k/5N2/5P2/8/8/8/8/K7 b - - 1 2",
+          "uci": "h8h7",
+          "san": "Kh7",
+          "legalResponses": [
+            "h8g8",
+            "h8h7"
+          ]
+        },
+        {
+          "before": "3q4/5N1k/5P2/8/8/8/8/K7 w - - 2 3",
+          "uci": "f7d8",
+          "san": "Nxd8",
+          "legalResponses": [
+            "a1a2",
+            "a1b1",
+            "a1b2",
+            "f7d6",
+            "f7d8",
+            "f7e5",
+            "f7g5",
+            "f7h6",
+            "f7h8"
+          ]
+        }
+      ],
+      "final": "3N4/7k/5P2/8/8/8/8/K7 b - - 0 3"
+    },
+    {
+      "defense": "h8g8",
+      "moves": [
+        {
+          "before": "3q2k1/8/5P2/4N3/8/8/8/K6R w - - 0 1",
+          "uci": "h1h8",
+          "san": "Rh8+",
+          "legalResponses": [
+            "a1a2",
+            "a1b1",
+            "a1b2",
+            "e5c4",
+            "e5c6",
+            "e5d3",
+            "e5d7",
+            "e5f3",
+            "e5f7",
+            "e5g4",
+            "e5g6",
+            "f6f7",
+            "h1b1",
+            "h1c1",
+            "h1d1",
+            "h1e1",
+            "h1f1",
+            "h1g1",
+            "h1h2",
+            "h1h3",
+            "h1h4",
+            "h1h5",
+            "h1h6",
+            "h1h7",
+            "h1h8"
+          ]
+        },
+        {
+          "before": "3q2kR/8/5P2/4N3/8/8/8/K7 b - - 1 1",
+          "uci": "g8h8",
+          "san": "Kxh8",
+          "legalResponses": [
+            "g8h8"
+          ]
+        },
+        {
+          "before": "3q3k/8/5P2/4N3/8/8/8/K7 w - - 0 2",
+          "uci": "e5f7",
+          "san": "Nf7+",
+          "legalResponses": [
+            "a1a2",
+            "a1b1",
+            "a1b2",
+            "e5c4",
+            "e5c6",
+            "e5d3",
+            "e5d7",
+            "e5f3",
+            "e5f7",
+            "e5g4",
+            "e5g6",
+            "f6f7"
+          ]
+        },
+        {
+          "before": "3q3k/5N2/5P2/8/8/8/8/K7 b - - 1 2",
+          "uci": "h8g8",
+          "san": "Kg8",
+          "legalResponses": [
+            "h8g8",
+            "h8h7"
+          ]
+        },
+        {
+          "before": "3q2k1/5N2/5P2/8/8/8/8/K7 w - - 2 3",
+          "uci": "f7d8",
+          "san": "Nxd8",
+          "legalResponses": [
+            "a1a2",
+            "a1b1",
+            "a1b2",
+            "f7d6",
+            "f7d8",
+            "f7e5",
+            "f7g5",
+            "f7h6",
+            "f7h8"
+          ]
+        }
+      ],
+      "final": "3N2k1/8/5P2/8/8/8/8/K7 b - - 0 3"
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+/* Scoped to the new Learn player; never changes the protected review board. */
+.ver-combo[hidden],.ver-combo [hidden]{display:none!important}
+.ver-learn[data-combo-active="true"]>:not(#verComboPlayer){display:none!important}
+body.ver-combination-active[data-ver-view="learn"]{overflow:hidden!important;overscroll-behavior:none}
+body.ver-combination-active[data-ver-view="learn"] .footer{visibility:hidden}
+.ver-combo{box-sizing:border-box;position:fixed;left:12px;right:12px;z-index:2;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto auto;gap:7px;margin:0 auto;padding:10px;max-width:680px;overflow:hidden}
+.ver-combo-head{display:flex;align-items:center;gap:6px;min-width:0}
+.ver-combo-head h2{flex:1;min-width:0;font:500 22px/1.2 Georgia,serif;margin:0;color:#f4e6c5}
+.ver-combo button,.ver-combo select{box-sizing:border-box;min-height:44px;min-width:44px;border:1px solid #819e8980;border-radius:9px;background:#244536;color:#eff5e5;font:700 12px/1.2 system-ui,sans-serif;padding:8px 10px;touch-action:manipulation}
+.ver-combo button:disabled{opacity:.4}
+.ver-combo button:focus-visible,.ver-combo summary:focus-visible,.ver-combo select:focus-visible{outline:3px solid #f0d68f;outline-offset:-3px}
+.ver-combo-progress{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:#c6d6bc}
+.ver-combo-progress strong{color:#e4cb88}
+.ver-combo-position{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;min-width:0;min-height:0;overflow:hidden}
+.ver-combo-position .ver-learn-board{flex:0 0 auto;margin:0;max-width:100%!important;max-height:none!important;box-sizing:border-box;border:0;touch-action:none}
+.ver-combo-position>small{font-size:10px;line-height:16px;color:#c6d6bc;white-space:nowrap}
+.ver-combo-copy{min-height:0;max-height:175px;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.ver-combo-copy>p{font-size:13px;line-height:1.45;margin:0;color:#f4f1e2}
+.ver-combo-copy>#verComboFeedback{margin-top:5px;color:#e7cd83;font-size:12px}
+.ver-combo-copy details{font-size:12px;color:#ccdec9;margin-top:4px}
+.ver-combo-copy summary{cursor:pointer;min-height:32px;padding:7px 0;box-sizing:border-box;color:#e7cd83}
+.ver-combo-copy details p{line-height:1.5;margin:4px 0}
+.ver-combo-copy label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:11px}
+.ver-combo-playback{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.ver-combo-playback button{padding:7px 3px;font-size:11px}
+.ver-combo[data-stage="4"] .ver-combo-playback{display:flex;justify-content:center}
+.ver-combo-actions{display:grid;grid-template-columns:1fr 1.4fr;gap:7px}
+#verComboNext{background:#e4ca84;color:#1b2d1f;border-color:#e9d493}
+.ver-combo-still .v5-piece{transition:none!important}
+@media(max-width:370px){.ver-combo{gap:5px;padding:8px}.ver-combo-head h2{font-size:20px}.ver-combo-copy>p{font-size:12px}.ver-combo-copy{max-height:120px}}
+@media(orientation:landscape) and (max-height:480px) and (min-width:600px){
+ .ver-combo{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:5px 12px}
+ .ver-combo-head{grid-column:1/-1;grid-row:1}
+ .ver-combo-progress{grid-column:1/-1;grid-row:2}
+ .ver-combo-position{grid-column:1;grid-row:3/6}
+ .ver-combo-copy{grid-column:2;grid-row:3;max-height:100%}
+ .ver-combo-playback{grid-column:2;grid-row:4}
+ .ver-combo-actions{grid-column:2;grid-row:5}
+}
+@media(prefers-reduced-motion:reduce){.ver-combo .v5-piece{transition:none!important}}

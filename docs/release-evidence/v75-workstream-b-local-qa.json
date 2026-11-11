@@ -1,0 +1,562 @@
+{
+  "recordedAt": "2026-11-11T20:07:29.701266+00:00",
+  "branch": "feature/v75-animated-combination-20261111",
+  "baseCommit": "639e65fb4d2fd985f5862a3ce965169cccfab531",
+  "browser": {
+    "command": "npm run test:stability -- --workers=2 --reporter=list,json",
+    "passed": 76,
+    "failed": 0,
+    "flaky": 0,
+    "skipped": 0
+  },
+  "node": {
+    "command": "node --test tests/ver-chess-*.test.cjs tests/game-lesson-index.test.cjs",
+    "passed": 71,
+    "failed": 0
+  },
+  "testedAssetSha256": {
+    "index.html": "ca1c3f0400589c531bdaba6debe880c8839c604adcbae3b9f0d0fb0db2b09db8",
+    "sw.js": "23e047684c20419b4c5c0cdaf233e5f3bdd52b93990f542bd5bc0cfe19747034",
+    "ver-chess-learn.js": "25ff12d8a64d91b2cd21161969f6d43e1327561baec294b6aee4730417862ad9",
+    "ver-chess-combination.js": "634c317ab90043d5676d11326bb9d038669791fcdad94f6dc7a10563910e13dc",
+    "ver-chess-combination-content.js": "f525007d3aaa97442c18ef0ef639d90782fbf9ed55f4bdd157b6e7ec3b0c2a7e",
+    "ver-chess-combination.css": "b0f94255942498831eec83375f777ad3177f7700ffc693c856a40ba4b47b6a55"
+  },
+  "frameMeasurements": [
+    {
+      "samples": 26,
+      "meanMs": 16.661538461538463,
+      "p95Ms": 16.700000000000045,
+      "maxMs": 16.700000000000045,
+      "environment": "Headless Chromium; not a physical Android FPS certification"
+    }
+  ],
+  "lessonViewports": [
+    {
+      "stage": "observe",
+      "expanded": false,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 278,
+      "height": 278,
+      "visible": 1,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 34.75
+    },
+    {
+      "stage": "observe",
+      "expanded": false,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "observe",
+      "expanded": false,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "observe",
+      "expanded": false,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    },
+    {
+      "stage": "discover",
+      "expanded": false,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 278,
+      "height": 278,
+      "visible": 1,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 34.75
+    },
+    {
+      "stage": "discover",
+      "expanded": false,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "discover",
+      "expanded": false,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "discover",
+      "expanded": false,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    },
+    {
+      "stage": "animate",
+      "expanded": false,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 256,
+      "height": 256,
+      "visible": 0.99945068359375,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 32
+    },
+    {
+      "stage": "animate",
+      "expanded": false,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "animate",
+      "expanded": false,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "animate",
+      "expanded": false,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    },
+    {
+      "stage": "explain",
+      "expanded": false,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 220,
+      "height": 220,
+      "visible": 0.9993607954545455,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 27.5
+    },
+    {
+      "stage": "explain",
+      "expanded": false,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "explain",
+      "expanded": false,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "explain",
+      "expanded": false,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    },
+    {
+      "stage": "deeper",
+      "expanded": true,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 171,
+      "height": 171,
+      "visible": 0.9985380116959064,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 21.375
+    },
+    {
+      "stage": "deeper",
+      "expanded": true,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "deeper",
+      "expanded": true,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "deeper",
+      "expanded": true,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    },
+    {
+      "stage": "practice",
+      "expanded": false,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 220,
+      "height": 220,
+      "visible": 0.9993607954545455,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 27.5
+    },
+    {
+      "stage": "practice",
+      "expanded": false,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "practice",
+      "expanded": false,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "practice",
+      "expanded": false,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    },
+    {
+      "stage": "review",
+      "expanded": false,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 238,
+      "height": 238,
+      "visible": 1,
+      "playerBottom": 592,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 29.75
+    },
+    {
+      "stage": "review",
+      "expanded": false,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "playerBottom": 792,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 39.75
+    },
+    {
+      "stage": "review",
+      "expanded": false,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375
+    },
+    {
+      "stage": "review",
+      "expanded": false,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "playerBottom": 907,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 45.75
+    }
+  ],
+  "playbackViewports": [
+    {
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375,
+      "scrollY": 0
+    },
+    {
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375,
+      "scrollY": 0
+    },
+    {
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375,
+      "scrollY": 0
+    },
+    {
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375,
+      "scrollY": 0
+    },
+    {
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "playerBottom": 844,
+      "overflow": 0,
+      "rows": 8,
+      "columns": 8,
+      "minSquareWidth": 43.375,
+      "scrollY": 0
+    }
+  ],
+  "physicalAndroid": "PENDING; all browser measurements are Chromium mobile emulation",
+  "isolatedFrameMeasurements": [
+    {
+      "samples": 26,
+      "meanMs": 16.662846153846154,
+      "p95Ms": 16.700000000000045,
+      "maxMs": 16.799999999999955,
+      "environment": "Headless Chromium; not a physical Android FPS certification"
+    }
+  ],
+  "isolatedMotionCheck": {
+    "passed": 1,
+    "failed": 0
+  },
+  "isolatedMotionSourceCommit": "e43a33ed81341b272a8b463b77fe324a22c47aea",
+  "ciLayoutCorrection": {
+    "failedRun": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43091980548",
+    "failedBoardWidthPx": 130,
+    "unchangedExpandedMinimumPx": 140,
+    "smallCopyMaxHeightPx": 120
+  }
+}

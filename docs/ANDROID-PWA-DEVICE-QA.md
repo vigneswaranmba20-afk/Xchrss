@@ -20,9 +20,12 @@ Do not uninstall the app or clear Chrome/app data to update it.
   the knight e5 → f7. A cancelled drag should leave the position intact, with no
   floating piece or accidental page scroll. Try Absolute pin too.
 - [ ] **Lesson playback.** Step through Observe, Discover, Animate, Explain,
-  Practice, Review. Check Back, Replay, Flip, and Close. If a combination lesson
-  is available, also check Pause, move stepping, its defensive alternative, and
-  leaving during playback. Enable Android's Remove animations option and repeat.
+  Practice, Review. Check Back, Replay, Flip, and Close.
+  **Lure, then fork** is the new combination: inspect the position, choose a
+  candidate, then check Pause, Previous/Next move, Replay and Exit during
+  playback. In Explain → Why this works, compare **…Kh7** and **…Kg8**. Complete
+  Practice with the rook lure, knight check and queen capture. Enable Android's
+  Remove animations option and repeat.
 - [ ] **Stockfish online.** Wait for the offline-ready message, then analyse a
   short completed PGN. Confirm analysis starts and produces legal move advice.
 - [ ] **Offline restart.** After the successful online visit, turn on airplane

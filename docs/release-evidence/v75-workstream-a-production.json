@@ -1,0 +1,93 @@
+{
+  "time": "2026-11-11T19:09:12.689Z",
+  "sourceCommit": "639e65fb4d2fd985f5862a3ce965169cccfab531",
+  "url": "https://vigneswaranmba20-afk.github.io/Xchrss/",
+  "automated": "Chromium mobile emulation; physical Android PENDING",
+  "assets": [
+    {
+      "file": "index.html",
+      "sha256": "c9edac0ef29661fd7f1f7c1bfd1a7b977f850fa4cf634bec5db69bf635034b6f"
+    },
+    {
+      "file": "sw.js",
+      "sha256": "df65723ecde18debf6b0ed9f98be4a9d3113e4e24b3abb13dffc287c775c63e5"
+    },
+    {
+      "file": "ver-chess-v6-2-board-rescue.css",
+      "sha256": "4d25cd6f3112c071a1eb6a3b55e2cacda35110bff9f70ed6506ead96a2a85e11"
+    }
+  ],
+  "viewports": [
+    {
+      "width": 289,
+      "height": 289,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0,
+      "viewport": {
+        "width": 320,
+        "height": 600
+      }
+    },
+    {
+      "width": 340,
+      "height": 342,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0,
+      "viewport": {
+        "width": 360,
+        "height": 800
+      }
+    },
+    {
+      "width": 373,
+      "height": 375,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0,
+      "viewport": {
+        "width": 393,
+        "height": 852
+      }
+    },
+    {
+      "width": 392,
+      "height": 394,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0,
+      "viewport": {
+        "width": 412,
+        "height": 915
+      }
+    },
+    {
+      "width": 102,
+      "height": 102,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0,
+      "viewport": {
+        "width": 800,
+        "height": 360
+      }
+    }
+  ],
+  "navigation": "PASS",
+  "cacheNames": [
+    "ver-chess-shell-v7-7-android-recovery-2026-11-11",
+    "ver-chess-stockfish-19-0-1"
+  ],
+  "offlineStockfish": "uciok",
+  "offlineReopen": "PASS",
+  "errors": [],
+  "ci": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43084058165",
+  "deployment": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43084370636",
+  "pr": "https://github.com/vigneswaranmba20-afk/Xchrss/pull/46"
+}

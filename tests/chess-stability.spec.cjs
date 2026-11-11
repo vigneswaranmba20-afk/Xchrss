@@ -398,7 +398,9 @@ test('Learn offers original fork and pin lessons with a separate chessboard on m
   await expect(page.locator('[data-ver-nav="learn"]')).toBeVisible();
   await page.locator('[data-ver-nav="learn"]').click();
   await expect(page.locator('body')).toHaveAttribute('data-ver-view','learn');
-  await expect(page.locator('#verLearnChoices .ver-learn-choice')).toHaveCount(2);
+  await expect(page.locator('#verLearnChoices .ver-learn-choice')).toHaveCount(3);
+  await expect(page.locator('#verLearnChoices [data-lesson="fork"]')).toHaveCount(1);
+  await expect(page.locator('#verLearnChoices [data-lesson="pin"]')).toHaveCount(1);
   expect(await page.evaluate(()=>window.VERChessLearn.verify())).toBe(true);
   await page.locator('[data-lesson="fork"]').click();
   await expect(page.locator('#verLearnPlayer')).toBeVisible();
