@@ -1,0 +1,166 @@
+{
+  "time": "2026-11-11T20:13:17.799Z",
+  "sourceCommit": "7b73a4f8044fae8dff2ac9a4892a2b4ffff25f4b",
+  "url": "https://vigneswaranmba20-afk.github.io/Xchrss/",
+  "automated": "Chromium mobile emulation; physical Android PENDING",
+  "assets": [
+    {
+      "file": "index.html",
+      "sha256": "ca1c3f0400589c531bdaba6debe880c8839c604adcbae3b9f0d0fb0db2b09db8"
+    },
+    {
+      "file": "sw.js",
+      "sha256": "23e047684c20419b4c5c0cdaf233e5f3bdd52b93990f542bd5bc0cfe19747034"
+    },
+    {
+      "file": "ver-chess-v6-2-board-rescue.css",
+      "sha256": "4d25cd6f3112c071a1eb6a3b55e2cacda35110bff9f70ed6506ead96a2a85e11"
+    },
+    {
+      "file": "ver-chess-combination.js",
+      "sha256": "634c317ab90043d5676d11326bb9d038669791fcdad94f6dc7a10563910e13dc"
+    },
+    {
+      "file": "ver-chess-combination.css",
+      "sha256": "b0f94255942498831eec83375f777ad3177f7700ffc693c856a40ba4b47b6a55"
+    },
+    {
+      "file": "ver-chess-combination-content.js",
+      "sha256": "f525007d3aaa97442c18ef0ef639d90782fbf9ed55f4bdd157b6e7ec3b0c2a7e"
+    },
+    {
+      "file": "ver-chess-learn.js",
+      "sha256": "25ff12d8a64d91b2cd21161969f6d43e1327561baec294b6aee4730417862ad9"
+    }
+  ],
+  "viewports": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 289,
+      "height": 289,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 340,
+      "height": 342,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0
+    },
+    {
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 373,
+      "height": 375,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0
+    },
+    {
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 392,
+      "height": 394,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0
+    },
+    {
+      "viewport": {
+        "width": 800,
+        "height": 360
+      },
+      "width": 102,
+      "height": 102,
+      "visible": 1,
+      "squares": 64,
+      "overflow": 0,
+      "leftScroll": 0
+    }
+  ],
+  "navigation": "PASS",
+  "cacheNames": [
+    "ver-chess-shell-v7-7-combination-2026-11-11",
+    "ver-chess-stockfish-19-0-1"
+  ],
+  "offlineStockfish": "uciok",
+  "combinationViewports": [
+    {
+      "viewport": {
+        "width": 320,
+        "height": 600
+      },
+      "width": 278,
+      "height": 278,
+      "visible": 1,
+      "squares": 64
+    },
+    {
+      "viewport": {
+        "width": 360,
+        "height": 800
+      },
+      "width": 318,
+      "height": 318,
+      "visible": 1,
+      "squares": 64
+    },
+    {
+      "viewport": {
+        "width": 393,
+        "height": 852
+      },
+      "width": 347,
+      "height": 347,
+      "visible": 1,
+      "squares": 64
+    },
+    {
+      "viewport": {
+        "width": 412,
+        "height": 915
+      },
+      "width": 366,
+      "height": 366,
+      "visible": 1,
+      "squares": 64
+    }
+  ],
+  "combination": {
+    "active": true,
+    "stage": "Review",
+    "ply": 5,
+    "defense": "kg8",
+    "playing": false,
+    "busy": false,
+    "solved": false,
+    "fen": "3N2k1/8/5P2/8/8/8/8/K7 b - - 0 3",
+    "practiceCompleted": true
+  },
+  "combinationReviewPreserved": "PASS",
+  "offlineReopen": "PASS",
+  "errors": [],
+  "pr": "https://github.com/vigneswaranmba20-afk/Xchrss/pull/47",
+  "finalCommit": "845493727535c66c353fbee088206e3c6d7bc201",
+  "ci": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43093556602",
+  "postMergeCI": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43094243606",
+  "deployment": "https://github.com/vigneswaranmba20-afk/Xchrss/actions/runs/43094242217",
+  "releaseGates": "PASS; physical Android PENDING"
+}
