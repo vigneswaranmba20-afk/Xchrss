@@ -558,5 +558,17 @@
     "failedBoardWidthPx": 130,
     "unchangedExpandedMinimumPx": 140,
     "smallCopyMaxHeightPx": 120
+  },
+  "historicalConcurrentFrameMeasurements": {
+    "sourceCommit": "e43a33ed81341b272a8b463b77fe324a22c47aea",
+    "measurements": [
+      {
+        "samples": 20,
+        "meanMs": 21.666700000000002,
+        "p95Ms": 83.29999999999995,
+        "maxMs": 83.29999999999995,
+        "environment": "Headless Chromium; not a physical Android FPS certification"
+      }
+    ]
   }
 }
